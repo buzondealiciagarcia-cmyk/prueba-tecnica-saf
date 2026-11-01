@@ -1,0 +1,56 @@
+
+
+Requisitos
+* Radar detecta a 220 m
+* Objeto tiene que ser mayor o igual a 0,6 m²
+* Radar entrega una nube de puntos cada 50 ms
+* Ancho de vía (1 m) → Vitoria → Assumption
+* Analizar Detección de obstáculos en movimiento vs estáticos (analizar velocidad)
+* Detección de objeto en la vía → análisis de la velocidad de giro (ω) para sacar el ángulo*
+	• esto solo permite saber el ángulo en ese instante
+(Dibujo de un esquema con un ángulo, una curva y la indicación: < 220 m)
+→ no podrá analizar este nuevo giro
+→ ¿dónde hacemos el procesamiento?
+* Detección y análisis 128 ms
+* Modo degradado → ¿cómo avisa?
+* Modo fallo
+* Las coordenadas del radar toma la vía como ref.
+- Se necesita saber la altura del radar
+* Cumplir requisitos estándares de Fusa
+* El radar ve en 2D, no detecta la altura → estudiar
+La mayoría de radares miden 2D → este mide ese desviación tb
+Hypothesis → hay que tener en cuenta que el error crece mucho con la distancia
+* Hipótesis → giro constante (1)
+* H → velocidad y giro llegan sincronizados
+* H → radar está montado y calibrado con el eje del tranvía
+	• → calcular la desviación con un error de 1°
+* Resolución y frec de velocidad y ángulo
+	• \(v_{\text{max}}\) tranvía
+* Sistema rechaza \(V_{\text{tranvía}} < 0\) y distancia > 220 m
+* Sistema compensar el movimiento del tram
+* Crear system de actualizar → ocupado / no / desconocido
+* Filtrar eco de raíles (detección cte y predicha)
+
+Tranvía
+* agrupar celdas detectadas para "crear" objetos mayores
+* Estándar de calidad → P de detección > 95% eg.
+* No reportar objetos fuera de la vía
+* Minimizar falsas alarmas, por debajo de X%
+* por cada detección entregar posición, tamaño, objeto y sus coordenadas tram e incertidumbre
+* error localización menor que <
+* timestamp + alcance estimado al objeto
+* El sistema tiene que confirmar el obstáculo N veces antes de dar el aviso
+(!)  Comportamiento determinista → evitar uso de memoria dinámica
+Modos
+* (Normal) \(\xrightarrow{\text{Fallo}}\) (Degradado) \(\xrightarrow{\text{Fallo}}\) (Fallo)
+* (Degradado) \(\xrightarrow{\text{reset}}\) (Normal)
+* (Degradado) → sigue dando alertas pero con confianza reducida
+* (Fallo) → no debería entregar nada en "vía libre" sino que no hay vigilancia
+* ③ Un continuo estado de degradado
+(Condiciones de fallo / degradado anotadas abajo):
+① no recibe ninguna trama en 128 ms
+el timestamp no avanza / retrocede
+uno de los datos no está disponible eg. velocidad
+fallo autodiagnóstico del radar
+② si no hay nada detectado en X s
+desalineación del radar

@@ -1,0 +1,6 @@
+Enunciado R1–R4 aportado por el usuario el 2026-11-01
+
+R1 — «Realizar un plan de viabilidad del uso del radar para detectar obstáculos en la vía: capacidades y limitaciones del sensor para el caso de uso planteado por el cliente.»
+R2 — «Realizar el diseño del sistema (hardware/software), e integrar un diagrama pipeline de un ciclo, desde la entrada del radar hasta la lista de objetos, y gestión de los fallos del sensor.»
+R3 — «Implementar el (pseudo) código de un componente del sistema: por ejemplo, la actualización de la probabilidad de ocupación de una celda del grid. Justificar la elección del lenguaje de programación seleccionado.»
+R4 — «Plantear cómo se le ofertaría al cliente la ejecución de este proyecto: redactar el borrador de una oferta con el alcance, plazo, presupuesto.»

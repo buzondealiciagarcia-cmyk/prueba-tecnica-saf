@@ -1,0 +1,16 @@
+# macOS y cachés de Python
+.DS_Store
+__pycache__/
+*.pyc
+
+# --- harness (STD-GIT §6) ---
+/build/
+/.harness/sandbox/
+/.harness/reports/
+/.harness/audit/
+/docs/export/
+.h-canary
+*.gcda
+*.gcno
+/.claude/
+.DS_Store
