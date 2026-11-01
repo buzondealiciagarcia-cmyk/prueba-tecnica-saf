@@ -1,0 +1,33 @@
+{
+  "$comment": "Fragmento que install.sh fusiona en <destino>/.claude/settings.json. Las entradas del harness llevan la marca h-harness para poder actualizarlas o desinstalarlas.",
+  "permissions": {
+    "allow": [
+      "Bash(@@HARNESS@@/bin/h:*)",
+      "Bash(\"@@HARNESS@@/bin/h\":*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git commit --no-verify:*)",
+      "Bash(git commit -n:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git rebase:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {"type": "command", "command": "python3 \"@@HARNESS@@/hooks/phase_guard.py\" # h-harness"}
+        ]
+      },
+      {
+        "matcher": "Read|Write|Edit|MultiEdit|NotebookEdit|Glob|Grep|Bash|WebFetch|WebSearch",
+        "hooks": [
+          {"type": "command", "command": "python3 \"@@HARNESS@@/hooks/guard_paths.py\" # h-harness"}
+        ]
+      }
+    ]
+  }
+}
