@@ -1,0 +1,49 @@
+# docker-compose.yml — STD-DEP. Las subredes/IPs deben copiarse del plan de red del
+# diseño (STD-NET NET-IP-02); los valores de abajo son marcadores a sustituir.
+name: saf
+services:
+  broker:
+    image: eclipse-mosquitto:2.0.18
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      sensors: {ipv4_address: 172.30.10.2}
+      viz: {ipv4_address: 172.30.30.2}
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-t", "$$SYS/#", "-C", "1", "-W", "3"]
+      interval: 5s
+      retries: 5
+  @MOD@:
+    build: {context: .., dockerfile: deploy/@MOD@.Dockerfile}
+    image: saf/@MOD@:${SAF_VERSION:-dev}
+    read_only: true
+    user: "10001:10001"
+    volumes:
+      - ../config:/etc/saf:ro
+      - logs:/var/log/saf
+    depends_on:
+      broker: {condition: service_healthy}
+    networks:
+      sensors: {ipv4_address: 172.30.10.10}
+    cpus: 1.0
+    mem_limit: 256m
+  ui:
+    image: python:3.12-slim
+    command: ["sh", "-c", "pip install --quiet paho-mqtt==1.6.1 && python /app/tools/ui_bridge.py --mqtt broker:1883 --topic $${SAF_GRID_TOPIC}"]
+    environment:
+      SAF_GRID_TOPIC: "PENDIENTE_DISENO"
+    volumes:
+      - ../frontend:/app/frontend:ro
+      - ../tools:/app/tools:ro
+    ports: ["8080:8080"]
+    depends_on:
+      broker: {condition: service_healthy}
+    networks:
+      viz: {ipv4_address: 172.30.30.20}
+networks:
+  sensors:
+    ipam: {config: [{subnet: 172.30.10.0/24}]}
+  viz:
+    ipam: {config: [{subnet: 172.30.30.0/24}]}
+volumes:
+  logs:

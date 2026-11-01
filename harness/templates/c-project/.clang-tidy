@@ -1,0 +1,36 @@
+# STD-C C-LNG-04
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  cert-*,
+  clang-analyzer-*,
+  misc-*,
+  -misc-include-cleaner,
+  performance-*,
+  portability-*,
+  readability-braces-around-statements,
+  readability-else-after-return,
+  readability-function-size,
+  readability-identifier-naming,
+  readability-implicit-bool-conversion,
+  readability-isolate-declaration,
+  readability-magic-numbers,
+  readability-misleading-indentation,
+  readability-non-const-parameter,
+  readability-redundant-declaration,
+  readability-uppercase-literal-suffix
+WarningsAsErrors: '*'
+HeaderFilterRegex: '(include|src)/.*'
+CheckOptions:
+  - { key: readability-function-size.LineThreshold, value: 60 }
+  - { key: readability-function-size.ParameterThreshold, value: 5 }
+  - { key: readability-identifier-naming.FunctionCase, value: lower_case }
+  - { key: readability-identifier-naming.VariableCase, value: lower_case }
+  - { key: readability-identifier-naming.ParameterCase, value: lower_case }
+  - { key: readability-identifier-naming.TypedefCase, value: lower_case }
+  - { key: readability-identifier-naming.TypedefSuffix, value: _t }
+  - { key: readability-identifier-naming.MacroDefinitionCase, value: UPPER_CASE }
+  - { key: readability-identifier-naming.EnumConstantCase, value: UPPER_CASE }
+  - { key: readability-magic-numbers.IgnoredIntegerValues, value: '0;1' }
+  - { key: readability-magic-numbers.IgnoredFloatingPointValues, value: '0.0;1.0' }

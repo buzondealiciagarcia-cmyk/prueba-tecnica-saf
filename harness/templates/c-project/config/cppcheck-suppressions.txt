@@ -1,0 +1,8 @@
+# Supresiones globales de cppcheck. Cada línea MISRA debe tener su DEV-NNN en
+# config/misra-desviaciones.md (C-LNG-03). Formato: <id>[:<fichero>[:<línea>]]
+missingIncludeSystem
+unmatchedSuppression
+# Ficheros de terceros
+*:third_party/*
+# DEV-001: cláusulas de guarda al inicio de función (C-FUN-03)
+misra-c2012-15.5

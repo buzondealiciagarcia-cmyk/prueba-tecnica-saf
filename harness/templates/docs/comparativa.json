@@ -1,0 +1,19 @@
+{
+  "titulo": "Comparativa de alternativas",
+  "escala": {"min": 1, "max": 5, "descripcion": "1 = muy desfavorable · 3 = neutro · 5 = muy favorable"},
+  "criterios": [
+    {"id": "C1", "nombre": "Criterio 1", "peso": 50, "descripcion": "definido por el usuario"},
+    {"id": "C2", "nombre": "Criterio 2", "peso": 50, "descripcion": "definido por el usuario"}
+  ],
+  "alternativas": [
+    {"id": "BASE", "nombre": "Diseño seleccionado", "seleccionada": true},
+    {"id": "ALT-01", "nombre": "Alternativa 1"}
+  ],
+  "puntuaciones": {
+    "BASE": {"C1": 3, "C2": 3},
+    "ALT-01": {"C1": 3, "C2": 3}
+  },
+  "justificaciones": {},
+  "cumplimiento": {"requisitos": [], "valores": {}},
+  "sensibilidad": {"variacion_pct": 20}
+}
