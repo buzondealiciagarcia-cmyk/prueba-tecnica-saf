@@ -21,11 +21,11 @@ gitGraph
   checkout main
   merge develop tag: "req-v1.0"
   checkout develop
-  branch feature/REQ-FUN-001-ogrid-init
+  branch feature/SYS-PR-01-ogrid-init
   commit id: "test: F-001"
   commit id: "feat: F-001"
   checkout develop
-  merge feature/REQ-FUN-001-ogrid-init
+  merge feature/SYS-PR-01-ogrid-init
   checkout main
   merge develop tag: "v1.0.0"
 ```
@@ -39,8 +39,8 @@ gitGraph
 
 | Prefijo | Uso | Ejemplo |
 |---|---|---|
-| `feature/<REQ>-<func>` | una función de la implementación | `feature/REQ-FUN-004-ogrid-update-cell` |
-| `fix/<REQ\|issue>-<desc>` | corrección tras integrar | `fix/REQ-PER-002-latency` |
+| `feature/<REQ>-<func>` | una función de la implementación | `feature/SYS-PR-04-ogrid-update-cell` |
+| `fix/<REQ\|issue>-<desc>` | corrección tras integrar | `fix/SYS-T-02-latency` |
 | `docs/<fase>` | trabajo documental de una fase | `docs/requisitos`, `docs/diseno`, `docs/implementacion`, `docs/oferta`, `docs/dosier` |
 | `test/<alcance>` | tests de integración | `test/integration` |
 | `ui/<desc>` | front-end (no crítico; se integra con aprobación del usuario) | `ui/grid-viewer` |
@@ -58,7 +58,7 @@ gitGraph
 |---|---|---|
 | GIT-CM-01 | OBL | Conventional Commits 1.0 en inglés: `<tipo>(<ámbito>): <resumen en imperativo, ≤ 72 caracteres, sin punto final>`. |
 | GIT-CM-02 | OBL | Tipos: `feat`, `fix`, `test`, `docs`, `refactor`, `perf`, `build`, `ci`, `chore`, `style`, `revert`. Ámbitos: módulo C (`ogrid`, `hal`, `app`), fase (`req`, `design`, `impl`, `offer`, `dossier`), `harness`, `ui`, `deploy`. |
-| GIT-CM-03 | OBL | Trailer `Refs:` con los IDs afectados cuando existan: `Refs: REQ-FUN-004, F-004, TC-F004-03`. |
+| GIT-CM-03 | OBL | Trailer `Refs:` con los IDs afectados cuando existan: `Refs: SYS-PR-04, F-004, TC-F004-03`. |
 | GIT-CM-04 | OBL | Commits atómicos: compila y pasa los hooks. Tests y código de una función van en commits distintos (`test(...)`, `feat(...)`), porque los generan agentes distintos. |
 | GIT-CM-05 | OBL | Prohibido `--no-verify`, `push --force` sobre `main`/`develop` y reescribir historia publicada. |
 | GIT-CM-06 | OBL | Los merges usan el mensaje por defecto de git (`Merge branch '<rama>' into <destino>`) más el trailer `Refs:`. |
@@ -69,7 +69,7 @@ feat(ogrid): implement log-odds cell update
 
 Clamp log-odds to [LO_MIN, LO_MAX] to avoid saturation.
 
-Refs: REQ-FUN-004, F-004
+Refs: SYS-PR-04, F-004
 ```
 
 ## 3. Integración

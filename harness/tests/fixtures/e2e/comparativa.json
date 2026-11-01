@@ -11,6 +11,6 @@
   ],
   "puntuaciones": {"BASE": {"C1": 5, "C2": 3, "C3": 4}, "ALT-01": {"C1": 2, "C2": 5, "C3": 2}},
   "justificaciones": {"ALT-01": {"C2": "La cámara confirma obstáculos que el radar ve con poca RCS"}},
-  "cumplimiento": {"requisitos": ["REQ-FUN-001", "REQ-FUN-002"], "valores": {"ALT-01": {"REQ-FUN-001": "parcial"}}},
+  "cumplimiento": {"requisitos": ["SYS-IN-01", "SYS-PR-01"], "valores": {"ALT-01": {"SYS-IN-01": "parcial"}}},
   "sensibilidad": {"variacion_pct": 20}
 }

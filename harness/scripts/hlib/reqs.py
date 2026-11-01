@@ -87,8 +87,18 @@ def load(root=None):
     return parse(path.read_text(encoding="utf-8"))
 
 
+def section_name(raw):
+    """'## 3. Entradas' -> 'Entradas'."""
+    return re.sub(r"^\s*\d+(\.\d+)*\.?\s*", "", raw or "").strip()
+
+
+EARS_RE = [re.compile(r"^el sistema debera\b"),
+           re.compile(r"^si .+, entonces el sistema debera\b")]
+EARS_OTHER = re.compile(r"^(cuando|mientras|donde) .+, el sistema debera\b")
+
+
 def lint(root=None, strict=False):
-    """Comprueba STD-REQ. Devuelve (errores, avisos) como listas de str."""
+    """Comprueba STD-REQ y el formato de la plantilla. Devuelve (errores, avisos)."""
     root = root or c.project_root()
     cfg = c.load_config(root)
     rcfg = cfg["requirements"]
@@ -101,6 +111,10 @@ def lint(root=None, strict=False):
     if not reqs:
         errors.append("no se ha encontrado ningún requisito (bloques '### <ID> — <título>')")
     id_re = re.compile(rcfg["id_regex"])
+    src_re = re.compile(rcfg.get("source_regex") or ".+")
+    hyp_prefix = rcfg.get("hypothesis_prefix", "H-")
+    hyp_type = c.norm(rcfg.get("hypothesis_type", "Hipótesis"))
+    sections = {c.norm(x["name"]): x["prefix"] for x in rcfg.get("sections", [])}
     seen = {}
     allowed = {
         "tipo": [c.norm(x) for x in rcfg["types"]],
@@ -108,43 +122,72 @@ def lint(root=None, strict=False):
         "verificacion": [c.norm(x) for x in rcfg["verification"]],
         "estado": [c.norm(x) for x in rcfg["states"]],
     }
+    keys = {"tipo": "types", "prioridad": "priorities", "verificacion": "verification",
+            "estado": "states"}
     for r in reqs:
         rid = r["id"]
         where = "%s (línea %d)" % (rid, r["linea"])
+        is_hyp = rid.startswith(hyp_prefix)
         if not id_re.match(rid):
             errors.append("%s: ID no cumple el formato %s" % (where, rcfg["id_regex"]))
         if rid in seen:
             errors.append("%s: ID duplicado (también en línea %d)" % (where, seen[rid]))
         seen[rid] = r["linea"]
+        sec = c.norm(section_name(r["seccion"]))
+        if sections:
+            if sec not in sections:
+                errors.append("%s: la sección '%s' no es de la plantilla (%s)" % (
+                    where, section_name(r["seccion"]),
+                    ", ".join(x["name"] for x in rcfg["sections"])))
+            elif not rid.startswith(sections[sec]):
+                errors.append("%s: en la sección '%s' los códigos empiezan por %s" % (
+                    where, section_name(r["seccion"]), sections[sec]))
         f = r["campos"]
-        for k in REQUIRED:
+        required = ["descripcion", "tipo", "origen", "estado"] if is_hyp else REQUIRED
+        for k in required:
             if not f.get(k):
                 errors.append("%s: falta el campo '%s'" % (where, FIELD_LABEL[k]))
         for k, vals in allowed.items():
             v = f.get(k)
-            if v and c.norm(v) not in vals:
+            if v and v not in ("—", "-") and c.norm(v) not in vals:
                 errors.append("%s: %s='%s' no permitido (%s)" % (
-                    where, FIELD_LABEL[k], v, ", ".join(rcfg[{"tipo": "types",
-                                                              "prioridad": "priorities",
-                                                              "verificacion": "verification",
-                                                              "estado": "states"}[k]])))
+                    where, FIELD_LABEL[k], v, ", ".join(rcfg[keys[k]])))
+        tipo = c.norm(f.get("tipo", ""))
+        if is_hyp and tipo and tipo != hyp_type:
+            errors.append("%s: una hipótesis H-nn debe tener Tipo '%s'" % (
+                where, rcfg.get("hypothesis_type")))
+        if not is_hyp and tipo == hyp_type:
+            errors.append("%s: Tipo 'Hipótesis' solo para códigos %snn" % (where, hyp_prefix))
+        if f.get("origen") and not src_re.match(f["origen"].strip()):
+            errors.append("%s: Origen/Source '%s' no válido (R1–R4 o «Derivado»)" % (
+                where, f["origen"]))
         desc = f.get("descripcion", "")
-        if desc and "debera" not in c.norm(desc):
-            errors.append("%s: REQ-Q-02 la descripción debe usar 'deberá'" % where)
-        if c.norm(desc).count("debera") > 1:
-            warns.append("%s: REQ-Q-01 posible requisito compuesto (varios 'deberá')" % where)
+        nd = c.norm(desc)
+        if not is_hyp and desc:
+            if "debera" not in nd:
+                errors.append("%s: REQ-Q-02 la descripción debe usar 'deberá' (EARS)" % where)
+            elif not any(e.match(nd) for e in EARS_RE):
+                if EARS_OTHER.match(nd):
+                    warns.append("%s: REQ-Q-02 forma EARS válida pero distinta de las dos de la "
+                                 "plantilla ('El sistema deberá…' / 'Si…, entonces…')" % where)
+                else:
+                    errors.append("%s: REQ-Q-02 usa 'El sistema deberá…' o 'Si…, entonces el "
+                                  "sistema deberá…'" % where)
+            if nd.count("debera") > 1:
+                warns.append("%s: REQ-Q-01 posible requisito compuesto (varios 'deberá')" % where)
         blob = c.norm(desc + " " + f.get("criterio", ""))
         for w in VAGUE:
             if re.search(r"(^|[^a-z])%s([^a-z]|$)" % re.escape(w), blob):
                 warns.append("%s: REQ-Q-03 término vago '%s'" % (where, w))
         crit = f.get("criterio", "")
-        if crit and not UNIT_RE.search(crit) and c.norm(f.get("verificacion", "")) in (
-                "test", "analisis"):
+        if not is_hyp and crit and not UNIT_RE.search(crit) and \
+                c.norm(f.get("verificacion", "")) in ("test", "analisis"):
             warns.append("%s: REQ-Q-04 el criterio no contiene magnitud con unidad" % where)
         if strict and c.norm(f.get("estado", "")) != "aprobado":
             errors.append("%s: Estado debe ser 'Aprobado' para cerrar" % where)
     for n, ln in c.find_markers(text):
-        (errors if strict else warns).append("requisitos.md:%d marcador abierto: %s" % (n, ln))
+        (errors if strict else warns).append(
+            "requisitos.md:%d valor o marcador pendiente ([X]/[PENDIENTE]): %s" % (n, ln))
     return errors, warns
 
 

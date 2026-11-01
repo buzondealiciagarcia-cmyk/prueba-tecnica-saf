@@ -2,7 +2,7 @@
   "alcance": "Saturación de probabilidad",
   "modulo": "ogrid",
   "funciones": [
-    {"id": "F-001", "nombre": "ogrid_clamp_prob", "requisitos": ["REQ-FUN-002"], "depende_de": [],
+    {"id": "F-001", "nombre": "ogrid_clamp_prob", "requisitos": ["SYS-PR-01"], "depende_de": [],
      "contrato": "docs/03-implementacion/contratos/F-001-ogrid_clamp_prob.md",
      "cabecera": "include/ogrid/ogrid.h", "fuente": "src/ogrid/ogrid_clamp_prob.c",
      "test": "tests/unit/test_ogrid_clamp_prob.c", "estado": "pendiente"}

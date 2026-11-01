@@ -21,7 +21,7 @@ def design_refs(root):
         if m:
             heading = m.group(2).strip()
             continue
-        for rid in re.findall(r"\b[A-Z]{2,}-[A-Z0-9]+(?:-[A-Z0-9]+)*\b", line):
+        for rid in re.findall(r"\b[A-Z]+-[A-Z0-9]+(?:-[A-Z0-9]+)*\b", line):
             refs.setdefault(rid, [])
             if heading and heading not in refs[rid]:
                 refs[rid].append(heading)
@@ -42,7 +42,7 @@ def test_refs(root):
             blk = blk.rsplit("/*", 1)[-1] if "/*" in blk else ""
             for line in blk.splitlines():
                 if "@req" in line:
-                    for rid in re.findall(r"[A-Z]{2,}-[A-Z0-9]+(?:-[A-Z0-9]+)*", line):
+                    for rid in re.findall(r"\b[A-Z]+-[A-Z0-9]+(?:-[A-Z0-9]+)*\b", line):
                         refs.setdefault(rid, [])
                         if tc not in refs[rid]:
                             refs[rid].append(tc)

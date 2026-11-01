@@ -14,7 +14,7 @@ CLI: `H="@@HARNESS@@/bin/h"` · Fuente: `docs/02-diseno/comparativa.json` · Sal
                    {"id": "ALT-01", "nombre": "…"}],
   "puntuaciones": {"BASE": {"C1": 4}, "ALT-01": {"C1": 2}},
   "justificaciones": {"ALT-01": {"C1": "Requiere una cámara adicional"}},
-  "cumplimiento": {"requisitos": ["REQ-FUN-001"], "valores": {"ALT-01": {"REQ-FUN-001": "parcial"}}},
+  "cumplimiento": {"requisitos": ["SYS-DET-01"], "valores": {"ALT-01": {"SYS-DET-01": "parcial"}}},
   "sensibilidad": {"variacion_pct": 20}
 }
 ```

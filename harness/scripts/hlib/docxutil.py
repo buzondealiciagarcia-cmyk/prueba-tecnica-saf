@@ -79,17 +79,34 @@ def set_cell_text(cell, text):
         first = para
 
 
+def _is_text_run(r):
+    el = r._r
+    return el.find(qn("w:fldChar")) is None and el.find(qn("w:instrText")) is None
+
+
 def replace_placeholders_in_element(element_paragraphs, values):
-    """Reemplaza {{CLAVE}} en párrafos (une runs del párrafo si es necesario)."""
+    """Reemplaza {{CLAVE}} en párrafos sin romper campos (PAGE, NUMPAGES…)."""
+    sub = lambda t: PH_RE.sub(lambda m: str(values.get(m.group(1), m.group(0))), t)  # noqa: E731
     for p in element_paragraphs:
-        full = "".join(r.text for r in p.runs)
-        if "{{" not in full:
+        if "{{" not in p.text:
             continue
-        new = PH_RE.sub(lambda m: str(values.get(m.group(1), m.group(0))), full)
-        if new != full and p.runs:
-            p.runs[0].text = new
-            for r in p.runs[1:]:
-                r.text = ""
+        for r in p.runs:
+            if "{{" in r.text and _is_text_run(r):
+                r.text = sub(r.text)
+        if "{{" not in p.text:
+            continue
+        # marcador partido en varios runs: se unen solo runs de texto consecutivos
+        group = []
+        for r in p.runs + [None]:
+            if r is not None and _is_text_run(r):
+                group.append(r)
+                continue
+            if len(group) > 1 and "{{" in "".join(x.text for x in group):
+                joined = sub("".join(x.text for x in group))
+                group[0].text = joined
+                for x in group[1:]:
+                    x._r.getparent().remove(x._r)
+            group = []
 
 
 def iter_paragraphs_deep(container):
