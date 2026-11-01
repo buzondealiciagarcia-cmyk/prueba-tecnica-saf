@@ -29,7 +29,7 @@ Ningún valor pendiente puede quedar al cerrar la fase.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | … (magnitud + unidad + condición) |
-| Estado | Aprobado |
+| Estado | Borrador |
 
 Hipótesis: código H-nn en la sección Hipótesis, Tipo = Hipótesis; Prioridad, Método de
 verificación y Criterio de aceptación son opcionales.
@@ -109,7 +109,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las tramas procesadas durante la duración de ejecución definida en la fase de diseño incluye timestamp. |
-| Estado | Aprobado |
+| Estado | Borrador |
 
 ### SYS-IN-05 — Altura de montaje del radar como parámetro
 
@@ -671,8 +671,8 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | R2, Derivado de requisitos.txt (Modos, L44-L45); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | 0 incumplimientos de los requisitos en 1 h de ejecución en modo normal. |
-| Estado | Aprobado |
+| Criterio de aceptación | 0 incumplimientos de los requisitos durante la duración de ejecución definida en la fase de diseño en modo normal. |
+| Estado | Borrador |
 
 ### SYS-SAF-16 — Recuperación de fallo a normal mediante reset
 
@@ -952,7 +952,7 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | Q-035 | SYS-SAF-12 | Número de mediciones consecutivas sin ningún eco antes de pasar a degradado. Parámetro calibrable. |
 | Q-031 | SYS-SAF-14 | Tiempo máximo de degradado continuado antes de pasar a fallo. Parámetro calibrable. |
 | Q-005 | SYS-OUT-07, SYS-OUT-09 | Topic MQTT de estado y diagnóstico y formato del log CRIT (STD-MQTT, STD-LOG). |
-| — | SYS-IN-01, SYS-IN-04 | Duración de la ejecución de prueba de los criterios de aceptación (antes fijada en 1 h). |
+| — | SYS-IN-01, SYS-IN-04, SYS-SAF-15 | Duración de la ejecución de prueba de los criterios de aceptación (antes fijada en 1 h), también en SYS-SAF-15. |
 
 ## Historial de cambios
 
