@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-REQ |
-| Versión | 0.7 |
+| Versión | 0.8 |
 | Fecha | 2026-11-01 |
 | Autor | Alicia Garcia |
 | Estado | Borrador |
@@ -43,7 +43,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá cumplir los requisitos de seguridad funcional de las normas EN 50126, EN 50128 y EN 50129 con un nivel de integridad objetivo SIL 2, aplicados como práctica de simulación sin reclamar certificación. |
 | Tipo | Restricción |
-| Origen | Derivado de requisitos.txt (Requisitos, L19); respuesta del usuario a Q-015 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L19); respuesta del usuario a Q-015 |
 | Prioridad | Must |
 | Método de verificación | Análisis |
 | Criterio de aceptación | Informe de aplicación de EN 50126, EN 50128 y EN 50129 con SIL 2 objetivo, sin desviaciones abiertas en el 100 % de los requisitos SYS-SAF. |
@@ -55,7 +55,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá tener documentado su entorno operativo nominal. |
 | Tipo | Restricción |
-| Origen | Derivado de requisitos.txt (Requisitos, L19); respuesta del usuario a Q-022 |
+| Origen | R1, Derivado de requisitos.txt (Requisitos, L19); respuesta del usuario a Q-022 |
 | Prioridad | Should |
 | Método de verificación | Inspección |
 | Criterio de aceptación | El entorno operativo nominal figura en el documento de diseño. |
@@ -81,7 +81,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá recibir la velocidad del tranvía con el mismo periodo de 50 ms de la nube de puntos y sincronizada con ella. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L27-L29); respuesta del usuario a Q-016 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L27-L29); respuesta del usuario a Q-016 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Se recibe la velocidad con periodo de 50 ms sincronizada con cada nube de puntos, con la resolución fijada en diseño. |
@@ -93,7 +93,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá recibir la velocidad de giro (ω) del tranvía con el mismo periodo de 50 ms de la nube de puntos y sincronizada con ella. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L9, L27); respuesta del usuario a Q-016 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L9, L27); respuesta del usuario a Q-016 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Se recibe ω con periodo de 50 ms sincronizada con cada nube de puntos, con la resolución fijada en diseño. |
@@ -105,7 +105,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá recibir una marca de tiempo (timestamp) asociada a cada trama del radar. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L41; Condiciones de fallo, L52) |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L41; Condiciones de fallo, L52) |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las tramas procesadas en 1 h de ejecución incluye timestamp. |
@@ -117,7 +117,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá disponer de la altura de montaje del radar como parámetro de configuración. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L18); respuesta del usuario a Q-009 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L18); respuesta del usuario a Q-009 |
 | Prioridad | Must |
 | Método de verificación | Inspección |
 | Criterio de aceptación | La altura de montaje figura como parámetro en m en el fichero de configuración (STD-CFG), con el valor fijado en diseño. |
@@ -129,7 +129,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá validar el timestamp del radar contra el reloj del sistema. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L41); respuesta del usuario a Q-026 |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L41); respuesta del usuario a Q-026 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Un timestamp del radar incoherente con el reloj del sistema se detecta en el 100 % de los casos de prueba; resolución y tolerancia fijadas en diseño. |
@@ -141,7 +141,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá validar cada trama recibida del radar antes de procesarla. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Condiciones de fallo, L51-L54); respuesta del usuario a Q-023 |
+| Origen | R2, Derivado de requisitos.txt (Condiciones de fallo, L51-L54); respuesta del usuario a Q-023 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las tramas inválidas de prueba se detecta y no se procesa; criterio de validez y contador de fallos consecutivos fijados en diseño (FMEA). |
@@ -155,7 +155,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá expresar las coordenadas de las detecciones del radar tomando la vía como referencia. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L17) |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L17) |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Una detección de posición conocida se expresa en coordenadas de vía con el error de localización de SYS-DET-06. |
@@ -167,7 +167,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá compensar el movimiento del tranvía en las detecciones del radar. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L30) |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L30) |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Un objeto fijo se mantiene en la misma posición de vía con desviación dentro del error de localización de SYS-DET-06, con el tranvía a velocidades entre 0 y la velocidad máxima de H-07. |
@@ -179,7 +179,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá filtrar el eco de los raíles mediante un filtro temporal basado en la persistencia del eco. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L32); respuesta del usuario a Q-010 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L32); respuesta del usuario a Q-010 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | En pruebas sin obstáculos en la vía, los ecos de raíl reportados como obstáculo no superan el máximo de falsas alarmas de SYS-DET-04; parámetros del filtro fijados en diseño. |
@@ -189,12 +189,12 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá agrupar las celdas detectadas para formar objetos de mayor tamaño. |
+| Descripción | El sistema deberá agrupar las celdas detectadas en un objeto solo si son contiguas en la grid, y no agrupar celdas separadas por un hueco. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L35) |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L35) |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Un objeto de 1 m × 1 m × 1 m cubierto por varias celdas se reporta como 1 objeto en el 100 % de los casos del conjunto de pruebas. |
+| Criterio de aceptación | Dos grupos de celdas detectadas separados por al menos 1 celda vacía producen 2 objetos, y un grupo de celdas contiguas produce 1 objeto, en el 100 % de los casos de prueba. |
 | Estado | Borrador |
 
 ### SYS-PR-05 — Clasificación de objeto en movimiento o estático
@@ -203,7 +203,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá clasificar cada objeto detectado como estático o en movimiento comparando su velocidad respecto a la vía, con compensación del movimiento del tranvía, con un umbral fijado en diseño. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L8); respuesta del usuario a Q-001; respuesta del usuario a Q-029 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L8); respuesta del usuario a Q-001; respuesta del usuario a Q-029 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Clasificación correcta de los objetos de prueba estáticos y en movimiento con el umbral y la histéresis fijados en diseño (STD-CFG). |
@@ -215,7 +215,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá calcular el ángulo de giro del tranvía a partir de la velocidad de giro (ω). |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L9-L10) |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L9-L10) |
 | Prioridad | Must |
 | Método de verificación | Análisis |
 | Criterio de aceptación | Error del ángulo calculado ≤ 1° (Q-019) en curva de radio fijado en diseño. |
@@ -227,7 +227,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá tener en cuenta la altura de montaje del radar y la altura medida de cada eco al calcular la posición del objeto en coordenadas de vía. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L18); respuesta del usuario a Q-009 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L18); respuesta del usuario a Q-009 |
 | Prioridad | Should |
 | Método de verificación | Test |
 | Criterio de aceptación | Objetos de prueba a alturas distintas se posicionan con el error de SYS-DET-06. |
@@ -239,7 +239,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá mantener para cada celda de la vía una probabilidad numérica de ocupación interna y derivar de ella únicamente el estado de la celda como ocupado, probabilidad baja de obstáculo o zona no estudiada, sin derivar nunca un estado libre. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037; respuesta del usuario a Q-021 |
+| Origen | R2, R3, Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037; respuesta del usuario a Q-021 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | La probabilidad de ocupación de cada celda se actualiza en cada ciclo de 50 ms; el estado derivado toma uno de tres valores (ocupado, probabilidad baja de obstáculo, zona no estudiada) y 0 estados «libre» en el 100 % de los ciclos. |
@@ -251,7 +251,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá confirmar un obstáculo en N ciclos consecutivos antes de emitir el aviso, con N fijado en diseño. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L42) |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L42) |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El aviso se emite en el ciclo N de confirmación (N calibrable, STD-CFG) y no antes. |
@@ -263,7 +263,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si la velocidad del tranvía es menor que 0, entonces el sistema deberá rechazar la detección. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L29); respuesta del usuario a Q-017 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L29); respuesta del usuario a Q-017 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Con velocidad < 0 m/s se rechaza el 100 % de las detecciones de prueba. |
@@ -275,7 +275,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá rechazar las detecciones situadas a más de 220 m del radar medidos a lo largo de la vía. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L29); respuesta del usuario a Q-028; respuesta del usuario a Q-017 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L29); respuesta del usuario a Q-028; respuesta del usuario a Q-017 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Ninguna detección a > 220 m a lo largo de la vía aparece en la salida y el modo no cambia en el conjunto de pruebas. |
@@ -289,7 +289,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá detectar obstáculos situados hasta 220 m del radar medidos a lo largo de la vía. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L4); respuesta del usuario a Q-028 |
+| Origen | R1, R2, Derivado de requisitos.txt (Requisitos, L4); respuesta del usuario a Q-028 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Detección de un objeto de 0,6 m × 0,6 m × 0,6 m situado a 220 m a lo largo de la vía. |
@@ -301,7 +301,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá alertar de un objeto detectado sobre la vía cuyas tres dimensiones sean mayores o iguales a 0,6 m × 0,6 m × 0,6 m. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L5); respuesta del usuario a Q-008, Q-011 y Q-040 (sustituye «≥ 0,6 m²» de requisitos.txt) |
+| Origen | R1, R2, Derivado de requisitos.txt (Requisitos, L5); respuesta del usuario a Q-008, Q-011 y Q-040 (sustituye «≥ 0,6 m²» de requisitos.txt) |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Alerta ante un objeto de 0,6 m × 0,6 m × 0,6 m dentro del ancho de la vía y del alcance de 220 m. |
@@ -311,9 +311,9 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá mantener el número de falsas alarmas por debajo del máximo fijado en diseño (número y ventana). |
+| Descripción | El sistema deberá mantener el número de falsas alarmas por debajo del máximo definido en la fase de diseño (parámetro calibrable, STD-CFG). |
 | Tipo | No funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L38); respuesta del usuario a Q-012 y Q-041 |
+| Origen | R1, R2, Derivado de requisitos.txt (Tranvía, L38); respuesta del usuario a Q-012 y Q-041 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Falsas alarmas por debajo del máximo (parámetro calibrable, STD-CFG) en pruebas sin obstáculos en la vía. |
@@ -325,7 +325,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá no reportar objetos situados fuera del ancho de la vía. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L37); respuesta del usuario a Q-008 |
+| Origen | R1, R2, Derivado de requisitos.txt (Tranvía, L37); respuesta del usuario a Q-008 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | 0 objetos reportados fuera del ancho de la vía (H-01) en el 100 % de los casos de prueba. |
@@ -337,7 +337,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá localizar cada objeto con un error menor que el valor fijado en diseño. |
 | Tipo | No funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L40) |
+| Origen | R1, R2, Derivado de requisitos.txt (Tranvía, L40) |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Error de localización menor que el valor de diseño en todo el rango hasta 220 m a lo largo de la vía. |
@@ -349,7 +349,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá calcular la desviación angular del radar respecto al eje del tranvía con un error máximo de 1°. |
 | Tipo | No funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L25-L26); respuesta del usuario a Q-019 |
+| Origen | R1, R2, Derivado de requisitos.txt (Requisitos, L25-L26); respuesta del usuario a Q-019 |
 | Prioridad | Must |
 | Método de verificación | Análisis |
 | Criterio de aceptación | Error angular ≤ 1°. |
@@ -362,7 +362,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá ignorar las detecciones de objetos con alguna dimensión menor de 0,6 m. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L5); respuesta del usuario a Q-040 |
+| Origen | R1, R2, Derivado de requisitos.txt (Requisitos, L5); respuesta del usuario a Q-040 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | 0 alertas por un objeto de 0,5 m × 0,5 m × 0,5 m dentro del ancho de la vía en el 100 % de los casos de prueba. |
@@ -376,7 +376,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá entregar, por cada detección, la posición del objeto en coordenadas de vía (longitudinal y lateral) en m. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L39); respuesta del usuario a Q-025 |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L39); respuesta del usuario a Q-025 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las detecciones de cada ciclo de 50 ms incluye posición longitudinal y lateral en m; formato detallado fijado en diseño. |
@@ -388,7 +388,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá entregar, por cada detección, el tamaño del objeto. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L39) |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L39) |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las detecciones de cada ciclo de 50 ms incluye las dimensiones del objeto (largo, ancho y alto) en m. |
@@ -400,7 +400,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá entregar, por cada detección, la incertidumbre de la posición. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L39) |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L39) |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las detecciones de cada ciclo de 50 ms incluye incertidumbre; criterio de incertidumbre fijado en diseño. |
@@ -412,7 +412,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá entregar, por cada detección, una marca de tiempo (timestamp). |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L41); respuesta del usuario a Q-026 |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L41); respuesta del usuario a Q-026 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las detecciones incluye timestamp del radar validado con el reloj del sistema; resolución fijada en diseño. |
@@ -424,7 +424,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá entregar, por cada detección, el alcance estimado al objeto. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L41) |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L41) |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las detecciones incluye alcance con el error de localización de SYS-DET-06. |
@@ -436,7 +436,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá publicar el estado de la vía por celdas como ocupado, probabilidad baja de obstáculo o zona no estudiada en cada ciclo, sin publicar la probabilidad numérica de ocupación. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037 |
+| Origen | R2, R3, Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Una publicación por cada ciclo de 50 ms con uno de los tres valores para cada celda y 0 publicaciones de la probabilidad numérica. |
@@ -448,7 +448,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si el sistema entra en modo degradado o en modo fallo, entonces el sistema deberá publicar un mensaje MQTT de estado y diagnóstico con el modo actual. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L15); respuesta del usuario a Q-005 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L15); respuesta del usuario a Q-005 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Un mensaje MQTT con el modo actual por cada cambio a degradado o a fallo. |
@@ -460,7 +460,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá entregar, por cada detección, la confianza de la detección. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L14, L47); respuesta del usuario a Q-002 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L14, L47); respuesta del usuario a Q-002 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las detecciones de cada ciclo de 50 ms incluye confianza; escala fijada en diseño. |
@@ -472,7 +472,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si el sistema entra en modo degradado o en modo fallo, entonces el sistema deberá registrar un log de nivel CRIT. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L15); respuesta del usuario a Q-005 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L15); respuesta del usuario a Q-005 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Una entrada de log CRIT por cada cambio a degradado o a fallo. |
@@ -484,7 +484,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá entregar, por cada detección, un identificador del objeto. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L39); respuesta del usuario a Q-025 |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L39); respuesta del usuario a Q-025 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las detecciones incluye un identificador de objeto. |
@@ -496,7 +496,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá publicar en cada ciclo la lista de objetos detectados, con los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10 por cada objeto. |
 | Tipo | Funcional |
-| Origen | R2 |
+| Origen | R2, Derivado de respuesta del usuario a Q-045 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Una publicación por cada ciclo de 50 ms con la lista de objetos detectados, y el 100 % de los objetos incluye todos los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10. |
@@ -510,7 +510,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá entregar los objetos detectados en la vía (tamaño, posición y confianza) en un tiempo máximo de 128 ms desde la recepción de la nube de puntos del radar. |
 | Tipo | No funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L14); respuesta del usuario a Q-002; respuesta del usuario a Q-030 |
+| Origen | R1, R2, Derivado de requisitos.txt (Requisitos, L14); respuesta del usuario a Q-002; respuesta del usuario a Q-030 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Tiempo de entrega ≤ 128 ms desde la recepción de la nube de puntos; percentil, carga y solape de ciclos fijados en diseño. |
@@ -524,7 +524,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá disponer de tres modos de funcionamiento: normal, degradado y fallo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L45) |
+| Origen | R2, Derivado de requisitos.txt (Modos, L45) |
 | Prioridad | Must |
 | Método de verificación | Inspección |
 | Criterio de aceptación | El sistema se encuentra en exactamente 1 de los 3 modos en el 100 % de los ciclos. |
@@ -536,7 +536,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si se recibe el reset de degradado estando en modo degradado, entonces el sistema deberá pasar a modo normal. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L46); respuesta del usuario a Q-003 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L46); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Tras el reset de degradado el modo es normal; el reset de fallo no produce esa transición. |
@@ -548,7 +548,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si el sistema está en modo degradado, entonces el sistema deberá seguir emitiendo alertas con confianza reducida, sobre todo en los casos en que no se detecta obstáculo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L47); respuesta del usuario a Q-003 y Q-037 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L47); respuesta del usuario a Q-003 y Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | En modo degradado, el 100 % de las salidas de cada ciclo de 50 ms lleva confianza reducida; escala fijada en diseño. |
@@ -560,7 +560,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si el sistema está en modo fallo, entonces el sistema deberá no entregar nada como vía libre y comunicar que no hay vigilancia. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | En modo fallo, 0 salidas de vía libre o de ausencia de obstáculo por ciclo de 50 ms y el 100 % de los ciclos comunica «sin vigilancia». |
@@ -572,7 +572,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá informar de la vía solo como ocupada, con probabilidad baja de obstáculo o como zona no estudiada, y no declarar nunca la ausencia de obstáculo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | 0 salidas de «no hay obstáculo» o «vía libre» por ciclo de 50 ms en el 100 % de los casos de prueba, incluidos los de inyección de fallo. |
@@ -584,7 +584,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si el sistema no recibe ninguna trama del radar en 128 ms, entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Condiciones de fallo, L51); respuesta del usuario a Q-003 |
+| Origen | R2, Derivado de requisitos.txt (Condiciones de fallo, L51); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Paso a fallo cuando transcurren 128 ms sin trama. |
@@ -596,7 +596,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si el timestamp de los datos recogidos no avanza o retrocede, entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Condiciones de fallo, L52); respuesta del usuario a Q-003 |
+| Origen | R2, Derivado de requisitos.txt (Condiciones de fallo, L52); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Paso a fallo tras inyectar un timestamp repetido o decreciente. |
@@ -608,7 +608,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si uno de los datos de entrada, como la velocidad, no está disponible, entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Condiciones de fallo, L53); respuesta del usuario a Q-003 |
+| Origen | R2, Derivado de requisitos.txt (Condiciones de fallo, L53); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Paso a fallo tras la indisponibilidad de cada dato de entrada. |
@@ -620,7 +620,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si el autodiagnóstico del radar notifica un fallo, entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Condiciones de fallo, L54); respuesta del usuario a Q-003 |
+| Origen | R2, Derivado de requisitos.txt (Condiciones de fallo, L54); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Paso a fallo tras la notificación del autodiagnóstico. |
@@ -630,33 +630,33 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si la nube de puntos recibida no contiene ninguna detección, ni siquiera el eco de los raíles, en 3 mediciones consecutivas, entonces el sistema deberá pasar a modo degradado. |
+| Descripción | Si la nube de puntos recibida no contiene ninguna detección, ni siquiera el eco de los raíles, durante el número de mediciones consecutivas definido en la fase de diseño (parámetro calibrable, STD-CFG), entonces el sistema deberá pasar a modo degradado. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Condiciones de fallo, L55); respuesta del usuario a Q-003 y Q-004 |
+| Origen | R2, Derivado de requisitos.txt (Condiciones de fallo, L55); respuesta del usuario a Q-003 y Q-004 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Paso a degradado tras 3 mediciones consecutivas sin ningún eco y no antes. |
+| Criterio de aceptación | Paso a degradado tras el número de mediciones consecutivas sin ningún eco definido en diseño y no antes. |
 | Estado | Borrador |
 
 ### SYS-SAF-13 — Degradado por desalineación del radar
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si se detecta una desalineación del radar mayor de 1°, entonces el sistema deberá pasar a modo degradado. |
+| Descripción | Si se detecta una desalineación del radar mayor que el umbral definido en la fase de diseño (parámetro calibrable, STD-CFG), entonces el sistema deberá pasar a modo degradado. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Condiciones de fallo, L56); respuesta del usuario a Q-003; respuesta del usuario a Q-019 |
+| Origen | R2, Derivado de requisitos.txt (Condiciones de fallo, L56); respuesta del usuario a Q-003; respuesta del usuario a Q-019 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Paso a degradado al inyectar una desalineación > 1°; método de detección fijado en diseño. |
+| Criterio de aceptación | Paso a degradado al inyectar una desalineación mayor que el umbral definido en diseño; método de detección fijado en diseño. |
 | Estado | Borrador |
 
 ### SYS-SAF-14 — Degradado continuado a fallo
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el sistema permanece en modo degradado de forma continuada, entonces el sistema deberá pasar a modo fallo. |
+| Descripción | Si el sistema permanece en modo degradado de forma continuada durante más del tiempo máximo definido en la fase de diseño (parámetro calibrable, STD-CFG), entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L49); respuesta del usuario a Q-003 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L49); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Paso a fallo cuando el tiempo continuado en degradado supera el límite parametrizado (STD-CFG). |
@@ -668,7 +668,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá cumplir en modo normal todos los requisitos de este documento. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L44-L45); respuesta del usuario a Q-003 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L44-L45); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | 0 incumplimientos de los requisitos en 1 h de ejecución en modo normal. |
@@ -680,7 +680,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si se recibe el reset de fallo estando en modo fallo, entonces el sistema deberá pasar a modo normal. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L44); respuesta del usuario a Q-003 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L44); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Tras el reset de fallo el modo es normal; el reset de degradado no produce esa transición. |
@@ -692,7 +692,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si el número de falsas alarmas supera el máximo de SYS-DET-04, entonces el sistema deberá pasar a modo degradado. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L38); respuesta del usuario a Q-041 |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L38); respuesta del usuario a Q-041 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Paso a modo degradado, y no directamente a fallo, al superar el máximo de falsas alarmas. |
@@ -704,7 +704,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | Si la velocidad del tranvía es menor que 0 (marcha atrás), entonces el sistema deberá pasar a modo degradado. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L29); respuesta del usuario a Q-017 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L29); respuesta del usuario a Q-017 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Paso a modo degradado con velocidad < 0 m/s. |
@@ -718,7 +718,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá evitar el uso de memoria dinámica en todo el software, sin excepciones. |
 | Tipo | Restricción |
-| Origen | Derivado de requisitos.txt (Tranvía, L43); respuesta del usuario a Q-024 |
+| Origen | R2, R3, Derivado de requisitos.txt (Tranvía, L43); respuesta del usuario a Q-024 |
 | Prioridad | Must |
 | Método de verificación | Inspección |
 | Criterio de aceptación | 0 llamadas a funciones de asignación dinámica de memoria en el código (análisis estático). |
@@ -730,7 +730,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá tener un comportamiento determinista: mismas entradas producen mismas salidas en un tiempo acotado. |
 | Tipo | No funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L43) |
+| Origen | R2, R3, Derivado de requisitos.txt (Tranvía, L43) |
 | Prioridad | Must |
 | Método de verificación | Análisis |
 | Criterio de aceptación | 100 % de salidas idénticas en 1000 repeticiones de la misma secuencia de entradas y tiempo de ciclo máximo ≤ 128 ms. |
@@ -743,7 +743,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá ejecutar el procesamiento a bordo del tranvía. |
 | Tipo | Restricción |
-| Origen | Derivado de requisitos.txt (Requisitos, L13); respuesta del usuario a Q-006 |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L13); respuesta del usuario a Q-006 |
 | Prioridad | Must |
 | Método de verificación | Inspección |
 | Criterio de aceptación | El 100 % del procesamiento se ejecuta en el equipo de a bordo. |
@@ -759,18 +759,6 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Inspección |
 | Criterio de aceptación | Ningún procesamiento del sistema depende de datos recibidos de la nube; las únicas interacciones con la nube son envíos de trazabilidad y logs. |
-| Estado | Borrador |
-
-### SYS-IMP-05 — Funcionamiento completo sin la nube (cloud)
-
-| Campo | Valor |
-|---|---|
-| Descripción | El sistema deberá funcionar de manera completa sin conexión a la nube (cloud). |
-| Tipo | Restricción |
-| Origen | Derivado de respuesta del usuario (ronda 5, nube en este proyecto) |
-| Prioridad | Must |
-| Método de verificación | Test |
-| Criterio de aceptación | Con la nube desconectada, el 100 % de los requisitos funcionales del documento se cumple en 1 h de ejecución. |
 | Estado | Borrador |
 
 ### SYS-IMP-06 — Plan de viabilidad del radar [ENTREGABLE]
@@ -807,18 +795,6 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Inspección |
 | Criterio de aceptación | El diseño incluye 1 diagrama pipeline que cubre un ciclo completo desde la entrada del radar hasta la lista de objetos. |
-| Estado | Borrador |
-
-### SYS-IMP-09 — Gestión de fallos del sensor en el diseño [ENTREGABLE]
-
-| Campo | Valor |
-|---|---|
-| Descripción | El sistema deberá estar acompañado de una descripción de la gestión de los fallos del sensor en el diseño. |
-| Tipo | Restricción |
-| Origen | R2 |
-| Prioridad | Must |
-| Método de verificación | Inspección |
-| Criterio de aceptación | El diseño incluye la gestión de los fallos del sensor, con detección, reacción y recuperación por cada fallo. |
 | Estado | Borrador |
 
 ### SYS-IMP-10 — Pseudocódigo de un componente [ENTREGABLE]
@@ -865,7 +841,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El ancho de vía es de 1 m. |
 | Tipo | Hipótesis |
-| Origen | Derivado de requisitos.txt (Requisitos, L7) |
+| Origen | R1, Derivado de requisitos.txt (Requisitos, L7) |
 | Estado | Borrador |
 
 ### H-02 — Giro constante
@@ -874,7 +850,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El tranvía mantiene un giro constante durante el horizonte de análisis fijado en diseño. |
 | Tipo | Hipótesis |
-| Origen | Derivado de requisitos.txt (Requisitos, L23) |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L23) |
 | Estado | Borrador |
 
 ### H-03 — Sincronización de velocidad y giro
@@ -883,7 +859,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | La velocidad y el giro llegan con el mismo periodo de 50 ms, sincronizados con la nube de puntos. |
 | Tipo | Hipótesis |
-| Origen | Derivado de requisitos.txt (Requisitos, L24) |
+| Origen | R2, Derivado de requisitos.txt (Requisitos, L24) |
 | Estado | Borrador |
 
 ### H-04 — Radar montado y calibrado con el eje del tranvía
@@ -892,7 +868,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El radar está montado y calibrado con el eje del tranvía. |
 | Tipo | Hipótesis |
-| Origen | Derivado de requisitos.txt (Requisitos, L25) |
+| Origen | R1, Derivado de requisitos.txt (Requisitos, L25) |
 | Estado | Borrador |
 
 ### H-05 — Radar 3D
@@ -901,7 +877,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El radar es 3D y mide distancia, azimut y altura. |
 | Tipo | Hipótesis |
-| Origen | Derivado de requisitos.txt (Requisitos, L20-L21); respuesta del usuario a Q-009 (sustituye la nota «2D, no detecta la altura» de requisitos.txt) |
+| Origen | R1, Derivado de requisitos.txt (Requisitos, L20-L21); respuesta del usuario a Q-009 (sustituye la nota «2D, no detecta la altura» de requisitos.txt) |
 | Estado | Borrador |
 
 ### H-06 — Error creciente con la distancia
@@ -910,7 +886,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El error de medida del radar en azimut y altura crece con la distancia. |
 | Tipo | Hipótesis |
-| Origen | Derivado de requisitos.txt (Requisitos, L22) |
+| Origen | R1, Derivado de requisitos.txt (Requisitos, L22) |
 | Estado | Borrador |
 
 ### H-07 — Velocidad máxima del tranvía
@@ -919,7 +895,7 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | La velocidad máxima del tranvía se fija en diseño. |
 | Tipo | Hipótesis |
-| Origen | Derivado de requisitos.txt (Requisitos, L28) |
+| Origen | R1, Derivado de requisitos.txt (Requisitos, L28) |
 | Estado | Borrador |
 
 ### H-08 — Campo de visión del sistema
@@ -928,19 +904,19 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El campo de visión del sistema es todo lo que alcanza a detectar el radar y de lo que luego entrega una nube de puntos. |
 | Tipo | Hipótesis |
-| Origen | Derivado de requisitos.txt (Requisitos, L4); respuesta del usuario a Q-008 |
+| Origen | R1, Derivado de requisitos.txt (Requisitos, L4); respuesta del usuario a Q-008 |
 | Estado | Borrador |
 
 ## Trazabilidad con el enunciado
 
-El campo Origen admite R1–R4 o «Derivado…», pero no ambos. Los requisitos previos conservan su cita a `requisitos.txt` y se relacionan con el enunciado en esta tabla. Los entregables SYS-IMP-06 a SYS-IMP-12 llevan Origen R1, R2, R3 o R4.
+El campo Origen combina R1–R4 (puntos del enunciado, en `entradas/enunciado.txt`) con «Derivado» (notas de `entradas/requisitos.txt` o decisiones del usuario). Esta tabla se deriva de ese campo. SYS-IMP-06, 07, 08, 10, 11 y 12 son los entregables que el enunciado pide y no están cubiertos por el resto de requisitos.
 
-| Enunciado | Requisitos de entregable | Requisitos de comportamiento relacionados |
+| Enunciado | Requisitos de entregable | Requisitos de comportamiento y restricción relacionados |
 |---|---|---|
-| R1 | SYS-IMP-06 | SYS-DET-01, SYS-DET-02, SYS-DET-06, SYS-IN-01 |
-| R2 | SYS-IMP-07, SYS-IMP-08, SYS-IMP-09 | SYS-SAF-01, SYS-SAF-08 a SYS-SAF-13, SYS-OUT-01 a SYS-OUT-11, SYS-T-01 |
-| R3 | SYS-IMP-10, SYS-IMP-11 | SYS-PR-08, SYS-OUT-06 |
-| R4 | SYS-IMP-12 | |
+| R1 | SYS-IMP-06 | SYS-IN-01, SYS-GEN-02, SYS-DET-01, SYS-DET-02, SYS-DET-04, SYS-DET-05, SYS-DET-06, SYS-DET-07, SYS-DET-08, SYS-T-01, H-01, H-04, H-05, H-06, H-07, H-08 |
+| R2 | SYS-IMP-07, SYS-IMP-08 | SYS-IN-01, SYS-GEN-01, SYS-IN-02, SYS-IN-03, SYS-IN-04, SYS-IN-05, SYS-IN-06, SYS-IN-07, SYS-PR-01, SYS-PR-02, SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-06, SYS-PR-07, SYS-PR-08, SYS-PR-09, SYS-PR-10, SYS-PR-11, SYS-DET-01, SYS-DET-02, SYS-DET-04, SYS-DET-05, SYS-DET-06, SYS-DET-07, SYS-DET-08, SYS-OUT-01, SYS-OUT-02, SYS-OUT-03, SYS-OUT-04, SYS-OUT-05, SYS-OUT-06, SYS-OUT-07, SYS-OUT-08, SYS-OUT-09, SYS-OUT-10, SYS-OUT-11, SYS-T-01, SYS-SAF-01, SYS-SAF-04, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07, SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11, SYS-SAF-12, SYS-SAF-13, SYS-SAF-14, SYS-SAF-15, SYS-SAF-16, SYS-SAF-18, SYS-SAF-19, SYS-IMP-01, SYS-IMP-02, SYS-IMP-03, H-02, H-03 |
+| R3 | SYS-IMP-10, SYS-IMP-11 | SYS-PR-08, SYS-OUT-06, SYS-IMP-01, SYS-IMP-02 |
+| R4 | SYS-IMP-12 |  |
 
 ## Decisiones aplazadas a diseño
 
@@ -963,7 +939,7 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | Q-014 | SYS-DET-06, SYS-OUT-03 | Valor del error de localización y criterio de incertidumbre. |
 | Q-016 | SYS-IN-02, SYS-IN-03, H-07 | Resolución de velocidad y ω y velocidad máxima del tranvía. |
 | Q-018 | H-02 | Horizonte del giro constante. |
-| Q-019 | SYS-SAF-13 | Método de detección de la desalineación del radar. |
+| Q-019 | SYS-SAF-13 | Umbral de desalineación del radar (parámetro calibrable) y método de detección. |
 | Q-021 | SYS-PR-08, SYS-OUT-06 | Tamaño y resolución de las celdas. Parámetro calibrable. |
 | Q-022 | SYS-GEN-02 | Entorno operativo nominal y sus hipótesis. |
 | Q-023 | SYS-IN-07 | Criterio de validez de trama y contador de fallos consecutivos (FMEA). |
@@ -971,6 +947,8 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | Q-026 | SYS-OUT-04, SYS-IN-06 | Resolución y tolerancia del timestamp. |
 | Q-029 | SYS-PR-05 | Umbral de velocidad e histéresis. Parámetro calibrable. |
 | Q-030 | SYS-T-01 | Percentil, carga y solape de ciclos del plazo de 128 ms. |
+| Q-035 | SYS-SAF-12 | Número de mediciones consecutivas sin ningún eco antes de pasar a degradado. Parámetro calibrable. |
+| Q-031 | SYS-SAF-14 | Tiempo máximo de degradado continuado antes de pasar a fallo. Parámetro calibrable. |
 | Q-005 | SYS-OUT-07, SYS-OUT-09 | Topic MQTT de estado y diagnóstico y formato del log CRIT (STD-MQTT, STD-LOG). |
 
 ## Historial de cambios
@@ -984,3 +962,4 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | 0.5 | 2026-11-01 | Alicia Garcia | Ronda 5: valores y parámetros aplazados a diseño sin marcadores pendientes; filtro temporal del eco de raíles (SYS-PR-03); estado por celdas (SYS-PR-08, SYS-OUT-06); marcha atrás: rechazo y degradado (SYS-PR-10, SYS-SAF-19); 220 m sin cambio de modo (SYS-PR-11); validación de timestamp y de trama (SYS-IN-06, SYS-IN-07); identificador de objeto (SYS-OUT-10); entorno operativo (SYS-GEN-02); sin memoria dinámica en todo el software (SYS-IMP-01); nube (cloud) solo para trazabilidad y logs, y funcionamiento sin ella (SYS-IMP-04, SYS-IMP-05); posición en coordenadas de vía (SYS-OUT-01); tamaño mínimo 0,6 × 0,6 × 0,6 m, SYS-DET-02, 08 |
 | 0.6 | 2026-11-01 | Alicia Garcia | Ronda 6: se incorpora el enunciado R1–R4 (`entradas/enunciado.txt`); línea Source restaurada; entregables SYS-IMP-06 a SYS-IMP-12 con Origen R1, R2, R3 y R4; sección «Trazabilidad con el enunciado» |
 | 0.7 | 2026-11-01 | Alicia Garcia | Ronda 7: probabilidad numérica de ocupación interna y tres estados derivados (SYS-PR-08, SYS-OUT-06, SYS-IMP-10); dos salidas, lista de objetos (SYS-OUT-11 nuevo) y estado por celdas; SYS-IMP-11 justifica C; SYS-IMP-06 como documento aparte en la fase de diseño; SYS-IMP-12 en Fase A y Fase B |
+| 0.8 | 2026-11-01 | Alicia Garcia | Ronda 8: contigüidad de celdas (SYS-PR-04); SYS-IMP-05 retirado («no es relevante») y SYS-IMP-09 retirado (cubierto por SYS-SAF-01, 04 a 16, 18, 19, SYS-IN-06, 07 y SYS-OUT-07, 09), códigos no reutilizados; Origen de todos los requisitos con R1–R4 y «Derivado»; parámetros de la máquina de estados definidos en diseño (SYS-SAF-12, 13, 14, SYS-DET-04); tabla de trazabilidad regenerada |

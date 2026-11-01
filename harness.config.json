@@ -5,5 +5,8 @@
     "author": "Alicia Garcia",
     "client": "Ikerlan"
   },
-  "module": "ogrid"
+  "module": "ogrid",
+  "requirements": {
+    "source_regex": "^(R[1-4](\\s*,\\s*R[1-4])*(\\s*,\\s*Derivado( de .+)?)?|Derivado( de .+)?)$"
+  }
 }
