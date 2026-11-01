@@ -1,0 +1,13 @@
+flowchart LR
+  subgraph Tranvía
+    RAD[Radar 3D · distancia, azimut y altura]
+    VEL[Sensor de velocidad lineal y de giro]
+    ECU[ECU edge]:::hl
+    HMI[HMI del conductor]
+  end
+  RAD -->|nube de puntos + timestamp · fabricante del radar| ECU
+  VEL -->|velocidad lineal y giro + timestamp| ECU
+  ECU -->|avisos e información · IEC 61375 + EN 50159| HMI
+  HMI -->|sign in y resets| ECU
+  ECU -.->|MQTT cifrado · propuesta al cliente| NUBE[(Nube: logs y trazabilidad)]:::muted
+  ECU -.->|futuro: frenado de emergencia| FRE[Sistema de freno]:::muted
