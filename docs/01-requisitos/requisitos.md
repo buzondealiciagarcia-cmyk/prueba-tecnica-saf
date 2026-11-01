@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-REQ |
-| Versión | 0.2 |
+| Versión | 0.3 |
 | Fecha | 2026-11-01 |
 | Autor | Alicia Garcia |
 | Estado | Borrador |
@@ -148,7 +148,7 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | Derivado de requisitos.txt (Requisitos, L32) |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Con vía libre, ecos de raíl reportados como obstáculo ≤ [PENDIENTE: X] por hora. |
+| Criterio de aceptación | En pruebas sin obstáculos en la vía, ecos de raíl reportados como obstáculo ≤ [PENDIENTE: X] por hora. |
 | Estado | Borrador |
 
 ### SYS-PR-04 — Agrupación de celdas en objetos
@@ -199,16 +199,16 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | Desviación residual de posición ≤ [PENDIENTE: X m] a 220 m para objetos de altura entre [PENDIENTE: X] m y [PENDIENTE: X] m. |
 | Estado | Borrador |
 
-### SYS-PR-08 — Mantenimiento del estado ocupado, libre o desconocido
+### SYS-PR-08 — Mantenimiento del estado de la vía
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá mantener actualizado el estado de la vía como ocupado, libre o desconocido. |
+| Descripción | El sistema deberá mantener actualizado el estado de la vía como ocupado, probabilidad baja de obstáculo o zona no estudiada. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L31) |
+| Origen | Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | El estado se actualiza en cada ciclo de 50 ms y toma uno de tres valores (ocupado, libre, desconocido) en el 100 % de los ciclos. |
+| Criterio de aceptación | El estado se actualiza en cada ciclo de 50 ms y toma uno de tres valores (ocupado, probabilidad baja de obstáculo o zona no estudiada) en el 100 % de los ciclos. |
 | Estado | Borrador |
 
 ### SYS-PR-09 — Confirmación del obstáculo antes del aviso
@@ -295,7 +295,7 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | Derivado de requisitos.txt (Tranvía, L38) |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Tasa de falsas alarmas < [PENDIENTE: X %] sobre [PENDIENTE: N] ciclos con vía libre. |
+| Criterio de aceptación | Tasa de falsas alarmas < [PENDIENTE: X %] sobre [PENDIENTE: N] ciclos en pruebas sin obstáculos en la vía. |
 | Estado | Borrador |
 
 ### SYS-DET-05 — Exclusión de objetos fuera de la vía
@@ -397,16 +397,16 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | El 100 % de las detecciones incluye alcance con error ≤ [PENDIENTE: X m]. |
 | Estado | Borrador |
 
-### SYS-OUT-06 — Publicación del estado ocupado, libre o desconocido
+### SYS-OUT-06 — Publicación del estado de la vía
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá publicar el estado ocupado, libre o desconocido en cada ciclo. |
+| Descripción | El sistema deberá publicar el estado de la vía como ocupado, probabilidad baja de obstáculo o zona no estudiada en cada ciclo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L31) |
+| Origen | Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Una publicación por cada ciclo de 50 ms [PENDIENTE: interfaz y formato de salida]. |
+| Criterio de aceptación | Una publicación por cada ciclo de 50 ms con uno de los tres valores [PENDIENTE: interfaz y formato de salida en diseño]. |
 | Estado | Borrador |
 
 ### SYS-OUT-07 — Aviso MQTT de modo degradado o fallo
@@ -418,7 +418,7 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | Derivado de requisitos.txt (Requisitos, L15); respuesta del usuario a Q-005 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Mensaje publicado en ≤ [PENDIENTE: X ms] tras el cambio de modo en el topic [PENDIENTE: topic según STD-MQTT]. |
+| Criterio de aceptación | Un mensaje MQTT con el modo actual por cada cambio a degradado o a fallo. |
 | Estado | Borrador |
 
 ### SYS-OUT-08 — Confianza de la detección
@@ -442,9 +442,8 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | Derivado de requisitos.txt (Requisitos, L15); respuesta del usuario a Q-005 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Una entrada de log CRIT por cada cambio de modo, en ≤ [PENDIENTE: X ms] tras el cambio. |
+| Criterio de aceptación | Una entrada de log CRIT por cada cambio a degradado o a fallo. |
 | Estado | Borrador |
-
 
 ## Tiempo
 
@@ -474,136 +473,136 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | El sistema se encuentra en exactamente 1 de los 3 modos en el 100 % de los ciclos. |
 | Estado | Borrador |
 
-### SYS-SAF-04 — Reset de degradado a normal desde el HMI
+### SYS-SAF-04 — Recuperación de degradado a normal mediante reset
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si se recibe desde el HMI el reset de degradado estando en modo degradado, entonces el sistema deberá pasar a modo normal. |
+| Descripción | Si se recibe el reset de degradado estando en modo degradado, entonces el sistema deberá pasar a modo normal. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Modos, L46); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Transición a normal en ≤ [PENDIENTE: X ms] tras el reset de degradado recibido; el reset de fallo no produce la transición. |
+| Criterio de aceptación | Tras el reset de degradado el modo es normal; el reset de fallo no produce esa transición. |
 | Estado | Borrador |
 
 ### SYS-SAF-05 — Confianza reducida en modo degradado
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el sistema está en modo degradado, entonces el sistema deberá seguir emitiendo alertas con confianza reducida, incluida la salida de ausencia de obstáculo. |
+| Descripción | Si el sistema está en modo degradado, entonces el sistema deberá seguir emitiendo alertas con confianza reducida, sobre todo en los casos en que no se detecta obstáculo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L47); respuesta del usuario a Q-003 |
+| Origen | Derivado de requisitos.txt (Modos, L47); respuesta del usuario a Q-003 y Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | En modo degradado, el 100 % de las salidas de cada ciclo de 50 ms lleva confianza reducida [PENDIENTE: valor o escala de confianza]. |
 | Estado | Borrador |
 
-### SYS-SAF-06 — No declarar vía libre en modo fallo
+### SYS-SAF-06 — No dar vía libre en modo fallo
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el sistema está en modo fallo, entonces el sistema deberá indicar que no hay vigilancia y no declarar la vía libre. |
+| Descripción | Si el sistema está en modo fallo, entonces el sistema deberá no entregar nada como vía libre y comunicar que no hay vigilancia. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L48) |
+| Origen | Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | En modo fallo, 0 salidas por ciclo de 50 ms «vía libre» y el 100 % de los ciclos indica «sin vigilancia». |
+| Criterio de aceptación | En modo fallo, 0 salidas de vía libre o de ausencia de obstáculo por ciclo de 50 ms y el 100 % de los ciclos comunica «sin vigilancia». |
 | Estado | Borrador |
 
-### SYS-SAF-07 — Estado desconocido ante falta de evidencia [PROPUESTA]
+### SYS-SAF-07 — Nunca declarar ausencia de obstáculo
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si no hay evidencia para determinar el estado de la vía, entonces el sistema deberá declarar el estado desconocido y no libre. |
+| Descripción | El sistema deberá informar de la vía solo como ocupada, con probabilidad baja de obstáculo o como zona no estudiada, y no declarar nunca la ausencia de obstáculo. |
 | Tipo | Funcional |
-| Origen | Derivado de seguridad-funcional.md (SAF-01) |
+| Origen | Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | 0 salidas «libre» sin evidencia por ciclo de 50 ms en el 100 % de los casos de inyección de fallo. |
+| Criterio de aceptación | 0 salidas de «no hay obstáculo» o «vía libre» por ciclo de 50 ms en el 100 % de los casos de prueba, incluidos los de inyección de fallo. |
 | Estado | Borrador |
 
 ### SYS-SAF-08 — Fallo por ausencia de tramas
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el sistema no recibe ninguna trama del radar en 128 ms, entonces el sistema deberá pasar a modo fallo desde el modo normal. |
+| Descripción | Si el sistema no recibe ninguna trama del radar en 128 ms, entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Condiciones de fallo, L51); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Detección de la ausencia de tramas y paso a fallo en ≤ 128 ms. |
+| Criterio de aceptación | Paso a fallo cuando transcurren 128 ms sin trama. |
 | Estado | Borrador |
 
 ### SYS-SAF-09 — Fallo por timestamp incoherente
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el timestamp de los datos recogidos no avanza o retrocede, entonces el sistema deberá pasar a modo fallo desde el modo normal. |
+| Descripción | Si el timestamp de los datos recogidos no avanza o retrocede, entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Condiciones de fallo, L52); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Paso a fallo en ≤ 1 ciclo de 50 ms ante timestamp repetido o decreciente. |
+| Criterio de aceptación | Paso a fallo tras inyectar un timestamp repetido o decreciente. |
 | Estado | Borrador |
 
 ### SYS-SAF-10 — Fallo por dato de entrada no disponible
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si uno de los datos de entrada, como la velocidad, no está disponible, entonces el sistema deberá pasar a modo fallo desde el modo normal. |
+| Descripción | Si uno de los datos de entrada, como la velocidad, no está disponible, entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Condiciones de fallo, L53); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Paso a fallo en ≤ 1 ciclo de 50 ms por cada dato de entrada indisponible. |
+| Criterio de aceptación | Paso a fallo tras la indisponibilidad de cada dato de entrada. |
 | Estado | Borrador |
 
 ### SYS-SAF-11 — Fallo por autodiagnóstico del radar
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el autodiagnóstico del radar notifica un fallo, entonces el sistema deberá pasar a modo fallo desde el modo normal. |
+| Descripción | Si el autodiagnóstico del radar notifica un fallo, entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Condiciones de fallo, L54); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Paso a fallo en ≤ 1 ciclo de 50 ms tras la notificación. |
+| Criterio de aceptación | Paso a fallo tras la notificación del autodiagnóstico. |
 | Estado | Borrador |
 
 ### SYS-SAF-12 — Degradado por ausencia de eco de raíles
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el sistema no detecta nada, ni siquiera el eco de los raíles, en 3 mediciones consecutivas estando en modo normal, entonces el sistema deberá pasar a modo degradado. |
+| Descripción | Si el sistema no detecta nada, ni siquiera el eco de los raíles, en 3 mediciones consecutivas, entonces el sistema deberá pasar a modo degradado. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Condiciones de fallo, L55); respuesta del usuario a Q-003 y Q-004 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Paso a degradado en la 3.ª medición consecutiva (150 ms con periodo de 50 ms) sin ningún eco, y no antes. |
+| Criterio de aceptación | Paso a degradado tras 3 mediciones consecutivas sin ningún eco y no antes. |
 | Estado | Borrador |
 
 ### SYS-SAF-13 — Degradado por desalineación del radar
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si se detecta desalineación del radar estando en modo normal, entonces el sistema deberá pasar a modo degradado. |
+| Descripción | Si se detecta desalineación del radar, entonces el sistema deberá pasar a modo degradado. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Condiciones de fallo, L56); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Paso a degradado en ≤ [PENDIENTE: X s] con desalineación > [PENDIENTE: 1 °]. |
+| Criterio de aceptación | Paso a degradado tras inyectar una desalineación del radar. |
 | Estado | Borrador |
 
 ### SYS-SAF-14 — Degradado continuado a fallo
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el sistema permanece en modo degradado de forma continuada durante más de [PENDIENTE: X s], entonces el sistema deberá pasar a modo fallo. |
+| Descripción | Si el sistema permanece en modo degradado de forma continuada, entonces el sistema deberá pasar a modo fallo. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Modos, L49); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Paso a fallo tras [PENDIENTE: X s] continuos en modo degradado. |
+| Criterio de aceptación | Paso a fallo cuando el tiempo continuado en degradado supera el límite parametrizado (STD-CFG). |
 | Estado | Borrador |
 
 ### SYS-SAF-15 — Funcionamiento en modo normal
@@ -618,30 +617,17 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | 0 incumplimientos de los requisitos en 1 h de ejecución en modo normal. |
 | Estado | Borrador |
 
-### SYS-SAF-16 — Reset de fallo a normal desde el HMI
+### SYS-SAF-16 — Recuperación de fallo a normal mediante reset
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si se recibe desde el HMI el reset de fallo, protegido con [PENDIENTE: nivel de seguridad del reset], estando en modo fallo, entonces el sistema deberá pasar a modo normal. |
+| Descripción | Si se recibe el reset de fallo estando en modo fallo, entonces el sistema deberá pasar a modo normal. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L44); respuesta del usuario a Q-003 y respuesta a Q-003 |
+| Origen | Derivado de requisitos.txt (Modos, L44); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Transición a normal en ≤ [PENDIENTE: X ms] solo con el reset de fallo válido; con el reset de degradado permanece en fallo. |
+| Criterio de aceptación | Tras el reset de fallo el modo es normal; el reset de degradado no produce esa transición. |
 | Estado | Borrador |
-
-### SYS-SAF-17 — Funcionamiento normal tras el reset de degradado
-
-| Campo | Valor |
-|---|---|
-| Descripción | Si se ejecuta el reset de degradado, entonces el sistema deberá funcionar en condiciones normales durante [PENDIENTE: 2 min]. |
-| Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L46); respuesta del usuario a Q-003 y respuesta a Q-003 |
-| Prioridad | Must |
-| Método de verificación | Test |
-| Criterio de aceptación | Tras el reset, 0 transiciones a degradado o fallo durante [PENDIENTE: 2 min] con entradas nominales. |
-| Estado | Borrador |
-
 
 ## Implementación
 
@@ -748,9 +734,25 @@ verificación y Criterio de aceptación son opcionales.
 | Estado | Borrador |
 
 
+## Decisiones aplazadas a diseño
+
+Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` y no son obligaciones de este documento. Los valores numéricos son parámetros calibrables en la configuración (STD-CFG: fichero versionado con esquema, rango y requisito; validación al arrancar).
+
+| Duda | Requisito afectado | Qué hay que decidir en diseño |
+|---|---|---|
+| Q-031 | SYS-SAF-14 | Tiempo máximo de degradado continuado antes de pasar a fallo (X s). Parámetro calibrable. |
+| Q-032 | SYS-SAF-04 (retirado SYS-SAF-17) | Valor y semántica del periodo de funcionamiento normal tras el reset de degradado (e.g. 2 min). Parámetro calibrable. |
+| Q-033 | SYS-SAF-04, SYS-SAF-16 | Nivel de seguridad de los resets desde el HMI (autenticación, doble confirmación). |
+| Q-034 | SYS-SAF-04, SYS-SAF-16, SYS-OUT-07 | Interfaz con el HMI: protocolo, mensajes y confirmación de los dos resets distintos. |
+| Q-035 | SYS-SAF-12 | Semántica y valor de «3 mediciones consecutivas» y su relación con las N confirmaciones de SYS-PR-09. Parámetro calibrable. |
+| Q-036 | SYS-SAF-08 a SYS-SAF-14 | Transiciones finas: condiciones de fallo estando en degradado, reset con la causa aún presente, otras vías de transición. |
+| Q-038 | SYS-PR-08, SYS-OUT-06 | Nombres y codificación de los tres valores del estado de la vía y escala de probabilidad. |
+| Q-005 | SYS-OUT-07, SYS-OUT-09 | Topic MQTT de estado y diagnóstico y formato del log CRIT (STD-MQTT, STD-LOG). |
+
 ## Historial de cambios
 
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 2026-11-01 | Alicia Garcia | Creación a partir de la plantilla Requirements_2 |
 | 0.2 | 2026-11-01 | Alicia Garcia | Ronda 1 y 2 de dudas: modos y transiciones (SYS-SAF-04, 05, 09, 12 a 17), HMI, SYS-OUT-07 a 09, SYS-T-01, SYS-IMP-03, H-01 y H-02 confirmadas. Códigos SYS-SAF-02 y SYS-SAF-03 retirados (absorbidos por SYS-SAF-12, 13 y 14), no se reutilizan |
+| 0.3 | 2026-11-01 | Alicia Garcia | Ronda 3: la salida nunca declara ausencia de obstáculo (SYS-PR-08, SYS-OUT-06, SYS-SAF-05, 06, 07); detalle de la máquina de estados y de los resets aplazado a diseño (SYS-SAF-04, 08 a 14, 16, SYS-OUT-07, 09); SYS-SAF-17 retirado, código no reutilizado; sección «Decisiones aplazadas a diseño» |
