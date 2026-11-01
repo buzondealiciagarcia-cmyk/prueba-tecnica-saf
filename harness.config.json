@@ -1,0 +1,9 @@
+{
+  "project": {
+    "name": "prueba-saf",
+    "code": "SAF",
+    "author": "Alicia Garcia",
+    "client": "Ikerlan"
+  },
+  "module": "ogrid"
+}

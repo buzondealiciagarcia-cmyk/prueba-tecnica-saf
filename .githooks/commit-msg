@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# commit-msg — valida Conventional Commits (STD-GIT GIT-CM-01/02)
+set -euo pipefail
+
+readonly TYPES="feat|fix|test|docs|refactor|perf|build|ci|chore|style|revert"
+
+main() {
+    local msg_file="$1"
+    local subject
+    subject="$(head -n 1 "${msg_file}")"
+    case "${subject}" in
+        "Merge "* | "Revert "* | "fixup! "* | "squash! "*) exit 0 ;;
+    esac
+    if ! [[ "${subject}" =~ ^(${TYPES})(\([a-z0-9-]+\))?!?:\ .+$ ]]; then
+        echo "commit-msg: el asunto no cumple Conventional Commits (GIT-CM-01):" >&2
+        echo "  '${subject}'" >&2
+        echo "  formato: <tipo>(<ámbito>): <resumen>   tipos: ${TYPES//|/, }" >&2
+        exit 1
+    fi
+    if [[ ${#subject} -gt 72 ]]; then
+        echo "commit-msg: asunto de ${#subject} caracteres (máx. 72, GIT-CM-01)" >&2
+        exit 1
+    fi
+    if [[ "${subject}" == *. ]]; then
+        echo "commit-msg: el asunto no termina en punto (GIT-CM-01)" >&2
+        exit 1
+    fi
+}
+
+main "$@"
