@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-REQ |
-| Versión | 0.3 |
+| Versión | 0.4 |
 | Fecha | 2026-11-01 |
 | Autor | Alicia Garcia |
 | Estado | Borrador |
@@ -41,14 +41,13 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá cumplir los requisitos de seguridad funcional de la normativa [PENDIENTE: EN 50126, EN 50128 y EN 50129; nivel de integridad SIL por definir]. |
+| Descripción | El sistema deberá cumplir los requisitos de seguridad funcional de las normas EN 50126, EN 50128 y EN 50129 con un nivel de integridad objetivo SIL 2, aplicados como práctica de simulación sin reclamar certificación. |
 | Tipo | Restricción |
-| Origen | Derivado de requisitos.txt (Requisitos, L19) |
+| Origen | Derivado de requisitos.txt (Requisitos, L19); respuesta del usuario a Q-015 |
 | Prioridad | Must |
 | Método de verificación | Análisis |
-| Criterio de aceptación | Informe de cumplimiento de [PENDIENTE: normas y nivel SIL] sin desviaciones abiertas en el 100 % de los requisitos SYS-SAF. |
+| Criterio de aceptación | Informe de aplicación de EN 50126, EN 50128 y EN 50129 con SIL 2 objetivo, sin desviaciones abiertas en el 100 % de los requisitos SYS-SAF. |
 | Estado | Borrador |
-
 
 ## Entradas
 
@@ -104,14 +103,13 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá disponer de la altura de montaje del radar como parámetro de entrada de [PENDIENTE: valor en m y origen del dato]. |
+| Descripción | El sistema deberá disponer de la altura de montaje del radar como parámetro de configuración. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L18) |
+| Origen | Derivado de requisitos.txt (Requisitos, L18); respuesta del usuario a Q-009 |
 | Prioridad | Must |
 | Método de verificación | Inspección |
-| Criterio de aceptación | La altura del radar es un parámetro con valor [PENDIENTE: X m] documentado en configuración. |
+| Criterio de aceptación | La altura de montaje figura como parámetro en m en el fichero de configuración (STD-CFG), con el valor fijado en diseño. |
 | Estado | Borrador |
-
 
 ## Procesamiento
 
@@ -187,16 +185,16 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | Error del ángulo calculado ≤ [PENDIENTE: X °] en curva de radio [PENDIENTE: X m]. |
 | Estado | Borrador |
 
-### SYS-PR-07 — Corrección por altura del radar 2D [PROPUESTA]
+### SYS-PR-07 — Posición con la altura del radar 3D
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá corregir o acotar la desviación de la posición de un objeto debida a que el radar no mide altura, usando la altura del radar. |
+| Descripción | El sistema deberá tener en cuenta la altura de montaje del radar y la altura medida de cada eco al calcular la posición del objeto en coordenadas de vía. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L18, L20-L22) |
+| Origen | Derivado de requisitos.txt (Requisitos, L18); respuesta del usuario a Q-009 |
 | Prioridad | Should |
-| Método de verificación | Análisis |
-| Criterio de aceptación | Desviación residual de posición ≤ [PENDIENTE: X m] a 220 m para objetos de altura entre [PENDIENTE: X] m y [PENDIENTE: X] m. |
+| Método de verificación | Test |
+| Criterio de aceptación | Objetos de prueba a alturas distintas se posicionan con el error de SYS-DET-06. |
 | Estado | Borrador |
 
 ### SYS-PR-08 — Mantenimiento del estado de la vía
@@ -239,75 +237,62 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá rechazar las detecciones situadas a una distancia mayor de 220 m. |
+| Descripción | El sistema deberá rechazar las detecciones situadas a más de 220 m del radar medidos a lo largo de la vía. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L29) |
+| Origen | Derivado de requisitos.txt (Requisitos, L29); respuesta del usuario a Q-028 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Ninguna detección a > 220 m aparece en la salida en el conjunto de pruebas. |
+| Criterio de aceptación | Ninguna detección a > 220 m a lo largo de la vía aparece en la salida en el conjunto de pruebas. |
 | Estado | Borrador |
-
 
 ## Detección y prestaciones
 
-### SYS-DET-01 — Alcance de detección de 220 m
+### SYS-DET-01 — Alcance de detección de 220 m a lo largo de la vía
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá detectar obstáculos situados hasta 220 m del radar. |
+| Descripción | El sistema deberá detectar obstáculos situados hasta 220 m del radar medidos a lo largo de la vía. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L4) |
+| Origen | Derivado de requisitos.txt (Requisitos, L4); respuesta del usuario a Q-028 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Detección de un objeto de 0,6 m² a 220 m con probabilidad ≥ [PENDIENTE: 95 %]. |
+| Criterio de aceptación | Detección de un objeto de 0,6 m × 0,6 m × 0,6 m situado a 220 m a lo largo de la vía. |
 | Estado | Borrador |
 
-### SYS-DET-02 — Tamaño mínimo del objeto detectable
+### SYS-DET-02 — Tamaño mínimo del objeto que genera alerta
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá detectar objetos de tamaño mayor o igual a 0,6 m². |
+| Descripción | El sistema deberá alertar de un objeto sobre la vía cuyas dimensiones sean como mínimo 0,6 m × 0,6 m × 0,6 m. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Requisitos, L5) |
+| Origen | Derivado de requisitos.txt (Requisitos, L5); respuesta del usuario a Q-008 y Q-011 (sustituye «≥ 0,6 m²» de requisitos.txt por 0,6 × 0,6 × 0,6 m) |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Detección de objetos de 0,6 m² [PENDIENTE: ¿área física o sección radar?] dentro del alcance. |
-| Estado | Borrador |
-
-### SYS-DET-03 — Probabilidad de detección
-
-| Campo | Valor |
-|---|---|
-| Descripción | El sistema deberá alcanzar una probabilidad de detección superior a [PENDIENTE: 95 %]. |
-| Tipo | No funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L36) |
-| Prioridad | Must |
-| Método de verificación | Test |
-| Criterio de aceptación | Probabilidad de detección > [PENDIENTE: 95 %] sobre [PENDIENTE: N] casos de prueba en las condiciones de [PENDIENTE: entorno]. |
+| Criterio de aceptación | Alerta ante un objeto de 0,6 m × 0,6 m × 0,6 m dentro del ancho de la vía y del alcance de 220 m. |
 | Estado | Borrador |
 
 ### SYS-DET-04 — Tasa de falsas alarmas
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá mantener la tasa de falsas alarmas por debajo de [PENDIENTE: X %]. |
+| Descripción | El sistema deberá mantener la tasa de falsas alarmas por debajo de [PENDIENTE: número concreto] antes de entrar en modo fallo [PENDIENTE: ver Q-041]. |
 | Tipo | No funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L38) |
+| Origen | Derivado de requisitos.txt (Tranvía, L38); respuesta del usuario a Q-012 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Tasa de falsas alarmas < [PENDIENTE: X %] sobre [PENDIENTE: N] ciclos en pruebas sin obstáculos en la vía. |
+| Criterio de aceptación | Tasa de falsas alarmas < [PENDIENTE: número y unidad] en pruebas sin obstáculos en la vía. |
 | Estado | Borrador |
 
 ### SYS-DET-05 — Exclusión de objetos fuera de la vía
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá no reportar objetos situados fuera de la vía. |
+| Descripción | El sistema deberá no reportar objetos situados fuera del ancho de la vía. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Tranvía, L37) |
+| Origen | Derivado de requisitos.txt (Tranvía, L37); respuesta del usuario a Q-008 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Objetos a más de [PENDIENTE: X m] del eje de vía no se reportan en el 100 % de los casos de prueba. |
+| Criterio de aceptación | 0 objetos reportados fuera del ancho de la vía (H-01) en el 100 % de los casos de prueba. |
 | Estado | Borrador |
 
 ### SYS-DET-06 — Error de localización
@@ -358,7 +343,7 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | Derivado de requisitos.txt (Tranvía, L39) |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | El 100 % de las detecciones de cada ciclo de 50 ms incluye tamaño en [PENDIENTE: m²]. |
+| Criterio de aceptación | El 100 % de las detecciones de cada ciclo de 50 ms incluye tamaño en m [PENDIENTE: dimensiones largo, ancho y alto o volumen]. |
 | Estado | Borrador |
 
 ### SYS-OUT-03 — Incertidumbre de la detección
@@ -706,13 +691,13 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | Derivado de requisitos.txt (Requisitos, L25) |
 | Estado | Borrador |
 
-### H-05 — Radar de medida 2D
+### H-05 — Radar 3D
 
 | Campo | Valor |
 |---|---|
-| Descripción | El radar mide en 2D y no mide altura. |
+| Descripción | El radar es 3D y mide distancia, azimut y altura. |
 | Tipo | Hipótesis |
-| Origen | Derivado de requisitos.txt (Requisitos, L20-L21) |
+| Origen | Derivado de requisitos.txt (Requisitos, L20-L21); respuesta del usuario a Q-009 (sustituye la nota «2D, no detecta la altura» de requisitos.txt) |
 | Estado | Borrador |
 
 ### H-06 — Error creciente con la distancia
@@ -733,6 +718,14 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | Derivado de requisitos.txt (Requisitos, L28) |
 | Estado | Borrador |
 
+### H-08 — Campo de visión del sistema
+
+| Campo | Valor |
+|---|---|
+| Descripción | El campo de visión del sistema es todo lo que alcanza a detectar el radar y de lo que luego entrega una nube de puntos. |
+| Tipo | Hipótesis |
+| Origen | Derivado de requisitos.txt (Requisitos, L4); respuesta del usuario a Q-008 |
+| Estado | Borrador |
 
 ## Decisiones aplazadas a diseño
 
@@ -747,6 +740,8 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | Q-035 | SYS-SAF-12 | Semántica y valor de «3 mediciones consecutivas» y su relación con las N confirmaciones de SYS-PR-09. Parámetro calibrable. |
 | Q-036 | SYS-SAF-08 a SYS-SAF-14 | Transiciones finas: condiciones de fallo estando en degradado, reset con la causa aún presente, otras vías de transición. |
 | Q-038 | SYS-PR-08, SYS-OUT-06 | Nombres y codificación de los tres valores del estado de la vía y escala de probabilidad. |
+| Q-009 | SYS-IN-05 | Altura de montaje del radar (parámetro de configuración, STD-CFG). |
+| Q-012 | SYS-DET-03 (retirado) | Probabilidad de detección: valor, casos de prueba y entorno de medida. |
 | Q-005 | SYS-OUT-07, SYS-OUT-09 | Topic MQTT de estado y diagnóstico y formato del log CRIT (STD-MQTT, STD-LOG). |
 
 ## Historial de cambios
@@ -756,3 +751,4 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | 0.1 | 2026-11-01 | Alicia Garcia | Creación a partir de la plantilla Requirements_2 |
 | 0.2 | 2026-11-01 | Alicia Garcia | Ronda 1 y 2 de dudas: modos y transiciones (SYS-SAF-04, 05, 09, 12 a 17), HMI, SYS-OUT-07 a 09, SYS-T-01, SYS-IMP-03, H-01 y H-02 confirmadas. Códigos SYS-SAF-02 y SYS-SAF-03 retirados (absorbidos por SYS-SAF-12, 13 y 14), no se reutilizan |
 | 0.3 | 2026-11-01 | Alicia Garcia | Ronda 3: la salida nunca declara ausencia de obstáculo (SYS-PR-08, SYS-OUT-06, SYS-SAF-05, 06, 07); detalle de la máquina de estados y de los resets aplazado a diseño (SYS-SAF-04, 08 a 14, 16, SYS-OUT-07, 09); SYS-SAF-17 retirado, código no reutilizado; sección «Decisiones aplazadas a diseño» |
+| 0.4 | 2026-11-01 | Alicia Garcia | Ronda 4: objeto sobre la vía y campo de visión (Q-008, H-08); radar 3D (H-05, SYS-PR-07, SYS-IN-05; sustituye el radar 2D de requisitos.txt); tamaño mínimo 0,6 × 0,6 × 0,6 m (SYS-DET-02; sustituye «≥ 0,6 m²» de requisitos.txt L5); 220 m a lo largo de la vía (SYS-DET-01, SYS-PR-11); SYS-DET-03 retirado (probabilidad de detección a diseño), código no reutilizado; SYS-DET-04 reformulado; SYS-GEN-01 con EN 50126/50128/50129, SIL 2, sin certificar (Q-015) |
