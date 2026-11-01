@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-REQ |
-| Versión | 0.9 |
+| Versión | 0.10 |
 | Fecha | 2026-11-01 |
 | Autor | Alicia Garcia |
 | Estado | Aprobado |
@@ -967,3 +967,4 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | 0.7 | 2026-11-01 | Alicia Garcia | Ronda 7: probabilidad numérica de ocupación interna y tres estados derivados (SYS-PR-08, SYS-OUT-06, SYS-IMP-10); dos salidas, lista de objetos (SYS-OUT-11 nuevo) y estado por celdas; SYS-IMP-11 justifica C; SYS-IMP-06 como documento aparte en la fase de diseño; SYS-IMP-12 en Fase A y Fase B |
 | 0.8 | 2026-11-01 | Alicia Garcia | Ronda 8: contigüidad de celdas (SYS-PR-04); SYS-IMP-05 retirado («no es relevante») y SYS-IMP-09 retirado (cubierto por SYS-SAF-01, 04 a 16, 18, 19, SYS-IN-06, 07 y SYS-OUT-07, 09), códigos no reutilizados; Origen de todos los requisitos con R1–R4 y «Derivado»; parámetros de la máquina de estados definidos en diseño (SYS-SAF-12, 13, 14, SYS-DET-04); tabla de trazabilidad regenerada |
 | 0.9 | 2026-11-01 | Alicia Garcia | Ronda 9: vecindad de 8 en SYS-PR-04; sin cifra en SYS-SAF-08 (tiempo sin trama) ni en SYS-DET-07 y SYS-SAF-13 (1°), a diseño; SYS-PR-06 remite al error angular de SYS-DET-07; entregables SYS-IMP-06, 07, 08, 10, 11 y 12 se mantienen con Origen R1 a R4 |
+| 0.10 | 2026-11-01 | Alicia Garcia | Duración de ejecución de los criterios de SYS-IN-01, SYS-IN-04 y SYS-SAF-15 definida en la fase de diseño (antes 1 h); los tres vuelven a Borrador. |
