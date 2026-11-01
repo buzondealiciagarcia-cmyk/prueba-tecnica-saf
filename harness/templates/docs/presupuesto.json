@@ -1,0 +1,9 @@
+{
+  "$comment": "Valores aportados por el usuario en /oferta-seccion presupuesto y plazo. No inventar.",
+  "moneda": "EUR",
+  "partidas": [],
+  "otros": [],
+  "contingencia_pct": 0,
+  "impuestos": null,
+  "plazo": {"inicio": "", "tareas": [], "hitos": []}
+}

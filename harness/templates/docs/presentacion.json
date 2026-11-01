@@ -1,0 +1,12 @@
+{
+  "titulo": "@PROJECT@",
+  "subtitulo": "Propuesta técnica y económica",
+  "autor": "@AUTHOR@",
+  "cliente": "",
+  "fecha": "@DATE@",
+  "pie": "@PROJECT@",
+  "diapositivas": [
+    {"tipo": "titulo"},
+    {"tipo": "cierre", "titulo": "Gracias", "texto": ""}
+  ]
+}

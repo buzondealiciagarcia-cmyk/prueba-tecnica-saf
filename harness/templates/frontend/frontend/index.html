@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@PROJECT@ · Visor</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="components.css">
+</head>
+<body>
+  <header class="ui-topbar">
+    <div class="ui-topbar__title">@PROJECT@</div>
+    <div class="ui-topbar__meta">
+      <span id="conn" class="ui-status">sin conexión</span>
+      <button id="theme" class="ui-btn ui-btn--ghost" aria-label="Cambiar tema">Tema</button>
+    </div>
+  </header>
+  <main class="ui-layout">
+    <section class="ui-panel">
+      <h2 class="ui-panel__title">Grid de ocupación</h2>
+      <canvas id="grid" class="ui-canvas" aria-label="Grid de ocupación"></canvas>
+      <div class="ui-legend">
+        <span>p = 0</span><div class="ui-legend__ramp"></div><span>p = 1</span>
+        <div class="ui-legend__swatch"></div><span>desconocido</span>
+      </div>
+    </section>
+    <aside>
+      <section class="ui-panel">
+        <h2 class="ui-panel__title">Estado</h2>
+        <div class="ui-kpis">
+          <div class="ui-kpi"><div><span id="k-seq" class="ui-kpi__value">—</span></div><div class="ui-kpi__label">secuencia</div></div>
+          <div class="ui-kpi"><div><span id="k-lat" class="ui-kpi__value">—</span><span class="ui-kpi__unit">ms</span></div><div class="ui-kpi__label">latencia</div></div>
+          <div class="ui-kpi"><div><span id="k-echo" class="ui-kpi__value">—</span></div><div class="ui-kpi__label">ecos / nube</div></div>
+          <div class="ui-kpi"><div><span id="k-occ" class="ui-kpi__value">—</span></div><div class="ui-kpi__label">celdas ocupadas</div></div>
+        </div>
+      </section>
+      <section class="ui-panel">
+        <h2 class="ui-panel__title">Visualización</h2>
+        <label class="ui-slider">Umbral de ocupación<output id="thr-o">0.70</output>
+          <input id="thr" type="range" min="0.5" max="0.99" step="0.01" value="0.70"></label>
+      </section>
+    </aside>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

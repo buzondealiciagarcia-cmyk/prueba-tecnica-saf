@@ -1,0 +1,8 @@
+# Toolchain de comprobación de portabilidad al objetivo (STD-DEP §1, C-LNG-07)
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR aarch64)
+find_program(H_CROSS_CC NAMES aarch64-linux-gnu-gcc aarch64-unknown-linux-gnu-gcc REQUIRED)
+set(CMAKE_C_COMPILER ${H_CROSS_CC})
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
