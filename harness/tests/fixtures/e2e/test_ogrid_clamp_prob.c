@@ -14,45 +14,45 @@ void tearDown(void)
 {
 }
 
-/** @req REQ-FUN-002 @contract post */
+/** @req SYS-PR-01 @contract post */
 void test_TC_F001_01_inside_range_unchanged(void)
 {
     float out = -1.0F;
     TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_OK, ogrid_clamp_prob(0.25F, &out),
-                                  "[TC-F001-01][REQ-FUN-002] status OK");
+                                  "[TC-F001-01][SYS-PR-01] status OK");
     TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1e-6F, 0.25F, out,
-                                     "[TC-F001-01][REQ-FUN-002] value unchanged");
+                                     "[TC-F001-01][SYS-PR-01] value unchanged");
 }
 
-/** @req REQ-FUN-002 @contract post */
+/** @req SYS-PR-01 @contract post */
 void test_TC_F001_02_above_one_clamped(void)
 {
     float out = -1.0F;
     (void)ogrid_clamp_prob(1.5F, &out);
-    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1e-6F, 1.0F, out, "[TC-F001-02][REQ-FUN-002] p>1 clamps to 1");
+    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1e-6F, 1.0F, out, "[TC-F001-02][SYS-PR-01] p>1 clamps to 1");
 }
 
-/** @req REQ-FUN-002 @contract post */
+/** @req SYS-PR-01 @contract post */
 void test_TC_F001_03_below_zero_clamped(void)
 {
     float out = -1.0F;
     (void)ogrid_clamp_prob(-0.5F, &out);
-    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1e-6F, 0.0F, out, "[TC-F001-03][REQ-FUN-002] p<0 clamps to 0");
+    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1e-6F, 0.0F, out, "[TC-F001-03][SYS-PR-01] p<0 clamps to 0");
 }
 
-/** @req REQ-FUN-002 @contract err */
+/** @req SYS-PR-01 @contract err */
 void test_TC_F001_04_null_output(void)
 {
     TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_ERR_PARAM, ogrid_clamp_prob(0.5F, NULL),
-                                  "[TC-F001-04][REQ-FUN-002] NULL rejected");
+                                  "[TC-F001-04][SYS-PR-01] NULL rejected");
 }
 
-/** @req REQ-FUN-002 @contract err */
+/** @req SYS-PR-01 @contract err */
 void test_TC_F001_05_nan_rejected(void)
 {
     float out = 0.3F;
     TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_ERR_RANGE, ogrid_clamp_prob(NAN, &out),
-                                  "[TC-F001-05][REQ-FUN-002] NaN rejected");
+                                  "[TC-F001-05][SYS-PR-01] NaN rejected");
 }
 
 int main(void)

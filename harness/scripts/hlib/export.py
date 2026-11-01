@@ -19,6 +19,8 @@ REQ_PH = "⟦H-REQ:%s⟧"
 REQ_PH_RE = re.compile(r"⟦H-REQ:([^⟧]+)⟧")
 REQTAB_PH = "⟦H-REQTABLE:%s⟧"
 REQTAB_PH_RE = re.compile(r"⟦H-REQTABLE:([^⟧]+)⟧")
+LAND_PH = "⟦H-LANDSCAPE:%s⟧"
+LAND_PH_RE = re.compile(r"⟦H-LANDSCAPE:(begin|end)⟧")
 IMG_RE = re.compile(r"!\[([^\]]*)\]\(([^)\s]+)\)(\{[^}]*\})?")
 FIG_PREFIX_RE = re.compile(r"^\s*Figura(\s+\d+)?\s*[.:]\s*", re.I)
 TAB_CAPTION_RE = re.compile(r"^\s*Tabla(\s+\d+)?\s*[.:]\s*(.+)$", re.I)
@@ -65,12 +67,13 @@ def _control_table(text):
 
 # --------------------------------------------------------------------------- preprocesado
 class Pre(object):
-    def __init__(self, src, cache, text_width_cm, req_mode):
+    def __init__(self, src, cache, text_width_cm, req_mode, req_sections=None):
         self.src = Path(src)
         self.base = self.src.parent
         self.cache = Path(cache)
         self.width = text_width_cm
         self.req_mode = req_mode
+        self.req_sections = req_sections or set()
         self.fig = 0
         self.tab = 0
         self.warnings = []
@@ -118,14 +121,28 @@ class Pre(object):
         return "*[Imagen no encontrada: %s]*" % target
 
     def run(self, text):
+        text = re.sub(r"<!--\s*h:landscape:(begin|end)\s*-->", lambda m: LAND_PH % m.group(1), text)
         text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
         lines = text.split("\n")
         out = []
         i = 0
         pending_tab_caption = None
         req_mode = self.req_mode
+        table_emitted = False
         while i < len(lines):
             line = lines[i]
+            # requisitos en modo 'rows': las secciones con requisitos se sustituyen por una tabla
+            if req_mode == "rows" and re.match(r"^##\s+", line) and not line.startswith("###"):
+                name = re.sub(r"^##\s+", "", line).strip()
+                if name in self.req_sections:
+                    if not table_emitted:
+                        out += ["", REQTAB_PH % "all", ""]
+                        table_emitted = True
+                    i += 1
+                    while i < len(lines) and not (re.match(r"^##\s+", lines[i])
+                                                  and not lines[i].startswith("###")):
+                        i += 1
+                    continue
             # bloque mermaid
             if line.strip().startswith("```mermaid"):
                 code = []
@@ -142,7 +159,7 @@ class Pre(object):
                 i += 1
                 continue
             # requisitos: '### ID — título' + tabla de campos -> marcador
-            if req_mode and rq.HEAD_RE.match(line):
+            if req_mode == "per-requirement" and rq.HEAD_RE.match(line):
                 out.append(line)
                 j = i + 1
                 while j < len(lines) and not lines[j].strip():
@@ -209,7 +226,18 @@ def _apply_cover(doc, tpl, mapping, values):
             continue
         first_non_title = e
         break
-    mode = (mapping.get("cover") or {}).get("mode", "pandoc")
+    mode = (mapping.get("document") or {}).get("cover") or \
+        (mapping.get("cover") or {}).get("mode", "pandoc")
+    if mode in ("title-only", "none"):
+        for e in list(body):
+            if e is first_non_title:
+                break
+            if e.tag == dx.qn("w:p"):
+                st = Paragraph(e, doc).style.name
+                if st in ("Subtitle", "Author", "Date", "Abstract") or \
+                        (mode == "none" and st == "Title"):
+                    body.remove(e)
+        return
     if mode == "template":
         for e in list(body):
             if e is first_non_title:
@@ -254,13 +282,124 @@ def _fill_req_table(tbl_el, doc, mapping, req):
         dx.replace_placeholders_in_element(list(dx.iter_paragraphs_deep(t)), vals)
 
 
+PENDING_RE = re.compile(r"\[PENDIENTE(?::\s*([^\]]*))?\]")
+
+
+def pending_to_template(text):
+    """'[PENDIENTE: 50 ms]' -> '[50 ms]'; '[PENDIENTE]' -> '[X]' (convención de la plantilla)."""
+    return PENDING_RE.sub(lambda m: "[%s]" % (m.group(1).strip() if m.group(1) else "X"),
+                          text or "")
+
+
+def _md_inline(text):
+    """Quita marcas markdown simples dentro de celdas (negrita, cursiva, código)."""
+    text = re.sub(r"\*\*(.+?)\*\*|__(.+?)__", lambda m: m.group(1) or m.group(2), text)
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    return text.replace("<br>", "\n").replace("\\|", "|")
+
+
 def _req_values(r):
     f = r["campos"]
-    return {"ID": r["id"], "TITULO": r["titulo"], "SECCION": r.get("seccion", ""),
+    vals = {"ID": r["id"], "TITULO": r["titulo"], "SECCION": rq.section_name(r.get("seccion", "")),
             "DESCRIPCION": f.get("descripcion", ""), "TIPO": f.get("tipo", ""),
             "PRIORIDAD": f.get("prioridad", ""), "ORIGEN": f.get("origen", ""),
             "VERIFICACION": f.get("verificacion", ""), "CRITERIO": f.get("criterio", ""),
             "ESTADO": f.get("estado", "")}
+    return {k: _md_inline(pending_to_template(v)) or ("—" if k != "ID" else v)
+            for k, v in vals.items()}
+
+
+def _requirements_rows(doc, tpl, rt, req_list, produced, only=None):
+    """Una tabla con cabecera, filas de sección y una fila por requisito (modo 'rows').
+
+    only: si se indica, solo se sustituyen los marcadores cuyo argumento coincide.
+    """
+    from docx.table import Table
+    from docx.text.paragraph import Paragraph
+    hdr = int(rt.get("header_rows", 1))
+    sec_i, data_i = rt.get("section_row"), int(rt.get("data_row", hdr))
+    cols = rt.get("columns") or {}
+    for p_el in list(doc.element.body.iter(dx.qn("w:p"))):
+        m = REQTAB_PH_RE.search(Paragraph(p_el, doc).text)
+        if not m or (only is not None and m.group(1).strip() != only):
+            continue
+        new_tbl = copy.deepcopy(tpl.tables[rt["table_index"]]._tbl)
+        rows = new_tbl.findall(dx.qn("w:tr"))
+        sec_tpl = copy.deepcopy(rows[sec_i]) if sec_i is not None else None
+        data_tpl = copy.deepcopy(rows[data_i])
+        for tr in rows[hdr:]:
+            new_tbl.remove(tr)
+        current = None
+        for r in req_list:
+            sec = rq.section_name(r.get("seccion", ""))
+            if sec_tpl is not None and sec != current:
+                tr = copy.deepcopy(sec_tpl)
+                new_tbl.append(tr)
+                current = sec
+                t = Table(new_tbl, doc)
+                dx.set_cell_text(t.rows[-1].cells[0], sec)
+            tr = copy.deepcopy(data_tpl)
+            new_tbl.append(tr)
+            t = Table(new_tbl, doc)
+            vals = _req_values(r)
+            row = t.rows[-1]
+            for field, ci in cols.items():
+                dx.set_cell_text(row.cells[ci], vals.get(field, ""))
+        p_el.addnext(new_tbl)
+        produced.append(new_tbl)
+        p_el.getparent().remove(p_el)
+
+
+def _external_requirements(doc, root, cfg, produced):
+    """Marcadores ⟦H-REQTABLE:<ruta requisitos.md>⟧ en otros documentos (p.ej. el dosier)."""
+    from docx import Document
+    from docx.text.paragraph import Paragraph
+    paths = set()
+    for p_el in doc.element.body.iter(dx.qn("w:p")):
+        m = REQTAB_PH_RE.search(Paragraph(p_el, doc).text)
+        if m and m.group(1).strip().endswith(".md"):
+            paths.add(m.group(1).strip())
+    if not paths:
+        return
+    rcfg = dict(cfg["export"])
+    rcfg.update((cfg["export"].get("documents") or {}).get("requisitos") or {})
+    rtpl = Document(str(c.expand(rcfg["template"], root)))
+    rmap = c.load_json(c.expand(rcfg["template_map"], root), {})
+    rt = rmap.get("requirement_table") or {}
+    for rel in paths:
+        src = root / rel
+        req_list = rq.parse(src.read_text(encoding="utf-8")) if src.is_file() else []
+        _requirements_rows(doc, rtpl, rt, req_list, produced, only=rel)
+
+
+def _landscape_sections(doc):
+    """Convierte ⟦H-LANDSCAPE:begin/end⟧ en saltos de sección apaisados."""
+    from docx.text.paragraph import Paragraph
+    body_sp = doc.element.body.find(dx.qn("w:sectPr"))
+    if body_sp is None:
+        return
+    for p_el in list(doc.element.body.iter(dx.qn("w:p"))):
+        m = LAND_PH_RE.search(Paragraph(p_el, doc).text)
+        if not m:
+            continue
+        sp = copy.deepcopy(body_sp)
+        if m.group(1) == "end":
+            pg = sp.find(dx.qn("w:pgSz"))
+            if pg is not None:
+                w, h = pg.get(dx.qn("w:w")), pg.get(dx.qn("w:h"))
+                pg.set(dx.qn("w:w"), h)
+                pg.set(dx.qn("w:h"), w)
+                pg.set(dx.qn("w:orient"), "landscape")
+            mar = sp.find(dx.qn("w:pgMar"))
+            if mar is not None:
+                for k in ("w:top", "w:bottom", "w:left", "w:right"):
+                    mar.set(dx.qn(k), "1134")
+        new_p = dx.el("w:p")
+        ppr = dx.el("w:pPr")
+        ppr.append(sp)
+        new_p.append(ppr)
+        p_el.addnext(new_p)
+        p_el.getparent().remove(p_el)
 
 
 def _requirements(doc, tpl, mapping, req_list, produced):
@@ -268,6 +407,8 @@ def _requirements(doc, tpl, mapping, req_list, produced):
     rt = mapping.get("requirement_table")
     if not rt or rt.get("table_index") is None:
         return
+    if rt.get("mode") == "rows":
+        return _requirements_rows(doc, tpl, rt, req_list, produced)
     src_tbl = tpl.tables[rt["table_index"]]._tbl
     by_id = {r["id"]: r for r in req_list}
     for p_el in list(doc.element.body.iter(dx.qn("w:p"))):
@@ -305,7 +446,7 @@ def _style_tables(doc, tpl, mapping, produced):
             for lay in new_pr.findall(dx.qn("w:tblLayout")):
                 new_pr.remove(lay)
             t._tbl.replace(tblPr, new_pr)
-            _copy_direct_format(ref, t, hdr_rows)
+            _copy_direct_format(ref, t, hdr_rows, (tr or {}).get("body_rows"))
         else:
             st = tblPr.find(dx.qn("w:tblStyle"))
             if st is None:
@@ -356,11 +497,12 @@ def _apply_cell_fmt(cell, fmt):
                 r._r.insert(0, new)
 
 
-def _copy_direct_format(ref, t, hdr_rows):
+def _copy_direct_format(ref, t, hdr_rows, body_rows=None):
     if not ref.rows:
         return
     hdr_fmt = _cell_fmt(ref.rows[0].cells[-1])
-    body_fmts = [_cell_fmt(ref.rows[i].cells[-1]) for i in range(hdr_rows, len(ref.rows))]
+    idx = body_rows if body_rows else range(hdr_rows, len(ref.rows))
+    body_fmts = [_cell_fmt(ref.rows[i].cells[-1]) for i in idx]
     for i, row in enumerate(t.rows):
         for cell in row.cells:
             if i < hdr_rows:
@@ -382,11 +524,18 @@ def export(src, out=None, toc=True, kind=None, extra_meta=None):
     if not dx.HAVE_DOCX:
         c.die("falta python-docx; ver h doctor", c.EXIT_DEP)
     from docx import Document
-    template = c.expand(cfg["export"]["template"], root)
+    is_req = (kind == "requisitos") or src.name == "requisitos.md"
+    ecfg = dict(cfg["export"])
+    override = (ecfg.get("documents") or {}).get("requisitos" if is_req else (kind or src.stem))
+    if override:
+        ecfg.update(override)
+    template = c.expand(ecfg["template"], root)
     if not template.is_file():
         c.die("no existe la plantilla %s (h template build-base o /plantilla-registrar)" % template)
-    mapping = c.load_json(c.expand(cfg["export"].get("template_map", ""), root), {}) \
-        if cfg["export"].get("template_map") else {}
+    mapping = c.load_json(c.expand(ecfg.get("template_map", ""), root), {}) \
+        if ecfg.get("template_map") else {}
+    dopts = mapping.get("document") or {}
+    toc = toc and dopts.get("toc", True)
     text = src.read_text(encoding="utf-8")
     meta = _control_table(text)
     title_m = re.search(r"^#\s+(.+)$", text, flags=re.M)
@@ -394,6 +543,11 @@ def export(src, out=None, toc=True, kind=None, extra_meta=None):
     title = title_m.group(1).strip() if title_m else default_title
     if title_m:
         text = text[:title_m.start()] + text[title_m.end():]
+    for sec in dopts.get("strip_sections", []):
+        text = re.sub(r"^##\s+%s\s*$.*?(?=^##\s|\Z)" % re.escape(sec), "", text,
+                      flags=re.M | re.S)
+    if not dopts.get("control_table", True) and meta:
+        text = re.sub(r"\A\s*(\|[^\n]*\|\s*\n)+", "\n", text, count=1)
     proj = cfg["project"]
     values = {
         "TITULO": title,
@@ -406,15 +560,20 @@ def export(src, out=None, toc=True, kind=None, extra_meta=None):
         "CLIENTE": proj.get("client", ""),
     }
     values.update(extra_meta or {})
-    is_req = (kind == "requisitos") or src.name == "requisitos.md"
     req_list = rq.parse(src.read_text(encoding="utf-8")) if is_req else []
-    req_mode = is_req and bool((mapping.get("requirement_table") or {}).get("table_index")
-                               is not None)
+    rt = mapping.get("requirement_table") or {}
+    req_mode = (rt.get("mode") or "per-requirement") if (is_req and rt.get("table_index")
+                                                         is not None) else None
     out = Path(out) if out else root / "docs" / "export" / (src.stem + ".docx")
     out.parent.mkdir(parents=True, exist_ok=True)
     cache = root / "build" / "export-cache"
     cache.mkdir(parents=True, exist_ok=True)
-    pre = Pre(src, cache, _text_width_cm(template) - 0.2, req_mode)
+    sec_names = {r["seccion"] for r in req_list}
+    if req_mode == "rows":
+        cfg_secs = {c.norm(x["name"]) for x in cfg["requirements"].get("sections", [])}
+        sec_names |= {h for h in re.findall(r"^##\s+(.+?)\s*$", text, flags=re.M)
+                      if c.norm(rq.section_name(h)) in cfg_secs}
+    pre = Pre(src, cache, _text_width_cm(template) - 0.2, req_mode, sec_names)
     body = pre.run(text)
     with tempfile.TemporaryDirectory() as td:
         md = Path(td) / "doc.md"
@@ -439,8 +598,14 @@ def export(src, out=None, toc=True, kind=None, extra_meta=None):
         _toc_page_break(doc)
     if req_mode:
         _requirements(doc, tpl, mapping, req_list, produced)
+    _external_requirements(doc, root, cfg, produced)
+    _landscape_sections(doc)
     _style_tables(doc, tpl, mapping, produced)
     _replace_ph_doc(doc, values)
+    if not dopts.get("header_footer", True):
+        for sp in doc.element.body.iter(dx.qn("w:sectPr")):
+            for ref in sp.findall(dx.qn("w:headerReference")) + sp.findall(dx.qn("w:footerReference")):
+                sp.remove(ref)
     doc.core_properties.title = values["TITULO"]
     doc.core_properties.author = values["AUTOR"]
     doc.core_properties.subject = values["PROYECTO"]

@@ -3,7 +3,8 @@
 | Campo | Valor |
 |---|---|
 | Versión | 1.0.0 |
-| Referencia | Reglas de calidad INCOSE (Guide for Writing Requirements) adaptadas |
+| Referencia | ISO/IEC/IEEE 29148:2018 + plantillas EARS + reglas de calidad INCOSE |
+| Plantilla | `Requirements_2.pages` del usuario, recreada en `templates/docx/plantilla-requisitos.docx` |
 | Verificación | `h req lint` (automático) + agente `analista-requisitos` |
 
 ## 1. Calidad de cada requisito
@@ -11,24 +12,44 @@
 | ID | Nivel | Regla | Detección automática |
 |---|---|---|---|
 | REQ-Q-01 | OBL | Necesario y único: un requisito, una necesidad. Sin "y/o" que mezclen dos obligaciones. | aviso si contiene " y " + 2 verbos "deberá" |
-| REQ-Q-02 | OBL | Forma "El sistema deberá <verbo> …" (o el subsistema concreto). | sí |
+| REQ-Q-02 | OBL | EARS: «El sistema deberá …» para requisitos siempre activos y «Si …, entonces el sistema deberá …» para la respuesta ante fallos. Otras formas EARS («Cuando…», «Mientras…», «Donde…») solo con aviso. Las hipótesis no usan «deberá». | sí |
 | REQ-Q-03 | OBL | Sin términos vagos: *adecuado, rápido, suficiente, robusto, aproximadamente, etc., fácil, normalmente, mínimo posible, en tiempo real* (sin cifra). | sí (lista en `h req lint`) |
 | REQ-Q-04 | OBL | Verificable: criterio de aceptación con magnitud, unidad y condición (`latencia ≤ 100 ms en el percentil 99 con 512 ecos/nube`). | sí (busca número + unidad) |
 | REQ-Q-05 | OBL | Sin solución de diseño salvo que el usuario la imponga como restricción (Tipo = Restricción). | revisión |
 | REQ-Q-06 | OBL | Consistente: sin contradicciones con otros requisitos (unidades, rangos, tiempos). | revisión |
-| REQ-Q-07 | OBL | Sin marcadores `TBD`, `TODO`, `[PENDIENTE…]`, `[PROPUESTA]`, `??` al cerrar. | sí |
+| REQ-Q-07 | OBL | Sin valores pendientes al cerrar: ni `[X]`, ni `[PENDIENTE…]`, `[PROPUESTA]`, `TBD`, `TODO`, `??` (decisión del usuario: todo `[X]` se resuelve antes de `/req-cerrar`). | sí |
 
-## 2. Atributos obligatorios
+## 2. Codificación, secciones y atributos
 
-| Atributo | Valores |
+**Códigos**: `SYS-<categoría>-<nn>` para requisitos del sistema y `H-<nn>` para hipótesis. Cada código va en la sección de la plantilla que le corresponde (el lint lo comprueba):
+
+| Sección (`##` en el markdown) | Prefijo |
 |---|---|
-| Descripción | texto "El sistema deberá…" |
-| Tipo | Funcional · Rendimiento · Seguridad funcional · Interfaz · Entorno · Restricción · No funcional |
-| Prioridad | Must · Should · Could · Won't |
-| Origen | enunciado de la práctica, usuario, norma, derivado de `<ID>` |
-| Método de verificación | Test · Análisis · Inspección · Demostración |
-| Criterio de aceptación | condición medible |
-| Estado | Borrador · En revisión · Aprobado |
+| Normativa | `SYS-GEN-` |
+| Entradas | `SYS-IN-` |
+| Procesamiento | `SYS-PR-` |
+| Detección y prestaciones | `SYS-DET-` |
+| Salida | `SYS-OUT-` |
+| Tiempo | `SYS-T-` |
+| Seguridad y modos de funcionamiento | `SYS-SAF-` |
+| Implementación | `SYS-IMP-` |
+| Hipótesis | `H-` |
+
+**Atributos** (columna del Word entre paréntesis):
+
+| Atributo | Valores | SYS | H |
+|---|---|---|---|
+| Descripción (Description) | EARS (REQ-Q-02) | obligatorio | obligatorio |
+| Tipo (Type) | Funcional · No funcional · Restricción · Hipótesis | obligatorio | `Hipótesis` |
+| Origen (Source) | `R1`–`R4` (requisitos del enunciado, admite lista `R1, R3`) · `Derivado` (o `Derivado de <código>`) | obligatorio | obligatorio |
+| Prioridad (Priority) | Must · Should · Could · Won't | obligatorio | opcional |
+| Método de verificación (Verification) | Test · Análisis · Inspección · Demostración | obligatorio | opcional |
+| Criterio de aceptación (Acceptance criterion) | condición medible | obligatorio | opcional |
+| Estado (Status) | Borrador · En revisión · Aprobado | obligatorio | obligatorio |
+
+**Valores pendientes**: en el markdown se escriben `[PENDIENTE: valor propuesto]` (o `[PENDIENTE]` sin propuesta); en el Word aparecen como `[valor]` / `[X]`, la convención de la plantilla. Cada uno tiene su duda `Q-NNN` abierta.
+
+**Word**: una única tabla `Code | Description | Type | Source | Priority | Verification | Acceptance criterion | Status` con filas de sección, A4 apaisado, sin portada ni índice (decisiones del usuario del 2026-11-01).
 
 ## 3. Ciclo de iteración
 

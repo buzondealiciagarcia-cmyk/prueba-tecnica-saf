@@ -31,9 +31,9 @@ docs/
   export/          *.docx generados (no versionados)
 ```
 
-## 3. Requisitos (resumen; detalle en la plantilla y en `requisitos-redaccion.md`)
+## 3. Requisitos (resumen; detalle en `requisitos-redaccion.md`)
 
-Cada requisito es un bloque `### <ID> — <título corto>` seguido de una tabla `Campo | Valor` con: **Descripción** (forma "El sistema deberá…"), **Tipo**, **Prioridad** (MoSCoW: Must/Should/Could/Won't), **Origen**, **Método de verificación** (Test/Análisis/Inspección/Demostración), **Criterio de aceptación** (medible), **Estado**. El formato de ID lo fija la plantilla registrada (`harness.config.json → requirements.id_regex`).
+Formato de la plantilla del usuario (ISO/IEC/IEEE 29148 + EARS): códigos `SYS-<cat>-<nn>` e hipótesis `H-<nn>`, agrupados en las 9 secciones de la plantilla. Cada requisito es un bloque `### <código> — <título corto>` con la tabla `Campo | Valor`: Descripción, Tipo, Origen, Prioridad, Método de verificación, Criterio de aceptación y Estado.
 
 ## 4. Diseño
 
@@ -65,7 +65,7 @@ Mermaid según UI-DIA-01..04. Tipos recomendados por propósito:
 
 | ID | Nivel | Regla |
 |---|---|---|
-| DOC-DOCX-01 | OBL | Se generan con `h export <doc>`; usan los estilos, cabecera/pie y tabla de referencia de la plantilla registrada en `harness.config.json → export.template`. |
-| DOC-DOCX-02 | OBL | Portada (título, código, versión, fecha, autor), índice automático, numeración de figuras y tablas. |
+| DOC-DOCX-01 | OBL | Se generan con `h export <doc>` con dos plantillas derivadas del formato del usuario: `plantilla-requisitos.docx` (requisitos) y `plantilla-documentos.docx` (resto). Estilo común: Arial, texto negro, tablas con cabecera `#D9D9D9`, filas de sección `#F2F2F2` y bordes negros finos. |
+| DOC-DOCX-02 | OBL | Documento de requisitos idéntico a la plantilla (título, párrafos de convenciones y tabla; sin portada, índice ni tabla de control). Resto de documentos: portada simple, índice automático, pie con código/versión/página y numeración de figuras y tablas. |
 | DOC-DOCX-03 | OBL | Diagramas como PNG a 3× con el tema del harness, ancho máximo el de la caja de texto. |
 | DOC-DOCX-04 | OBL | Si la plantilla no cubre un elemento (p.ej. matrices de la comparativa), se generaliza el formato de su tabla de referencia; las dudas de generalización se preguntan al usuario y quedan en `harness.config.json → export.decisions`. |

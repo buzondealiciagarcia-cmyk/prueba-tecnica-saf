@@ -34,9 +34,9 @@
 
 | Rol | UI | Word | PowerPoint |
 |---|---|---|---|
-| Texto | Inter 14 px | Inter → Calibri 10,5 pt | Inter → Calibri 16 pt |
-| Título 1 / 2 / 3 | 24 / 18 / 14 px, 600 | 18 / 14 / 12 pt | 30 pt título de diapositiva |
-| Código, IDs, valores numéricos | JetBrains Mono 13 px | JetBrains Mono → Consolas 9 pt | JetBrains Mono → Consolas 12 pt |
+| Texto | Inter 14 px | Arial 10,5 pt (plantilla del usuario) | Inter → Calibri 16 pt |
+| Título 1 / 2 / 3 | 24 / 18 / 14 px, 600 | 14 / 12 / 11 pt negrita, negro | 30 pt título de diapositiva |
+| Código, IDs, valores numéricos | JetBrains Mono 13 px | Consolas 9 pt | JetBrains Mono → Consolas 12 pt |
 
 Números en tablas alineados a la derecha y con `font-variant-numeric: tabular-nums`. Decimales con coma en documentos en español, punto en UI técnica y código.
 
@@ -81,5 +81,5 @@ Escala de 4 px (`xs 4 · sm 8 · md 16 · lg 24 · xl 40`). Radio 4 px (controle
 
 ## 8. Documentos y presentaciones
 
-- Word: estilos de la plantilla registrada (`h template register`); tablas con el formato de la tabla de referencia de la plantilla; si no la hay, cabecera `accent` con texto blanco, filas alternas `surface`, bordes `border`.
+- Word: estilo de la plantilla de requisitos del usuario generalizado (`tokens.json → docx`): Arial, texto negro, títulos en negrita negra, tablas con cabecera `#D9D9D9`, filas de sección `#F2F2F2` y bordes negros finos. Los diagramas incrustados mantienen la paleta de este estándar (el acento azul convive con el gris de las tablas).
 - PowerPoint 16:9: fondo blanco, título arriba a la izquierda en `text`, barra de acento de 4 px bajo el título, máx. 6 viñetas, numeración de diapositiva y nombre del proyecto en el pie en `textMuted`.

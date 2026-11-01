@@ -8,6 +8,6 @@
 
 ## 1. Arquitectura software
 
-Cubre REQ-FUN-001 y REQ-FUN-002.
+Cubre SYS-IN-01 y SYS-PR-01.
 
 ![Figura. Arquitectura software](diagramas/arquitectura-sw.svg)

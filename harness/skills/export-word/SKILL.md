@@ -8,7 +8,11 @@ CLI: `H="@@HARNESS@@/bin/h"`
 
 ## Uso
 - `$H export <requisitos|diseno|comparativa|implementacion|oferta|dosier|ruta.md> [-o salida.docx] [--no-toc]` → `docs/export/<nombre>.docx`.
-- Plantilla activa: `harness.config.json → export.template` y su mapa `export.template_map`. Por defecto, la plantilla base del harness (paleta grafito + azul señal).
+- Plantillas activas (derivadas de `templates/docx/origen/Requirements_2.pages`, la plantilla del usuario):
+  - `plantilla-requisitos.docx` (`export.documents.requisitos`): A4 apaisado, título + párrafos de convenciones + **una tabla** `Code | Description | Type | Source | Priority | Verification | Acceptance criterion | Status` con filas de sección; sin portada, índice ni tabla de control.
+  - `plantilla-documentos.docx` (`export.template`): resto de documentos, mismo estilo (Arial, negro, cabecera de tabla `#D9D9D9`, filas de sección `#F2F2F2`, bordes negros finos) + portada simple, índice y pie con código/versión/página.
+- Valores pendientes `[PENDIENTE: v]` → `[v]`, `[PENDIENTE]` → `[X]` en el Word (convención de la plantilla).
+- El dosier inserta la tabla de requisitos en una sección apaisada (`<!-- h:landscape:begin/end -->` + `⟦H-REQTABLE:<ruta>⟧`).
 - `$H template inspect <docx>` describe estilos, cabecera/pie, cuerpo y tablas; `$H template register <docx>` registra la plantilla X; `$H template validate` comprueba el mapa.
 
 ## Qué hace el exportador
@@ -21,12 +25,16 @@ CLI: `H="@@HARNESS@@/bin/h"`
 ## Mapa de plantilla (`config/template-map.json`)
 ```json
 {
-  "cover": {"mode": "template"},
-  "requirement_table": {"table_index": 0, "mode": "per-requirement", "fill": "placeholders"},
-  "table_reference": {"table_index": 1, "header_rows": 1},
-  "decisions": ["2026-11-05 · Las matrices de la comparativa usan el formato de la tabla 1 (decidido por el usuario)"]
+  "document": {"cover": "title-only", "toc": false, "control_table": false,
+               "header_footer": false, "strip_sections": ["Historial de cambios"]},
+  "requirement_table": {"table_index": 0, "mode": "rows", "header_rows": 1, "section_row": 1,
+                        "data_row": 2, "columns": {"ID": 0, "DESCRIPCION": 1, "TIPO": 2, "ORIGEN": 3,
+                        "PRIORIDAD": 4, "VERIFICACION": 5, "CRITERIO": 6, "ESTADO": 7}},
+  "table_reference": {"table_index": 0, "header_rows": 1, "body_rows": [2]},
+  "decisions": ["…"]
 }
 ```
+- `document.cover`: `template` (copia la portada de la plantilla), `pandoc` (portada simple + salto de página), `title-only` (solo el título, como la plantilla de requisitos) o `none`.
 - `requirement_table.mode`: `per-requirement` (una copia de la tabla por requisito, sustituye el bloque `### ID — título` + tabla de campos) o `rows` (una fila por requisito; requiere `columns: {"ID": 0, ...}`).
 - `fill`: `placeholders` (la tabla contiene `{{ID}}`, `{{TITULO}}`, `{{DESCRIPCION}}`, `{{TIPO}}`, `{{PRIORIDAD}}`, `{{ORIGEN}}`, `{{VERIFICACION}}`, `{{CRITERIO}}`, `{{ESTADO}}`, `{{SECCION}}`) o `cells` (`fields: {"DESCRIPCION": [1, 1], ...}` con `[fila, columna]`).
 - `table_reference`: tabla cuyo formato (propiedades de tabla, sombreado y fuente de cabecera y filas) se aplica a todas las tablas generadas. Si es `null`, se usa el estilo `Table` de la plantilla.

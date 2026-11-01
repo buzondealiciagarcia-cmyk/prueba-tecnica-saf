@@ -41,6 +41,9 @@ def _font(style, size=None, color=None, bold=None, italic=None, name=None):
             rpr.append(rfonts)
         for a in ("w:ascii", "w:hAnsi", "w:cs", "w:eastAsia"):
             rfonts.set(dx.qn(a), name)
+        for a in ("w:asciiTheme", "w:hAnsiTheme", "w:cstheme", "w:eastAsiaTheme"):
+            if rfonts.get(dx.qn(a)) is not None:
+                del rfonts.attrib[dx.qn(a)]
     if size:
         f.size = dx.Pt(size)
     if color:
@@ -51,168 +54,214 @@ def _font(style, size=None, color=None, bold=None, italic=None, name=None):
         f.italic = italic
 
 
-def _table_style_xml(col):
-    border = col["border"].lstrip("#")
+def _table_style_xml(dk):
+    """Estilo de tabla 'Table': cabecera gris, bordes finos negros (plantilla del usuario)."""
+    border = dk["tableBorder"].lstrip("#")
+    sz = dk["tableBorderSz"]
     xml = (
         '<w:style xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
         'w:type="table" w:styleId="Table"><w:name w:val="Table"/><w:basedOn w:val="TableNormal"/>'
         '<w:uiPriority w:val="59"/><w:qFormat/>'
-        '<w:pPr><w:spacing w:before="40" w:after="40" w:line="240" w:lineRule="auto"/></w:pPr>'
-        '<w:rPr><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr>'
-        '<w:tblPr><w:tblStyleRowBandSize w:val="1"/><w:tblBorders>'
-        + "".join('<w:%s w:val="single" w:sz="4" w:space="0" w:color="%s"/>' % (b, border)
+        '<w:pPr><w:spacing w:before="30" w:after="30" w:line="240" w:lineRule="auto"/></w:pPr>'
+        '<w:rPr><w:sz w:val="%d"/><w:szCs w:val="%d"/></w:rPr>'
+        '<w:tblPr><w:tblBorders>'
+        + "".join('<w:%s w:val="single" w:sz="%d" w:space="0" w:color="%s"/>' % (b, sz, border)
                   for b in ("top", "left", "bottom", "right", "insideH", "insideV"))
-        + '</w:tblBorders><w:tblCellMar><w:top w:w="40" w:type="dxa"/><w:left w:w="100" w:type="dxa"/>'
-        '<w:bottom w:w="40" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tblCellMar></w:tblPr>'
-        '<w:tblStylePr w:type="firstRow"><w:rPr><w:b/><w:color w:val="FFFFFF"/></w:rPr>'
+        + '</w:tblBorders><w:tblCellMar><w:top w:w="30" w:type="dxa"/><w:left w:w="80" w:type="dxa"/>'
+        '<w:bottom w:w="30" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr>'
+        '<w:tblStylePr w:type="firstRow"><w:rPr><w:b/></w:rPr>'
         '<w:tcPr><w:shd w:val="clear" w:color="auto" w:fill="%s"/></w:tcPr></w:tblStylePr>'
-        '<w:tblStylePr w:type="band2Horz"><w:tcPr><w:shd w:val="clear" w:color="auto" w:fill="%s"/>'
-        '</w:tcPr></w:tblStylePr></w:style>'
-    ) % (col["accent"].lstrip("#"), col["surface"].lstrip("#"))
+        '</w:style>'
+    ) % (int(dk["tablePt"] * 2), int(dk["tablePt"] * 2), dk["tableHeader"].lstrip("#"))
     from docx.oxml import parse_xml
     return parse_xml(xml)
 
 
-def _field_run(paragraph, instr):
-    r = dx.el("w:r")
-    r.append(dx.el("w:fldChar", **{"w:fldCharType": "begin"}))
-    paragraph._p.append(r)
-    r2 = dx.el("w:r")
-    it = dx.el("w:instrText", **{"xml:space": "preserve"})
-    it.text = " %s " % instr
-    r2.append(it)
-    paragraph._p.append(r2)
-    r3 = dx.el("w:r")
-    r3.append(dx.el("w:fldChar", **{"w:fldCharType": "separate"}))
-    paragraph._p.append(r3)
-    r4 = dx.el("w:r")
-    t = dx.el("w:t")
-    t.text = "1"
-    r4.append(t)
-    paragraph._p.append(r4)
-    r5 = dx.el("w:r")
-    r5.append(dx.el("w:fldChar", **{"w:fldCharType": "end"}))
-    paragraph._p.append(r5)
+def _field_run(paragraph, instr, size=None):
+    for kind in ("begin", None, "separate", "text", "end"):
+        r = dx.el("w:r")
+        if size:
+            rpr = dx.el("w:rPr")
+            rpr.append(dx.el("w:sz", **{"w:val": str(int(size * 2))}))
+            r.append(rpr)
+        if kind in ("begin", "separate", "end"):
+            r.append(dx.el("w:fldChar", **{"w:fldCharType": kind}))
+        elif kind is None:
+            it = dx.el("w:instrText", **{"xml:space": "preserve"})
+            it.text = " %s " % instr
+            r.append(it)
+        else:
+            t = dx.el("w:t")
+            t.text = "1"
+            r.append(t)
+        paragraph._p.append(r)
+
+
+def _styles(doc, dk):
+    """Estilos de párrafo comunes (Arial, negro) generalizados desde la plantilla."""
+    sans, mono = dk["font"], dk["fontMono"]
+    txt, muted = dk["text"], dk["textMuted"]
+    normal = doc.styles["Normal"]
+    _font(normal, dk["bodyPt"], txt, name=sans)
+    normal.paragraph_format.space_after = dx.Pt(6)
+    normal.paragraph_format.line_spacing = 1.1
+    for name in ("Body Text", "First Paragraph", "Compact", "Block Text"):
+        _font(_style(doc, name, base="Normal"), dk["bodyPt"], txt, name=sans)
+    doc.styles["Compact"].paragraph_format.space_after = dx.Pt(2)
+    _font(_style(doc, "Title"), dk["titlePt"], txt, bold=True, name=sans)
+    ttl = doc.styles["Title"]
+    ttl.paragraph_format.space_after = dx.Pt(8)
+    pPr = ttl.element.get_or_add_pPr()
+    for b in pPr.findall(dx.qn("w:pBdr")):
+        pPr.remove(b)
+    _font(_style(doc, "Subtitle"), dk["subtitlePt"], muted, bold=False, italic=False, name=sans)
+    for name in ("Author", "Date", "Abstract"):
+        _font(_style(doc, name, base="Normal"), 11, muted, name=sans)
+    for name, size in (("Heading 1", dk["h1Pt"]), ("Heading 2", dk["h2Pt"]),
+                       ("Heading 3", dk["h3Pt"]), ("Heading 4", dk["bodyPt"])):
+        s = doc.styles[name]
+        _font(s, size, txt, bold=True, italic=False, name=sans)
+        s.paragraph_format.space_before = dx.Pt(12 if name == "Heading 1" else 8)
+        s.paragraph_format.space_after = dx.Pt(4)
+    for name in ("Caption", "Image Caption", "Table Caption"):
+        _font(_style(doc, name, base="Normal"), dk["captionPt"], muted, italic=True, name=sans)
+    s = _style(doc, "Source Code", base="Normal")
+    _font(s, 9, txt, name=mono)
+    s.paragraph_format.space_after = dx.Pt(0)
+    _font(_style(doc, "Verbatim Char", kind=2), 9, txt, name=mono)
+    _font(_style(doc, "TOC Heading", base="Heading 1"), dk["h1Pt"], txt, bold=True, name=sans)
+    _font(_style(doc, "Hyperlink", kind=2), None, txt)
+    doc.styles.element.append(_table_style_xml(dk))
+
+
+def _grey_table(doc, dk, headers, widths_cm, section_row=True, data_rows=1):
+    """Tabla con el formato de la plantilla: cabecera #D9D9D9, fila de sección #F2F2F2."""
+    from docx.shared import Cm
+    rows = 1 + (1 if section_row else 0) + data_rows
+    t = doc.add_table(rows=rows, cols=len(headers))
+    t.style = doc.styles["Table"]
+    t.autofit = False
+    for j, w in enumerate(widths_cm):
+        t.columns[j].width = Cm(w)
+        for r in t.rows:
+            r.cells[j].width = Cm(w)
+    for j, h in enumerate(headers):
+        cell = t.cell(0, j)
+        cell.text = h
+        dx.set_cell_shading(cell, dk["tableHeader"])
+        for r in cell.paragraphs[0].runs:
+            r.font.bold, r.font.size = True, dx.Pt(dk["tablePt"])
+    trPr = t.rows[0]._tr.get_or_add_trPr()
+    trPr.append(dx.el("w:tblHeader"))
+    first_data = 1
+    if section_row:
+        merged = t.cell(1, 0).merge(t.cell(1, len(headers) - 1))
+        merged.text = "{{SECCION}}"
+        dx.set_cell_shading(merged, dk["tableSection"])
+        for r in merged.paragraphs[0].runs:
+            r.font.bold, r.font.size = True, dx.Pt(dk["tablePt"])
+        first_data = 2
+    for i in range(first_data, rows):
+        for j in range(len(headers)):
+            run = t.cell(i, j).paragraphs[0].add_run("")
+            run.font.size = dx.Pt(dk["tablePt"])
+    return t
+
+
+def _page(sec, landscape, margin_cm):
+    from docx.enum.section import WD_ORIENT
+    from docx.shared import Cm
+    if landscape:
+        sec.orientation = WD_ORIENT.LANDSCAPE
+        sec.page_width, sec.page_height = Cm(29.7), Cm(21.0)
+    else:
+        sec.page_width, sec.page_height = Cm(21.0), Cm(29.7)
+    for side in ("left_margin", "right_margin", "top_margin", "bottom_margin"):
+        setattr(sec, side, Cm(margin_cm))
+
+
+REQ_HEADERS = ["Code", "Description", "Type", "Source", "Priority", "Verification",
+               "Acceptance criterion", "Status"]
+REQ_COLUMNS = {"ID": 0, "DESCRIPCION": 1, "TIPO": 2, "ORIGEN": 3, "PRIORIDAD": 4,
+               "VERIFICACION": 5, "CRITERIO": 6, "ESTADO": 7}
 
 
 def build_base(out_path):
-    """Genera plantilla-base.docx con la paleta STD-UI y su mapa."""
+    """Genera las dos plantillas Word del proyecto a partir del estilo del usuario.
+
+    - plantilla-requisitos.docx: A4 apaisado; título + convenciones + tabla única
+      Code|Description|Type|Source + Priority|Verification|Acceptance criterion|Status
+      con filas de sección (decisión del usuario: columnas extra en el Word).
+    - plantilla-documentos.docx: A4 vertical, mismo estilo, portada simple, índice y pie
+      con numeración (generalización acordada para el resto de documentos).
+    """
     _need_docx()
     from docx import Document
     from docx.enum.text import WD_ALIGN_PARAGRAPH
-    from docx.shared import Cm
-    tk = c.tokens()
-    col, fnt, sz = tk["color"], tk["font"], tk["size"]
-    sans, mono = fnt["sansFallbackOffice"], fnt["monoFallbackOffice"]
+    dk = c.tokens()["docx"]
+    out_dir = Path(out_path).parent if str(out_path).endswith(".docx") else Path(out_path)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # ---- requisitos
+    doc = Document()
+    _page(doc.sections[0], True, 2.0)
+    _styles(doc, dk)
+    doc.add_paragraph("{{TITULO}}", style="Title")
+    doc.add_paragraph("Párrafos de convenciones (se toman del markdown).")
+    _grey_table(doc, dk, REQ_HEADERS, [2.4, 8.6, 2.2, 2.1, 1.7, 2.3, 4.6, 1.8])
+    req_path = out_dir / "plantilla-requisitos.docx"
+    doc.save(str(req_path))
+    c.save_json(req_path.with_suffix(".map.json"), {
+        "$comment": "Formato de requisitos del usuario (Requirements_2.pages) con 4 columnas extra.",
+        "document": {"cover": "title-only", "toc": False, "control_table": False,
+                     "header_footer": False, "strip_sections": ["Historial de cambios"]},
+        "requirement_table": {"table_index": 0, "mode": "rows", "header_rows": 1,
+                              "section_row": 1, "data_row": 2, "columns": REQ_COLUMNS},
+        "table_reference": {"table_index": 0, "header_rows": 1, "body_rows": [2]},
+        "decisions": [
+            "2026-11-01 · Plantilla original en .pages: se recrea en .docx (Arial, negro, cabecera "
+            "#D9D9D9, filas de sección #F2F2F2, bordes negros finos).",
+            "2026-11-01 · Prioridad, verificación, criterio de aceptación y estado se exportan como "
+            "columnas extra (Priority, Verification, Acceptance criterion, Status); por ello el "
+            "documento de requisitos es A4 apaisado.",
+            "2026-11-01 · El documento de requisitos no lleva portada, índice ni tabla de control "
+            "(idéntico a la plantilla).",
+        ],
+    })
+
+    # ---- resto de documentos
     doc = Document()
     sec = doc.sections[0]
-    sec.page_width, sec.page_height = Cm(21.0), Cm(29.7)
-    for side in ("left_margin", "right_margin"):
-        setattr(sec, side, Cm(2.3))
-    sec.top_margin, sec.bottom_margin = Cm(2.5), Cm(2.2)
-
-    normal = doc.styles["Normal"]
-    _font(normal, sz["docBodyPt"], col["text"], name=sans)
-    normal.paragraph_format.space_after = dx.Pt(6)
-    normal.paragraph_format.line_spacing = 1.15
-    for name in ("Body Text", "First Paragraph", "Compact", "Block Text"):
-        s = _style(doc, name, base="Normal")
-        _font(s, sz["docBodyPt"], col["text"], name=sans)
-    doc.styles["Compact"].paragraph_format.space_after = dx.Pt(2)
-    _font(_style(doc, "Title"), 26, col["text"], bold=True, name=sans)
-    _font(_style(doc, "Subtitle"), 14, col["textMuted"], bold=False, italic=False, name=sans)
-    for name in ("Author", "Date", "Abstract"):
-        _font(_style(doc, name, base="Normal"), 11, col["textMuted"], name=sans)
-    heads = [("Heading 1", sz["docH1Pt"], col["accent"]), ("Heading 2", sz["docH2Pt"], col["text"]),
-             ("Heading 3", sz["docH3Pt"], col["text"]), ("Heading 4", 11, col["textMuted"])]
-    for name, size, color in heads:
-        s = doc.styles[name]
-        _font(s, size, color, bold=True, italic=False, name=sans)
-        s.paragraph_format.space_before = dx.Pt(14 if name == "Heading 1" else 10)
-        s.paragraph_format.space_after = dx.Pt(6)
-    for name in ("Caption", "Image Caption", "Table Caption"):
-        s = _style(doc, name, base="Normal")
-        _font(s, sz["docCaptionPt"], col["textMuted"], italic=True, name=sans)
-    s = _style(doc, "Source Code", base="Normal")
-    _font(s, 9, col["text"], name=mono)
-    s.paragraph_format.space_after = dx.Pt(0)
-    _font(_style(doc, "Verbatim Char", kind=2), 9, col["text"], name=mono)
-    _font(_style(doc, "TOC Heading", base="Heading 1"), sz["docH1Pt"], col["accent"], bold=True,
-          name=sans)
-    hl = _style(doc, "Hyperlink", kind=2)
-    _font(hl, None, col["accent"])
-    doc.styles.element.append(_table_style_xml(col))
-
-    # cabecera y pie
-    hp = sec.header.paragraphs[0]
-    hp.text = "{{PROYECTO}}\t\t{{CODIGO}} · v{{VERSION}}"
-    for r in hp.runs:
-        r.font.size, r.font.color.rgb, r.font.name = dx.Pt(8), dx.hex_rgb(col["textMuted"]), sans
+    _page(sec, False, 2.5)
+    _styles(doc, dk)
     fp = sec.footer.paragraphs[0]
     fp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    run = fp.add_run("Página ")
-    run.font.size = dx.Pt(8)
-    _field_run(fp, "PAGE")
-    run = fp.add_run(" de ")
-    run.font.size = dx.Pt(8)
-    _field_run(fp, "NUMPAGES")
-
-    # cuerpo: portada (se copia al exportar), tabla de requisito y tabla de referencia
-    for _ in range(6):
-        doc.add_paragraph("")
+    for txt, fld in (("{{CODIGO}} · v{{VERSION}} · Página ", "PAGE"), (" de ", "NUMPAGES")):
+        r = fp.add_run(txt)
+        r.font.size, r.font.name = dx.Pt(8), dk["font"]
+        r.font.color.rgb = dx.hex_rgb(dk["textMuted"])
+        _field_run(fp, fld, 8)
     doc.add_paragraph("{{TITULO}}", style="Title")
-    doc.add_paragraph("{{SUBTITULO}}", style="Subtitle")
-    doc.add_paragraph("")
-    doc.add_paragraph("Código {{CODIGO}} · Versión {{VERSION}} · {{FECHA}}", style="Author")
-    doc.add_paragraph("{{AUTOR}}", style="Author")
-    doc.add_paragraph("{{CLIENTE}}", style="Author")
-    doc.add_paragraph("").add_run().add_break(dx.WD_BREAK.PAGE)
+    _grey_table(doc, dk, ["Columna", "Columna", "Valor"], [5.3, 5.3, 5.4], section_row=True)
+    # tema del documento: fuentes mayor/menor también en Arial para estilos heredados
 
-    doc.add_paragraph("Formato de requisito", style="Heading 2")
-    t = doc.add_table(rows=8, cols=2)
-    t.style = doc.styles["Table"]
-    rows = [("{{ID}}", "{{TITULO}}"), ("Descripción", "{{DESCRIPCION}}"), ("Tipo", "{{TIPO}}"),
-            ("Prioridad", "{{PRIORIDAD}}"), ("Origen", "{{ORIGEN}}"),
-            ("Método de verificación", "{{VERIFICACION}}"),
-            ("Criterio de aceptación", "{{CRITERIO}}"), ("Estado", "{{ESTADO}}")]
-    for i, (a, b) in enumerate(rows):
-        t.cell(i, 0).text, t.cell(i, 1).text = a, b
-        t.cell(i, 0).width, t.cell(i, 1).width = Cm(4.5), Cm(11.9)
-        if i > 0:
-            dx.set_cell_shading(t.cell(i, 0), col["surface"])
-            for p in t.cell(i, 0).paragraphs:
-                for r in p.runs:
-                    r.font.bold = True
-    t.autofit = False
-    t.columns[0].width, t.columns[1].width = Cm(4.5), Cm(11.9)
-    doc.add_paragraph("")
-    doc.add_paragraph("Tabla de referencia", style="Heading 2")
-    t2 = doc.add_table(rows=3, cols=3)
-    t2.style = doc.styles["Table"]
-    for j, h in enumerate(("Columna", "Columna", "Valor")):
-        t2.cell(0, j).text = h
-    for i in (1, 2):
-        for j in range(3):
-            t2.cell(i, j).text = "dato"
-    for tb in (t, t2):
-        for cell in tb.rows[0].cells:
-            dx.set_cell_shading(cell, col["accent"])
-            for p in cell.paragraphs:
-                for r in p.runs:
-                    r.font.bold = True
-                    r.font.color.rgb = dx.hex_rgb("#FFFFFF")
-    out_path = Path(out_path)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    doc.save(str(out_path))
-    mapping = {
-        "$comment": "Mapa de la plantilla base. Ver skill export-word para el formato.",
-        "cover": {"mode": "template"},
-        "requirement_table": {"table_index": 0, "mode": "per-requirement", "fill": "placeholders"},
-        "table_reference": {"table_index": 1, "header_rows": 1},
-        "decisions": [],
-    }
-    c.save_json(out_path.with_suffix(".map.json"), mapping)
-    c.info("plantilla base generada: %s" % out_path)
+    doc_path = out_dir / "plantilla-documentos.docx"
+    doc.save(str(doc_path))
+    c.save_json(doc_path.with_suffix(".map.json"), {
+        "$comment": "Generalización del estilo de la plantilla de requisitos al resto de documentos.",
+        "document": {"cover": "pandoc", "toc": True, "control_table": True, "header_footer": True},
+        "requirement_table": None,
+        "table_reference": {"table_index": 0, "header_rows": 1, "body_rows": [2]},
+        "decisions": [
+            "2026-11-01 · Resto de documentos: mismo estilo (Arial, negro, tablas grises) con "
+            "portada simple, índice y pie con código, versión y página.",
+        ],
+    })
+    old = out_dir / "plantilla-base.docx"
+    for p in (old, old.with_suffix(".map.json")):
+        if p.exists():
+            p.unlink()
+    c.info("plantillas generadas: %s, %s" % (req_path.name, doc_path.name))
     return c.EXIT_OK
 
 

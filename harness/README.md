@@ -74,13 +74,22 @@ harness/
   git-hooks/   commit-msg, pre-commit, pre-push
   bin/h        CLI único → scripts/hcli.py + scripts/hlib/*
   tokens/      tokens.json, tokens.css, mermaid-config.json
-  templates/   docx (plantilla base), docs, c-project, frontend, deploy
+  templates/   docx (plantillas Word + original .pages), docs, c-project, frontend, deploy
   tests/       run.sh (autotests), e2e.sh (4 fases completas)
 ```
 
 ## CLI `h`
 
 `h --help` lista todo. Los más usados: `h gate status|check|close|reopen`, `h req lint`, `h export <doc>`, `h template register|inspect|validate`, `h diagram render`, `h matrix render`, `h impl validate|next|status`, `h sandbox prepare|collect|check-impl`, `h test F-NNN|--all`, `h log change`, `h trace`, `h git start-phase|start-feature|finish|release`, `h offer budget|section`, `h pptx build`, `h dossier build`.
+
+## Plantilla Word
+
+La plantilla de requisitos del usuario (`templates/docx/origen/Requirements_2.pages`) está recreada en `.docx` porque Pages no puede leerse fuera de macOS:
+
+- `plantilla-requisitos.docx`: título, párrafos de convenciones (ISO/IEC/IEEE 29148 + EARS, códigos `SYS-<cat>-<nn>` / `H-<nn>`, Source `R1–R4`/«Derivado», `[X]` pendientes) y una tabla con filas de sección; añade las columnas Priority, Verification, Acceptance criterion y Status (por eso es A4 apaisado).
+- `plantilla-documentos.docx`: el mismo estilo generalizado al resto de documentos, con portada e índice.
+
+Se regeneran con `h template build-base`. Si exportas la plantilla desde Pages a Word (Archivo → Exportar a → Word), `/plantilla-registrar` la usa directamente.
 
 ## Autotests
 

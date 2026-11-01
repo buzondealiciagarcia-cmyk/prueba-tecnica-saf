@@ -38,34 +38,61 @@ def git_project(tmp):
     assert r.returncode == 0, r.stderr
 
 
-REQ_OK = """# Especificación de requisitos
+REQ_OK = """# Requisitos del sistema
 
 | Campo | Valor |
 |---|---|
 | Código | PRB-REQ |
 | Versión | 1.0 |
 
-## 3. Requisitos funcionales
+Convenciones de la plantilla.
 
-### REQ-FUN-001 — Ciclo
+## Entradas
+
+### SYS-IN-01 — Ciclo
 
 | Campo | Valor |
 |---|---|
 | Descripción | El sistema deberá procesar una nube cada 50 ms. |
 | Tipo | Funcional |
+| Origen | R1 |
 | Prioridad | Must |
-| Origen | Enunciado |
 | Método de verificación | Test |
 | Criterio de aceptación | Latencia ≤ 50 ms |
+| Estado | Aprobado |
+
+## Seguridad y modos de funcionamiento
+
+### SYS-SAF-01 — Pérdida de nubes
+
+| Campo | Valor |
+|---|---|
+| Descripción | Si no llega ninguna nube durante 3 ciclos, entonces el sistema deberá marcar el grid como desconocido. |
+| Tipo | Funcional |
+| Origen | Derivado |
+| Prioridad | Must |
+| Método de verificación | Test |
+| Criterio de aceptación | Transición en ≤ 150 ms |
+| Estado | Aprobado |
+
+## Hipótesis
+
+### H-01 — Vía recta
+
+| Campo | Valor |
+|---|---|
+| Descripción | La vía es recta en el campo de visión del radar. |
+| Tipo | Hipótesis |
+| Origen | Derivado |
 | Estado | Aprobado |
 """
 
 
 class TestRequirements(unittest.TestCase):
     def test_parse_and_ignore_comments(self):
-        text = "<!--\n### REQ-FUN-999 — Ejemplo\n-->\n" + REQ_OK
+        text = "<!--\n### SYS-IN-99 — Ejemplo\n-->\n" + REQ_OK
         rs = reqs.parse(text)
-        self.assertEqual([r["id"] for r in rs], ["REQ-FUN-001"])
+        self.assertEqual([r["id"] for r in rs], ["SYS-IN-01", "SYS-SAF-01", "H-01"])
         self.assertEqual(rs[0]["campos"]["verificacion"], "Test")
 
     def test_lint_detects_vague_and_missing(self):
@@ -73,11 +100,21 @@ class TestRequirements(unittest.TestCase):
             d = Path(tmp, "docs", "01-requisitos")
             d.mkdir(parents=True)
             Path(tmp, "harness.config.json").write_text("{}")
+            (d / "requisitos.md").write_text(REQ_OK)
+            errs, _ = reqs.lint(Path(tmp), strict=True)
+            self.assertEqual(errs, [])
             bad = REQ_OK.replace("procesar una nube cada 50 ms", "ser rápido y adecuado") \
-                        .replace("| Prioridad | Must |\n", "")
+                        .replace("| Prioridad | Must |\n", "", 1) \
+                        .replace("| Origen | R1 |", "| Origen | Enunciado |") \
+                        .replace("### H-01", "### SYS-T-01") \
+                        .replace("≤ 150 ms |", "≤ [PENDIENTE: 150 ms] |")
             (d / "requisitos.md").write_text(bad)
             errs, warns = reqs.lint(Path(tmp), strict=True)
-            self.assertTrue(any("Prioridad" in e for e in errs))
+            joined = "\n".join(errs)
+            self.assertIn("Prioridad", joined)
+            self.assertIn("Source", joined)
+            self.assertIn("SYS-T-01", joined)          # sección Hipótesis exige prefijo H-
+            self.assertIn("pendiente", joined)
             self.assertTrue(any("vago" in w for w in warns))
 
 
@@ -179,7 +216,7 @@ class TestGitHooks(unittest.TestCase):
         os.unlink(fh.name)
 
     def test_branch_names(self):
-        for ok in ("feature/REQ-FUN-001-ogrid-init", "docs/requisitos", "harness/doc-export",
+        for ok in ("feature/SYS-PR-01-ogrid-init", "docs/requisitos", "harness/doc-export",
                    "test/integration", "ui/grid-viewer", "release/1.0.0"):
             self.assertEqual(run([H, "git", "check-branch", ok]).returncode, 0, ok)
         for bad in ("feature/x", "Docs/requisitos", "random", "docs/otra"):
@@ -224,15 +261,39 @@ class TestExport(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             git_project(tmp)
             Path(tmp, "docs/01-requisitos/requisitos.md").write_text(
-                REQ_OK + "\nTabla: Ejemplo\n\n| A | B |\n|---|---|\n| 1 | 2 |\n")
+                REQ_OK.replace("cada 50 ms. |", "cada [PENDIENTE: 50 ms]. |"))
             r = run([H, "export", "requisitos"], cwd=tmp)
             self.assertEqual(r.returncode, 0, r.stderr)
             doc = Document(str(Path(tmp, "docs/export/requisitos.docx")))
-            heads = [t.rows[0].cells[0].text for t in doc.tables]
-            self.assertIn("REQ-FUN-001", heads)
+            self.assertEqual(len(doc.tables), 1)            # sin tabla de control
+            t = doc.tables[0]
+            self.assertEqual([c.text for c in t.rows[0].cells][:4],
+                             ["Code", "Description", "Type", "Source"])
+            col0 = [r.cells[0].text for r in t.rows]
+            self.assertEqual(col0, ["Code", "Entradas", "SYS-IN-01",
+                                    "Seguridad y modos de funcionamiento", "SYS-SAF-01",
+                                    "Hipótesis", "H-01"])
+            self.assertIn("[50 ms]", t.rows[2].cells[1].text)
+            self.assertTrue(doc.sections[0].page_width > doc.sections[0].page_height)
+            texts = "\n".join(p.text for p in doc.paragraphs)
+            self.assertNotIn("{{", texts)
+            self.assertNotIn("Índice", texts)
+
+    def test_generic_document_has_cover_and_grey_tables(self):
+        from docx import Document
+        with tempfile.TemporaryDirectory() as tmp:
+            git_project(tmp)
+            Path(tmp, "nota.md").write_text("# Nota\n\n## Uno\n\nTabla: Ejemplo\n\n"
+                                            "| A | B |\n|---|---|\n| 1 | 2 |\n")
+            r = run([H, "export", "nota.md"], cwd=tmp)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            doc = Document(str(Path(tmp, "docs/export/nota.docx")))
+            styles = [p.style.name for p in doc.paragraphs]
+            self.assertIn("Title", styles)
             texts = "\n".join(p.text for p in doc.paragraphs)
             self.assertIn("Tabla 1. Ejemplo", texts)
-            self.assertNotIn("{{", texts)
+            shd = doc.tables[-1].rows[0].cells[0]._tc.xml
+            self.assertIn("D9D9D9", shd.upper())
 
 
 class TestInstaller(unittest.TestCase):

@@ -1,0 +1,20 @@
+{
+  "$comment": "Generalización del estilo de la plantilla de requisitos al resto de documentos.",
+  "document": {
+    "cover": "pandoc",
+    "toc": true,
+    "control_table": true,
+    "header_footer": true
+  },
+  "requirement_table": null,
+  "table_reference": {
+    "table_index": 0,
+    "header_rows": 1,
+    "body_rows": [
+      2
+    ]
+  },
+  "decisions": [
+    "2026-11-01 · Resto de documentos: mismo estilo (Arial, negro, tablas grises) con portada simple, índice y pie con código, versión y página."
+  ]
+}
