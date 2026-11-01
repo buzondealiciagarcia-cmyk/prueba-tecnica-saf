@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-REQ |
-| Versión | 0.1 |
+| Versión | 0.2 |
 | Fecha | 2026-11-01 |
 | Autor | Alicia Garcia |
 | Estado | Borrador |
@@ -474,52 +474,28 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | El sistema se encuentra en exactamente 1 de los 3 modos en el 100 % de los ciclos. |
 | Estado | Borrador |
 
-### SYS-SAF-02 — Transición de normal a degradado
+### SYS-SAF-04 — Reset de degradado a normal desde el HMI
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si se produce una condición de degradación [PENDIENTE: condiciones de normal a degradado, ver Q-003] estando en modo normal, entonces el sistema deberá pasar a modo degradado. |
+| Descripción | Si se recibe desde el HMI el reset de degradado estando en modo degradado, entonces el sistema deberá pasar a modo normal. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L45) |
+| Origen | Derivado de requisitos.txt (Modos, L46); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Transición a degradado en ≤ [PENDIENTE: 1 ciclo de 50 ms] tras la condición inyectada. |
+| Criterio de aceptación | Transición a normal en ≤ [PENDIENTE: X ms] tras el reset de degradado recibido; el reset de fallo no produce la transición. |
 | Estado | Borrador |
 
-### SYS-SAF-03 — Transición de degradado a fallo
+### SYS-SAF-05 — Confianza reducida en modo degradado
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si se produce un fallo estando en modo degradado, entonces el sistema deberá pasar a modo fallo. |
+| Descripción | Si el sistema está en modo degradado, entonces el sistema deberá seguir emitiendo alertas con confianza reducida, incluida la salida de ausencia de obstáculo. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L45) |
+| Origen | Derivado de requisitos.txt (Modos, L47); respuesta del usuario a Q-003 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Transición a fallo en ≤ [PENDIENTE: 1 ciclo de 50 ms] tras el segundo fallo inyectado. |
-| Estado | Borrador |
-
-### SYS-SAF-04 — Recuperación de degradado a normal mediante reset
-
-| Campo | Valor |
-|---|---|
-| Descripción | Si se recibe un reset estando en modo degradado, entonces el sistema deberá pasar a modo normal [PENDIENTE: ¿solo si el fallo ya no está presente?]. |
-| Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L46) |
-| Prioridad | Must |
-| Método de verificación | Test |
-| Criterio de aceptación | Tras el reset la transición a normal se produce en ≤ [PENDIENTE: X ms]. |
-| Estado | Borrador |
-
-### SYS-SAF-05 — Alertas con confianza reducida en modo degradado
-
-| Campo | Valor |
-|---|---|
-| Descripción | Si el sistema está en modo degradado, entonces el sistema deberá seguir emitiendo alertas indicando una confianza reducida. |
-| Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L47) |
-| Prioridad | Must |
-| Método de verificación | Test |
-| Criterio de aceptación | En modo degradado, el 100 % de las alertas de cada ciclo de 50 ms lleva confianza reducida [PENDIENTE: valor o escala de confianza]. |
+| Criterio de aceptación | En modo degradado, el 100 % de las salidas de cada ciclo de 50 ms lleva confianza reducida [PENDIENTE: valor o escala de confianza]. |
 | Estado | Borrador |
 
 ### SYS-SAF-06 — No declarar vía libre en modo fallo
@@ -562,7 +538,7 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el timestamp no avanza o retrocede, entonces el sistema deberá pasar a modo fallo desde el modo normal. |
+| Descripción | Si el timestamp de los datos recogidos no avanza o retrocede, entonces el sistema deberá pasar a modo fallo desde el modo normal. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Condiciones de fallo, L52); respuesta del usuario a Q-003 |
 | Prioridad | Must |
@@ -594,40 +570,76 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | Paso a fallo en ≤ 1 ciclo de 50 ms tras la notificación. |
 | Estado | Borrador |
 
-### SYS-SAF-12 — Fallo por ausencia prolongada de detecciones
+### SYS-SAF-12 — Degradado por ausencia de eco de raíles
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si no hay nada detectado durante [PENDIENTE: X s], entonces el sistema deberá pasar a modo [PENDIENTE: degradado o fallo]. |
+| Descripción | Si el sistema no detecta nada, ni siquiera el eco de los raíles, en 3 mediciones consecutivas estando en modo normal, entonces el sistema deberá pasar a modo degradado. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Condiciones de fallo, L55) |
-| Prioridad | Should |
-| Método de verificación | Test |
-| Criterio de aceptación | Transición tras [PENDIENTE: X s] sin detecciones. |
-| Estado | Borrador |
-
-### SYS-SAF-13 — Fallo por desalineación del radar
-
-| Campo | Valor |
-|---|---|
-| Descripción | Si se detecta desalineación del radar, entonces el sistema deberá pasar a modo [PENDIENTE: degradado o fallo]. |
-| Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Condiciones de fallo, L56) |
+| Origen | Derivado de requisitos.txt (Condiciones de fallo, L55); respuesta del usuario a Q-003 y Q-004 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Detección de desalineación > [PENDIENTE: X °] en ≤ [PENDIENTE: X s]. |
+| Criterio de aceptación | Paso a degradado en la 3.ª medición consecutiva (150 ms con periodo de 50 ms) sin ningún eco, y no antes. |
 | Estado | Borrador |
 
-### SYS-SAF-14 — Degradado permanente [PROPUESTA]
+### SYS-SAF-13 — Degradado por desalineación del radar
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el sistema permanece en modo degradado durante más de [PENDIENTE: X s], entonces el sistema deberá pasar a modo fallo. |
+| Descripción | Si se detecta desalineación del radar estando en modo normal, entonces el sistema deberá pasar a modo degradado. |
 | Tipo | Funcional |
-| Origen | Derivado de requisitos.txt (Modos, L49) |
-| Prioridad | Should |
+| Origen | Derivado de requisitos.txt (Condiciones de fallo, L56); respuesta del usuario a Q-003 |
+| Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Transición a fallo tras [PENDIENTE: X s] continuos en degradado. |
+| Criterio de aceptación | Paso a degradado en ≤ [PENDIENTE: X s] con desalineación > [PENDIENTE: 1 °]. |
+| Estado | Borrador |
+
+### SYS-SAF-14 — Degradado continuado a fallo
+
+| Campo | Valor |
+|---|---|
+| Descripción | Si el sistema permanece en modo degradado de forma continuada durante más de [PENDIENTE: X s], entonces el sistema deberá pasar a modo fallo. |
+| Tipo | Funcional |
+| Origen | Derivado de requisitos.txt (Modos, L49); respuesta del usuario a Q-003 |
+| Prioridad | Must |
+| Método de verificación | Test |
+| Criterio de aceptación | Paso a fallo tras [PENDIENTE: X s] continuos en modo degradado. |
+| Estado | Borrador |
+
+### SYS-SAF-15 — Funcionamiento en modo normal
+
+| Campo | Valor |
+|---|---|
+| Descripción | El sistema deberá cumplir en modo normal todos los requisitos de este documento. |
+| Tipo | Funcional |
+| Origen | Derivado de requisitos.txt (Modos, L44-L45); respuesta del usuario a Q-003 |
+| Prioridad | Must |
+| Método de verificación | Test |
+| Criterio de aceptación | 0 incumplimientos de los requisitos en 1 h de ejecución en modo normal. |
+| Estado | Borrador |
+
+### SYS-SAF-16 — Reset de fallo a normal desde el HMI
+
+| Campo | Valor |
+|---|---|
+| Descripción | Si se recibe desde el HMI el reset de fallo, protegido con [PENDIENTE: nivel de seguridad del reset], estando en modo fallo, entonces el sistema deberá pasar a modo normal. |
+| Tipo | Funcional |
+| Origen | Derivado de requisitos.txt (Modos, L44); respuesta del usuario a Q-003 y respuesta a Q-003 |
+| Prioridad | Must |
+| Método de verificación | Test |
+| Criterio de aceptación | Transición a normal en ≤ [PENDIENTE: X ms] solo con el reset de fallo válido; con el reset de degradado permanece en fallo. |
+| Estado | Borrador |
+
+### SYS-SAF-17 — Funcionamiento normal tras el reset de degradado
+
+| Campo | Valor |
+|---|---|
+| Descripción | Si se ejecuta el reset de degradado, entonces el sistema deberá funcionar en condiciones normales durante [PENDIENTE: 2 min]. |
+| Tipo | Funcional |
+| Origen | Derivado de requisitos.txt (Modos, L46); respuesta del usuario a Q-003 y respuesta a Q-003 |
+| Prioridad | Must |
+| Método de verificación | Test |
+| Criterio de aceptación | Tras el reset, 0 transiciones a degradado o fallo durante [PENDIENTE: 2 min] con entradas nominales. |
 | Estado | Borrador |
 
 
@@ -658,22 +670,34 @@ verificación y Criterio de aceptación son opcionales.
 | Estado | Borrador |
 
 
-## Hipótesis
-
-### H-01 — Ancho de vía de 1 m [PROPUESTA]
+### SYS-IMP-03 — Procesamiento a bordo del tranvía
 
 | Campo | Valor |
 |---|---|
-| Descripción | El ancho de vía es de 1 m [PENDIENTE: confirmar valor y que es hipótesis]. |
+| Descripción | El sistema deberá ejecutar el procesamiento a bordo del tranvía. |
+| Tipo | Restricción |
+| Origen | Derivado de requisitos.txt (Requisitos, L13); respuesta del usuario a Q-006 |
+| Prioridad | Must |
+| Método de verificación | Inspección |
+| Criterio de aceptación | El 100 % del procesamiento se ejecuta en el equipo de a bordo. |
+| Estado | Borrador |
+
+## Hipótesis
+
+### H-01 — Ancho de vía de 1 m
+
+| Campo | Valor |
+|---|---|
+| Descripción | El ancho de vía es de 1 m. |
 | Tipo | Hipótesis |
 | Origen | Derivado de requisitos.txt (Requisitos, L7) |
 | Estado | Borrador |
 
-### H-02 — Giro constante [PROPUESTA]
+### H-02 — Giro constante
 
 | Campo | Valor |
 |---|---|
-| Descripción | El tranvía mantiene un giro constante durante el intervalo de análisis [PENDIENTE: interpretar «(1)»]. |
+| Descripción | El tranvía mantiene un giro constante durante [PENDIENTE: intervalo de análisis, ver Q-018]. |
 | Tipo | Hipótesis |
 | Origen | Derivado de requisitos.txt (Requisitos, L23) |
 | Estado | Borrador |
@@ -729,3 +753,4 @@ verificación y Criterio de aceptación son opcionales.
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 2026-11-01 | Alicia Garcia | Creación a partir de la plantilla Requirements_2 |
+| 0.2 | 2026-11-01 | Alicia Garcia | Ronda 1 y 2 de dudas: modos y transiciones (SYS-SAF-04, 05, 09, 12 a 17), HMI, SYS-OUT-07 a 09, SYS-T-01, SYS-IMP-03, H-01 y H-02 confirmadas. Códigos SYS-SAF-02 y SYS-SAF-03 retirados (absorbidos por SYS-SAF-12, 13 y 14), no se reutilizan |
