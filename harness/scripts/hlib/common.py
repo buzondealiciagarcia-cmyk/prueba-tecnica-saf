@@ -45,18 +45,37 @@ DEFAULT_CONFIG = {
     },
     "module": "ogrid",
     "requirements": {
-        "id_regex": "^REQ-[A-Z]{3}-[0-9]{3}$",
-        "types": [
-            "Funcional", "Rendimiento", "Seguridad funcional", "Interfaz",
-            "Entorno", "Restricción", "No funcional",
-        ],
+        "$comment": "Formato de la plantilla del usuario (Requirements_2.pages): ISO/IEC/IEEE "
+                    "29148 + EARS, códigos SYS-<cat>-<nn> e hipótesis H-<nn>.",
+        "id_regex": "^(SYS-(DET|IN|PR|OUT|T|SAF|GEN|IMP)-[0-9]{2}|H-[0-9]{2})$",
+        "types": ["Funcional", "No funcional", "Restricción", "Hipótesis"],
         "priorities": ["Must", "Should", "Could", "Won't"],
         "verification": ["Test", "Análisis", "Inspección", "Demostración"],
         "states": ["Borrador", "En revisión", "Aprobado"],
+        "source_regex": "^(R[1-4](\\s*,\\s*R[1-4])*|Derivado( de .+)?)$",
+        "hypothesis_prefix": "H-",
+        "hypothesis_type": "Hipótesis",
+        "sections": [
+            {"name": "Normativa", "prefix": "SYS-GEN-"},
+            {"name": "Entradas", "prefix": "SYS-IN-"},
+            {"name": "Procesamiento", "prefix": "SYS-PR-"},
+            {"name": "Detección y prestaciones", "prefix": "SYS-DET-"},
+            {"name": "Salida", "prefix": "SYS-OUT-"},
+            {"name": "Tiempo", "prefix": "SYS-T-"},
+            {"name": "Seguridad y modos de funcionamiento", "prefix": "SYS-SAF-"},
+            {"name": "Implementación", "prefix": "SYS-IMP-"},
+            {"name": "Hipótesis", "prefix": "H-"},
+        ],
     },
     "export": {
-        "template": "@HARNESS@/templates/docx/plantilla-base.docx",
-        "template_map": "@HARNESS@/templates/docx/plantilla-base.map.json",
+        "template": "@HARNESS@/templates/docx/plantilla-documentos.docx",
+        "template_map": "@HARNESS@/templates/docx/plantilla-documentos.map.json",
+        "documents": {
+            "requisitos": {
+                "template": "@HARNESS@/templates/docx/plantilla-requisitos.docx",
+                "template_map": "@HARNESS@/templates/docx/plantilla-requisitos.map.json",
+            },
+        },
         "decisions": [],
     },
     "impl": {
@@ -226,7 +245,7 @@ def tokens():
     return json.loads((HARNESS_HOME / "tokens" / "tokens.json").read_text(encoding="utf-8"))
 
 
-MARKER_RE = re.compile(r"\bTBD\b|\bTODO\b|\[PENDIENTE[^\]]*\]|\[PROPUESTA[^\]]*\]|\?\?")
+MARKER_RE = re.compile(r"\bTBD\b|\bTODO\b|\[PENDIENTE[^\]]*\]|\[PROPUESTA[^\]]*\]|\[X\]|\?\?")
 
 
 def find_markers(text):

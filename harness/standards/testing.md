@@ -25,7 +25,7 @@
 | TST-CAS-02 | OBL | Cada caso declara en comentario `@req` (requisitos) y `@contract` (cláusula del contrato: `pre`, `post`, `err`, `perf`). |
 | TST-CAS-03 | OBL | Cobertura del contrato: al menos un caso por postcondición, por código de error, por límite de cada rango (mín, máx, mín−ε, máx+ε) y por cada parámetro puntero nulo. |
 | TST-CAS-04 | OBL | Técnicas mínimas: particiones de equivalencia, valores límite, y para lógica probabilística: casos con resultado analítico conocido (p.ej. N actualizaciones de log-odds con valor exacto) y propiedades (monotonía, acotación en [0,1], simetría). |
-| TST-CAS-05 | OBL | Mensajes de aserción con formato `"[TC-F003-04][REQ-xxx] <qué se esperaba>"` usando `TEST_ASSERT_*_MESSAGE`. Es lo único que el runner extrae para el feedback. |
+| TST-CAS-05 | OBL | Mensajes de aserción con formato `"[TC-F003-04][SYS-PR-02] <qué se esperaba>"` usando `TEST_ASSERT_*_MESSAGE`. Es lo único que el runner extrae para el feedback. |
 | TST-CAS-06 | OBL | Tolerancias de coma flotante explícitas y justificadas en el caso (`TEST_ASSERT_FLOAT_WITHIN(1e-5F, …)`). |
 | TST-CAS-07 | OBL | Tests deterministas: sin reloj, sin aleatoriedad no sembrada, sin red, sin orden implícito entre casos (`setUp`/`tearDown` reinician todo). |
 | TST-CAS-08 | REC | Datos de entrada grandes (nubes de puntos) desde `tests/data/` en el formato de STD-DAT. |

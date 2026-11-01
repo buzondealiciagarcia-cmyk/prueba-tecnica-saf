@@ -24,7 +24,7 @@ typedef enum
  * @return OGRID_OK on success, OGRID_ERR_PARAM if p_out is NULL, OGRID_ERR_RANGE if p is NaN.
  * @pre p_out != NULL.
  * @post 0 <= *p_out <= 1 when OGRID_OK.
- * @req REQ-FUN-002
+ * @req SYS-PR-01
  * @contract F-001
  */
 ogrid_status_t ogrid_clamp_prob(float p, float *p_out);

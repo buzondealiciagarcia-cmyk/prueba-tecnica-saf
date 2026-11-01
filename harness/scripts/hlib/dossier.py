@@ -28,7 +28,32 @@ def _meta(text):
     return _control_table(text)
 
 
-def _shift(text, src_dir, out_dir):
+REQ_BLOCK = ("<!-- h:landscape:begin -->\n\n"
+             "⟦H-REQTABLE:docs/01-requisitos/requisitos.md⟧\n\n"
+             "<!-- h:landscape:end -->\n")
+
+
+def _requirements_as_table(text, cfg):
+    """Sustituye las secciones de requisitos por la tabla de la plantilla (en apaisado)."""
+    names = {c.norm(x["name"]) for x in cfg["requirements"].get("sections", [])}
+    out, skipping, emitted = [], False, False
+    for line in text.splitlines():
+        m = re.match(r"^##\s+(.+?)\s*$", line)
+        if m and not line.startswith("###"):
+            from .reqs import section_name
+            if c.norm(section_name(m.group(1))) in names:
+                skipping = True
+                if not emitted:
+                    out += ["", REQ_BLOCK]
+                    emitted = True
+                continue
+            skipping = False
+        if not skipping:
+            out.append(line)
+    return "\n".join(out)
+
+
+def _shift(text, src_dir, out_dir, levels=2):
     lines, out, in_code = text.splitlines(), [], False
     first_h1_done = False
     skip_table = False
@@ -38,7 +63,7 @@ def _shift(text, src_dir, out_dir):
         if not in_code:
             if re.match(r"^#\s", line) and not first_h1_done:
                 first_h1_done = True
-                out.append("#" + line)
+                out.append("#" * levels + line)
                 skip_table = True
                 continue
             if skip_table:
@@ -46,8 +71,8 @@ def _shift(text, src_dir, out_dir):
                     continue
                 if line.strip():
                     skip_table = False
-            if re.match(r"^#{1,5}\s", line):
-                line = "#" + line
+            if re.match(r"^#{1,4}\s", line):
+                line = "#" * levels + line
             line = re.sub(r"(!\[[^\]]*\]\()(?!https?://|/)([^)\s]+)\)",
                           lambda m: "%s%s)" % (m.group(1), os.path.relpath(
                               str((src_dir / m.group(2)).resolve()), str(out_dir.resolve()))), line)
@@ -63,7 +88,7 @@ def build(root=None):
     docs = []
     body = []
     for title, sources, intro in PARTS:
-        body += ["", "# %s" % title, "", intro, ""]
+        body += ["", "## %s" % title, "", intro, ""]
         for pattern, required in sources:
             files = sorted(root.glob(pattern)) if "*" in pattern else [root / pattern]
             for f in files:
@@ -73,6 +98,8 @@ def build(root=None):
                     continue
                 text = f.read_text(encoding="utf-8")
                 m = _meta(text)
+                if f.name == "requisitos.md":
+                    text = _requirements_as_table(text, cfg)
                 t = re.search(r"^#\s+(.+)$", text, flags=re.M)
                 docs.append((t.group(1).strip() if t else f.stem, m.get("codigo", "—"),
                              m.get("version", "—"), m.get("fecha", "—"),
