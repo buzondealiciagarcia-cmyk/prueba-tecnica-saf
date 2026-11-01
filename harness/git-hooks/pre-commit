@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# pre-commit — protección de ramas, nombres, formato C y shellcheck (STD-GIT §5)
+set -euo pipefail
+
+readonly MAX_BYTES=5242880
+readonly BRANCH_RE='^(feature/[A-Za-z0-9]+(-[A-Za-z0-9]+)+|fix/[A-Za-z0-9]+(-[A-Za-z0-9]+)*|docs/(requisitos|diseno|implementacion|oferta|dosier)|test/[a-z0-9]+(-[a-z0-9]+)*|ui/[a-z0-9]+(-[a-z0-9]+)*|harness/[a-z0-9]+(-[a-z0-9]+)*|release/[0-9]+\.[0-9]+\.[0-9]+)$'
+
+fail() {
+    echo "pre-commit: $*" >&2
+    exit 1
+}
+
+main() {
+    local git_dir branch
+    git_dir="$(git rev-parse --git-dir)"
+    branch="$(git symbolic-ref --short HEAD 2>/dev/null || echo DETACHED)"
+    if [[ -f "${git_dir}/MERGE_HEAD" ]]; then
+        exit 0
+    fi
+    case "${branch}" in
+        main | develop)
+            fail "commits directos en '${branch}' prohibidos (GIT-BR-03); usa una rama de trabajo"
+            ;;
+    esac
+    if ! [[ "${branch}" =~ ${BRANCH_RE} ]]; then
+        fail "nombre de rama '${branch}' no válido (GIT-BR-04)"
+    fi
+    local f size
+    while IFS= read -r f; do
+        [[ -f "${f}" ]] || continue
+        size="$(wc -c <"${f}" | tr -d ' ')"
+        if [[ "${size}" -gt "${MAX_BYTES}" ]]; then
+            fail "${f} supera 5 MB (STD-GIT §6)"
+        fi
+        case "${f}" in
+            *.c | *.h)
+                if [[ "${f}" != third_party/* ]] && command -v clang-format >/dev/null 2>&1; then
+                    clang-format --dry-run --Werror "${f}" >/dev/null 2>&1 \
+                        || fail "${f} no cumple el formato (C-FMT-01): clang-format -i ${f}"
+                fi
+                ;;
+            *.sh)
+                if command -v shellcheck >/dev/null 2>&1; then
+                    shellcheck -S style "${f}" || fail "${f} no pasa shellcheck (STD-SH)"
+                fi
+                ;;
+        esac
+    done < <(git diff --cached --name-only --diff-filter=ACM)
+}
+
+main "$@"
