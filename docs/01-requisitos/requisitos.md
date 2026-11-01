@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-REQ |
-| Versión | 0.6 |
+| Versión | 0.7 |
 | Fecha | 2026-11-01 |
 | Autor | Alicia Garcia |
 | Estado | Borrador |
@@ -233,16 +233,16 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | Objetos de prueba a alturas distintas se posicionan con el error de SYS-DET-06. |
 | Estado | Borrador |
 
-### SYS-PR-08 — Mantenimiento del estado de la vía
+### SYS-PR-08 — Probabilidad interna de ocupación y estado de la celda
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá mantener actualizado el estado de cada celda de la vía como ocupado, probabilidad baja de obstáculo o zona no estudiada. |
+| Descripción | El sistema deberá mantener para cada celda de la vía una probabilidad numérica de ocupación interna y derivar de ella únicamente el estado de la celda como ocupado, probabilidad baja de obstáculo o zona no estudiada, sin derivar nunca un estado libre. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037; respuesta del usuario a Q-021 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | El estado de cada celda se actualiza en cada ciclo de 50 ms y toma uno de tres valores (ocupado, probabilidad baja de obstáculo, zona no estudiada) en el 100 % de los ciclos. |
+| Criterio de aceptación | La probabilidad de ocupación de cada celda se actualiza en cada ciclo de 50 ms; el estado derivado toma uno de tres valores (ocupado, probabilidad baja de obstáculo, zona no estudiada) y 0 estados «libre» en el 100 % de los ciclos. |
 | Estado | Borrador |
 
 ### SYS-PR-09 — Confirmación del obstáculo antes del aviso
@@ -430,16 +430,16 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | El 100 % de las detecciones incluye alcance con el error de localización de SYS-DET-06. |
 | Estado | Borrador |
 
-### SYS-OUT-06 — Publicación del estado de la vía
+### SYS-OUT-06 — Publicación del estado de la vía por celdas
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá publicar el estado de cada celda de la vía como ocupado, probabilidad baja de obstáculo o zona no estudiada en cada ciclo. |
+| Descripción | El sistema deberá publicar el estado de la vía por celdas como ocupado, probabilidad baja de obstáculo o zona no estudiada en cada ciclo, sin publicar la probabilidad numérica de ocupación. |
 | Tipo | Funcional |
 | Origen | Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Una publicación por cada ciclo de 50 ms con uno de los tres valores para cada celda. |
+| Criterio de aceptación | Una publicación por cada ciclo de 50 ms con uno de los tres valores para cada celda y 0 publicaciones de la probabilidad numérica. |
 | Estado | Borrador |
 
 ### SYS-OUT-07 — Aviso MQTT de modo degradado o fallo
@@ -488,6 +488,18 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las detecciones incluye un identificador de objeto. |
+| Estado | Borrador |
+
+### SYS-OUT-11 — Publicación de la lista de objetos detectados
+
+| Campo | Valor |
+|---|---|
+| Descripción | El sistema deberá publicar en cada ciclo la lista de objetos detectados, con los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10 por cada objeto. |
+| Tipo | Funcional |
+| Origen | R2 |
+| Prioridad | Must |
+| Método de verificación | Test |
+| Criterio de aceptación | Una publicación por cada ciclo de 50 ms con la lista de objetos detectados, y el 100 % de los objetos incluye todos los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10. |
 | Estado | Borrador |
 
 ## Tiempo
@@ -765,12 +777,12 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá estar acompañado de un plan de viabilidad del uso del radar para detectar obstáculos en la vía, con las capacidades y limitaciones del sensor para el caso de uso del cliente. |
+| Descripción | El sistema deberá estar acompañado de un plan de viabilidad, entregado en la fase de diseño como documento aparte, del uso del radar para detectar obstáculos en la vía, con las capacidades y limitaciones del sensor para el caso de uso de requisitos.txt. |
 | Tipo | Restricción |
 | Origen | R1 |
 | Prioridad | Must |
 | Método de verificación | Inspección |
-| Criterio de aceptación | Existe 1 plan de viabilidad entregado que recoge las capacidades y las limitaciones del radar para el caso de uso del cliente. |
+| Criterio de aceptación | Existe 1 plan de viabilidad, como documento aparte entregado en la fase de diseño, que recoge las capacidades y las limitaciones del radar para el caso de uso de requisitos.txt. |
 | Estado | Borrador |
 
 ### SYS-IMP-07 — Diseño hardware y software del sistema [ENTREGABLE]
@@ -813,7 +825,7 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá estar acompañado del (pseudo) código de un componente del sistema, por ejemplo la actualización de la probabilidad de ocupación de una celda del grid. |
+| Descripción | El sistema deberá estar acompañado del (pseudo) código de un componente del sistema, por ejemplo la actualización de la probabilidad interna de ocupación de una celda del grid, sin derivar nunca un estado libre. |
 | Tipo | Restricción |
 | Origen | R3 |
 | Prioridad | Must |
@@ -821,28 +833,28 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | Existe el (pseudo) código de 1 componente del sistema, trazado a los requisitos que cubre. |
 | Estado | Borrador |
 
-### SYS-IMP-11 — Justificación del lenguaje de programación [ENTREGABLE]
+### SYS-IMP-11 — Justificación del lenguaje C [ENTREGABLE]
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá estar acompañado de la justificación de la elección del lenguaje de programación seleccionado. |
+| Descripción | El sistema deberá estar acompañado de la justificación de la elección de C (C11 con MISRA, determinismo y sin memoria dinámica) frente a lenguajes alternativos. |
 | Tipo | Restricción |
 | Origen | R3 |
 | Prioridad | Must |
 | Método de verificación | Inspección |
-| Criterio de aceptación | Existe 1 justificación escrita de la elección del lenguaje de programación. |
+| Criterio de aceptación | Existe 1 justificación escrita de C (C11 con MISRA, determinismo y sin memoria dinámica) frente a al menos 1 lenguaje alternativo. |
 | Estado | Borrador |
 
 ### SYS-IMP-12 — Borrador de oferta al cliente [ENTREGABLE]
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá estar acompañado de un borrador de oferta al cliente para la ejecución del proyecto, con el alcance, el plazo y el presupuesto. |
+| Descripción | El sistema deberá estar acompañado de un borrador de oferta al cliente con el alcance, el plazo y el presupuesto, en dos fases: Fase A (viabilidad, diseño y pseudocódigo) y Fase B (implementación completa del sistema). |
 | Tipo | Restricción |
 | Origen | R4 |
 | Prioridad | Must |
 | Método de verificación | Inspección |
-| Criterio de aceptación | Existe 1 borrador de oferta que incluye alcance, plazo y presupuesto. |
+| Criterio de aceptación | Existe 1 borrador de oferta con alcance, plazo y presupuesto de las 2 fases (A y B); plazo, presupuesto, tarifas y margen los aporta el usuario, sin cifras inventadas. |
 | Estado | Borrador |
 
 ## Hipótesis
@@ -926,8 +938,8 @@ El campo Origen admite R1–R4 o «Derivado…», pero no ambos. Los requisitos 
 | Enunciado | Requisitos de entregable | Requisitos de comportamiento relacionados |
 |---|---|---|
 | R1 | SYS-IMP-06 | SYS-DET-01, SYS-DET-02, SYS-DET-06, SYS-IN-01 |
-| R2 | SYS-IMP-07, SYS-IMP-08, SYS-IMP-09 | SYS-SAF-01, SYS-SAF-08 a SYS-SAF-13, SYS-OUT-01 a SYS-OUT-10, SYS-T-01 |
-| R3 | SYS-IMP-10, SYS-IMP-11 | SYS-PR-08 |
+| R2 | SYS-IMP-07, SYS-IMP-08, SYS-IMP-09 | SYS-SAF-01, SYS-SAF-08 a SYS-SAF-13, SYS-OUT-01 a SYS-OUT-11, SYS-T-01 |
+| R3 | SYS-IMP-10, SYS-IMP-11 | SYS-PR-08, SYS-OUT-06 |
 | R4 | SYS-IMP-12 | |
 
 ## Decisiones aplazadas a diseño
@@ -971,3 +983,4 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | 0.4 | 2026-11-01 | Alicia Garcia | Ronda 4: objeto sobre la vía y campo de visión (Q-008, H-08); radar 3D (H-05, SYS-PR-07, SYS-IN-05; sustituye el radar 2D de requisitos.txt); tamaño mínimo 0,6 × 0,6 × 0,6 m (SYS-DET-02; sustituye «≥ 0,6 m²» de requisitos.txt L5); 220 m a lo largo de la vía (SYS-DET-01, SYS-PR-11); SYS-DET-03 retirado (probabilidad de detección a diseño), código no reutilizado; SYS-DET-04 reformulado; SYS-GEN-01 con EN 50126/50128/50129, SIL 2, sin certificar (Q-015) |
 | 0.5 | 2026-11-01 | Alicia Garcia | Ronda 5: valores y parámetros aplazados a diseño sin marcadores pendientes; filtro temporal del eco de raíles (SYS-PR-03); estado por celdas (SYS-PR-08, SYS-OUT-06); marcha atrás: rechazo y degradado (SYS-PR-10, SYS-SAF-19); 220 m sin cambio de modo (SYS-PR-11); validación de timestamp y de trama (SYS-IN-06, SYS-IN-07); identificador de objeto (SYS-OUT-10); entorno operativo (SYS-GEN-02); sin memoria dinámica en todo el software (SYS-IMP-01); nube (cloud) solo para trazabilidad y logs, y funcionamiento sin ella (SYS-IMP-04, SYS-IMP-05); posición en coordenadas de vía (SYS-OUT-01); tamaño mínimo 0,6 × 0,6 × 0,6 m, SYS-DET-02, 08 |
 | 0.6 | 2026-11-01 | Alicia Garcia | Ronda 6: se incorpora el enunciado R1–R4 (`entradas/enunciado.txt`); línea Source restaurada; entregables SYS-IMP-06 a SYS-IMP-12 con Origen R1, R2, R3 y R4; sección «Trazabilidad con el enunciado» |
+| 0.7 | 2026-11-01 | Alicia Garcia | Ronda 7: probabilidad numérica de ocupación interna y tres estados derivados (SYS-PR-08, SYS-OUT-06, SYS-IMP-10); dos salidas, lista de objetos (SYS-OUT-11 nuevo) y estado por celdas; SYS-IMP-11 justifica C; SYS-IMP-06 como documento aparte en la fase de diseño; SYS-IMP-12 en Fase A y Fase B |
