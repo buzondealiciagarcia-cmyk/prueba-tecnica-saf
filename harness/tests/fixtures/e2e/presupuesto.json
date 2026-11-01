@@ -1,0 +1,16 @@
+{
+  "moneda": "EUR",
+  "partidas": [
+    {"id": "P1", "concepto": "Ingeniería de requisitos", "fase": "Requisitos", "horas": 16, "tarifa": 55},
+    {"id": "P2", "concepto": "Diseño y alternativas", "fase": "Diseño", "horas": 40, "tarifa": 60},
+    {"id": "P3", "concepto": "Implementación y verificación", "fase": "Implementación", "horas": 120, "tarifa": 55}
+  ],
+  "otros": [{"id": "O1", "concepto": "Licencias de herramientas", "importe": 300}],
+  "contingencia_pct": 10,
+  "impuestos": {"nombre": "IVA", "pct": 21},
+  "plazo": {"inicio": "2027-01-11", "tareas": [
+    {"id": "T1", "nombre": "Requisitos", "fase": "Ingeniería", "semanas": 1},
+    {"id": "T2", "nombre": "Diseño", "fase": "Ingeniería", "semanas": 2, "depende": ["t1"]},
+    {"id": "T3", "nombre": "Implementación", "fase": "Desarrollo", "semanas": 4, "depende": ["t2"]}],
+    "hitos": [{"id": "H1", "nombre": "Entrega", "tras": ["t3"]}]}
+}

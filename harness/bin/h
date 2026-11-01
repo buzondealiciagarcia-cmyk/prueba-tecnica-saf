@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# h — punto de entrada único del harness (STD-SH). Uso: h --help
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR
+
+main() {
+    if ! command -v python3 >/dev/null 2>&1; then
+        echo "h: python3 no encontrado (xcode-select --install)" >&2
+        exit 3
+    fi
+    exec python3 "${SCRIPT_DIR}/../scripts/hcli.py" "$@"
+}
+
+main "$@"

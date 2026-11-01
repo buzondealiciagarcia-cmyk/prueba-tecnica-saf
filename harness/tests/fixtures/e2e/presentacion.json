@@ -1,0 +1,11 @@
+{"titulo": "Detección de obstáculos estáticos en vía", "subtitulo": "Grid de ocupación dinámico con radar frontal", "autor": "Álvaro", "fecha": "Noviembre 2026",
+ "diapositivas": [
+  {"tipo": "titulo"},
+  {"tipo": "seccion", "numero": "01", "titulo": "El problema", "texto": "Obstáculos estáticos en la vía del tranvía"},
+  {"tipo": "vinetas", "titulo": "Objetivos", "vinetas": ["Detectar obstáculos estáticos sobre la vía", "Probabilidad de ocupación por celda", "Solo ecos del radar frontal, cada 50 ms"]},
+  {"tipo": "imagen", "titulo": "Arquitectura", "imagen": "docs/02-diseno/diagramas/arquitectura-sw.mmd", "pie": "Arquitectura software"},
+  {"tipo": "kpis", "titulo": "Cifras clave", "kpis": [{"valor": "50 ms", "etiqueta": "periodo de actualización"}, {"valor": "100 %", "etiqueta": "cobertura de ramas"}, {"valor": "0", "etiqueta": "desviaciones MISRA abiertas"}]},
+  {"tipo": "tabla", "titulo": "Presupuesto", "cabecera": ["Partida", "Horas", "Importe"], "filas": [["Requisitos", "16", "880 €"], ["Diseño", "40", "2.400 €"], ["Implementación", "120", "6.600 €"]]},
+  {"tipo": "dos_columnas", "titulo": "Alcance", "izquierda_titulo": "Incluido", "izquierda": ["Algoritmo", "Tests"], "derecha_titulo": "Excluido", "derecha": ["Hardware"]},
+  {"tipo": "cierre", "titulo": "Gracias", "texto": "Álvaro · Noviembre 2026"}
+ ]}
