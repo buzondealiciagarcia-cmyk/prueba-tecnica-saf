@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-REQ |
-| Versión | 0.5 |
+| Versión | 0.6 |
 | Fecha | 2026-11-01 |
 | Autor | Alicia Garcia |
 | Estado | Borrador |
@@ -13,7 +13,7 @@ Redacción según ISO/IEC/IEEE 29148:2018, con plantillas EARS: «El sistema deb
 
 Codificación: SYS-\<categoría\>-\<nn\> para requisitos del sistema y H-\<nn\> para hipótesis. Categorías: DET = detección y prestaciones; IN = entradas; PR = procesamiento; OUT = salida; T = tiempo; SAF = seguridad y modos de funcionamiento; GEN = normativa; IMP = implementación.
 
-Source: en este proyecto no existen requisitos del enunciado R1–R4; el origen se cita como «Derivado de requisitos.txt (sección, línea)» sobre las notas del usuario (`entradas/requisitos.txt`). «Derivado» indica además un requisito o hipótesis necesario para el diseño que no aparece explícitamente en esas notas; «Derivado» indica un requisito o hipótesis necesario para el diseño que no aparece explícitamente en el enunciado. Los valores entre corchetes \[X\] están pendientes de definir.
+Source: R1–R4 son los requisitos del enunciado aportado por el usuario (`entradas/enunciado.txt`). «Derivado de requisitos.txt (sección, línea)» cita las notas del usuario (`entradas/requisitos.txt`); «Derivado» indica un requisito o hipótesis necesario para el diseño que no aparece explícitamente en el enunciado. Los valores entre corchetes \[X\] están pendientes de definir.
 
 <!--
 Formato de cada requisito (STD-REQ). En el markdown, un valor pendiente se escribe
@@ -761,6 +761,90 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | Con la nube desconectada, el 100 % de los requisitos funcionales del documento se cumple en 1 h de ejecución. |
 | Estado | Borrador |
 
+### SYS-IMP-06 — Plan de viabilidad del radar [ENTREGABLE]
+
+| Campo | Valor |
+|---|---|
+| Descripción | El sistema deberá estar acompañado de un plan de viabilidad del uso del radar para detectar obstáculos en la vía, con las capacidades y limitaciones del sensor para el caso de uso del cliente. |
+| Tipo | Restricción |
+| Origen | R1 |
+| Prioridad | Must |
+| Método de verificación | Inspección |
+| Criterio de aceptación | Existe 1 plan de viabilidad entregado que recoge las capacidades y las limitaciones del radar para el caso de uso del cliente. |
+| Estado | Borrador |
+
+### SYS-IMP-07 — Diseño hardware y software del sistema [ENTREGABLE]
+
+| Campo | Valor |
+|---|---|
+| Descripción | El sistema deberá estar acompañado de un diseño del sistema que cubra el hardware y el software. |
+| Tipo | Restricción |
+| Origen | R2 |
+| Prioridad | Must |
+| Método de verificación | Inspección |
+| Criterio de aceptación | Existe 1 documento de diseño con la arquitectura de hardware y la de software. |
+| Estado | Borrador |
+
+### SYS-IMP-08 — Diagrama pipeline de un ciclo [ENTREGABLE]
+
+| Campo | Valor |
+|---|---|
+| Descripción | El sistema deberá estar acompañado de un diagrama pipeline de un ciclo, desde la entrada del radar hasta la lista de objetos. |
+| Tipo | Restricción |
+| Origen | R2 |
+| Prioridad | Must |
+| Método de verificación | Inspección |
+| Criterio de aceptación | El diseño incluye 1 diagrama pipeline que cubre un ciclo completo desde la entrada del radar hasta la lista de objetos. |
+| Estado | Borrador |
+
+### SYS-IMP-09 — Gestión de fallos del sensor en el diseño [ENTREGABLE]
+
+| Campo | Valor |
+|---|---|
+| Descripción | El sistema deberá estar acompañado de una descripción de la gestión de los fallos del sensor en el diseño. |
+| Tipo | Restricción |
+| Origen | R2 |
+| Prioridad | Must |
+| Método de verificación | Inspección |
+| Criterio de aceptación | El diseño incluye la gestión de los fallos del sensor, con detección, reacción y recuperación por cada fallo. |
+| Estado | Borrador |
+
+### SYS-IMP-10 — Pseudocódigo de un componente [ENTREGABLE]
+
+| Campo | Valor |
+|---|---|
+| Descripción | El sistema deberá estar acompañado del (pseudo) código de un componente del sistema, por ejemplo la actualización de la probabilidad de ocupación de una celda del grid. |
+| Tipo | Restricción |
+| Origen | R3 |
+| Prioridad | Must |
+| Método de verificación | Inspección |
+| Criterio de aceptación | Existe el (pseudo) código de 1 componente del sistema, trazado a los requisitos que cubre. |
+| Estado | Borrador |
+
+### SYS-IMP-11 — Justificación del lenguaje de programación [ENTREGABLE]
+
+| Campo | Valor |
+|---|---|
+| Descripción | El sistema deberá estar acompañado de la justificación de la elección del lenguaje de programación seleccionado. |
+| Tipo | Restricción |
+| Origen | R3 |
+| Prioridad | Must |
+| Método de verificación | Inspección |
+| Criterio de aceptación | Existe 1 justificación escrita de la elección del lenguaje de programación. |
+| Estado | Borrador |
+
+### SYS-IMP-12 — Borrador de oferta al cliente [ENTREGABLE]
+
+| Campo | Valor |
+|---|---|
+| Descripción | El sistema deberá estar acompañado de un borrador de oferta al cliente para la ejecución del proyecto, con el alcance, el plazo y el presupuesto. |
+| Tipo | Restricción |
+| Origen | R4 |
+| Prioridad | Must |
+| Método de verificación | Inspección |
+| Criterio de aceptación | Existe 1 borrador de oferta que incluye alcance, plazo y presupuesto. |
+| Estado | Borrador |
+
 ## Hipótesis
 
 ### H-01 — Ancho de vía de 1 m
@@ -835,6 +919,17 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | Derivado de requisitos.txt (Requisitos, L4); respuesta del usuario a Q-008 |
 | Estado | Borrador |
 
+## Trazabilidad con el enunciado
+
+El campo Origen admite R1–R4 o «Derivado…», pero no ambos. Los requisitos previos conservan su cita a `requisitos.txt` y se relacionan con el enunciado en esta tabla. Los entregables SYS-IMP-06 a SYS-IMP-12 llevan Origen R1, R2, R3 o R4.
+
+| Enunciado | Requisitos de entregable | Requisitos de comportamiento relacionados |
+|---|---|---|
+| R1 | SYS-IMP-06 | SYS-DET-01, SYS-DET-02, SYS-DET-06, SYS-IN-01 |
+| R2 | SYS-IMP-07, SYS-IMP-08, SYS-IMP-09 | SYS-SAF-01, SYS-SAF-08 a SYS-SAF-13, SYS-OUT-01 a SYS-OUT-10, SYS-T-01 |
+| R3 | SYS-IMP-10, SYS-IMP-11 | SYS-PR-08 |
+| R4 | SYS-IMP-12 | |
+
 ## Decisiones aplazadas a diseño
 
 Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` y no son obligaciones de este documento. Los valores numéricos son parámetros calibrables en la configuración (STD-CFG: fichero versionado con esquema, rango y requisito; validación al arrancar).
@@ -875,3 +970,4 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | 0.3 | 2026-11-01 | Alicia Garcia | Ronda 3: la salida nunca declara ausencia de obstáculo (SYS-PR-08, SYS-OUT-06, SYS-SAF-05, 06, 07); detalle de la máquina de estados y de los resets aplazado a diseño (SYS-SAF-04, 08 a 14, 16, SYS-OUT-07, 09); SYS-SAF-17 retirado, código no reutilizado; sección «Decisiones aplazadas a diseño» |
 | 0.4 | 2026-11-01 | Alicia Garcia | Ronda 4: objeto sobre la vía y campo de visión (Q-008, H-08); radar 3D (H-05, SYS-PR-07, SYS-IN-05; sustituye el radar 2D de requisitos.txt); tamaño mínimo 0,6 × 0,6 × 0,6 m (SYS-DET-02; sustituye «≥ 0,6 m²» de requisitos.txt L5); 220 m a lo largo de la vía (SYS-DET-01, SYS-PR-11); SYS-DET-03 retirado (probabilidad de detección a diseño), código no reutilizado; SYS-DET-04 reformulado; SYS-GEN-01 con EN 50126/50128/50129, SIL 2, sin certificar (Q-015) |
 | 0.5 | 2026-11-01 | Alicia Garcia | Ronda 5: valores y parámetros aplazados a diseño sin marcadores pendientes; filtro temporal del eco de raíles (SYS-PR-03); estado por celdas (SYS-PR-08, SYS-OUT-06); marcha atrás: rechazo y degradado (SYS-PR-10, SYS-SAF-19); 220 m sin cambio de modo (SYS-PR-11); validación de timestamp y de trama (SYS-IN-06, SYS-IN-07); identificador de objeto (SYS-OUT-10); entorno operativo (SYS-GEN-02); sin memoria dinámica en todo el software (SYS-IMP-01); nube (cloud) solo para trazabilidad y logs, y funcionamiento sin ella (SYS-IMP-04, SYS-IMP-05); posición en coordenadas de vía (SYS-OUT-01); tamaño mínimo 0,6 × 0,6 × 0,6 m, SYS-DET-02, 08 |
+| 0.6 | 2026-11-01 | Alicia Garcia | Ronda 6: se incorpora el enunciado R1–R4 (`entradas/enunciado.txt`); línea Source restaurada; entregables SYS-IMP-06 a SYS-IMP-12 con Origen R1, R2, R3 y R4; sección «Trazabilidad con el enunciado» |
