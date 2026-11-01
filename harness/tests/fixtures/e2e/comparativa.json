@@ -1,0 +1,16 @@
+{
+  "escala": {"min": 1, "max": 5, "descripcion": "1 = muy desfavorable · 5 = muy favorable"},
+  "criterios": [
+    {"id": "C1", "nombre": "Coste HW", "peso": 30, "descripcion": "coste de sensores"},
+    {"id": "C2", "nombre": "Robustez detección", "peso": 50, "descripcion": "tasa de falsos negativos"},
+    {"id": "C3", "nombre": "Complejidad SW", "peso": 20, "descripcion": "esfuerzo"}
+  ],
+  "alternativas": [
+    {"id": "BASE", "nombre": "Radar único", "seleccionada": true},
+    {"id": "ALT-01", "nombre": "Fusión radar + cámara"}
+  ],
+  "puntuaciones": {"BASE": {"C1": 5, "C2": 3, "C3": 4}, "ALT-01": {"C1": 2, "C2": 5, "C3": 2}},
+  "justificaciones": {"ALT-01": {"C2": "La cámara confirma obstáculos que el radar ve con poca RCS"}},
+  "cumplimiento": {"requisitos": ["REQ-FUN-001", "REQ-FUN-002"], "valores": {"ALT-01": {"REQ-FUN-001": "parcial"}}},
+  "sensibilidad": {"variacion_pct": 20}
+}

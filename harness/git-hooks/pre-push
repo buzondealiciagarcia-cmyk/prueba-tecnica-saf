@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# pre-push — no se sube una rama feature sin 'h test' en PASS sobre su último commit (STD-GIT §5)
+set -euo pipefail
+
+find_h() {
+    local top
+    top="$(git rev-parse --show-toplevel)"
+    if [[ -x "${top}/.claude/harness/bin/h" ]]; then
+        echo "${top}/.claude/harness/bin/h"
+    elif [[ -x "${top}/harness/bin/h" ]]; then
+        echo "${top}/harness/bin/h"
+    elif command -v h >/dev/null 2>&1; then
+        command -v h
+    fi
+}
+
+main() {
+    local h local_ref local_sha remote_ref remote_sha branch
+    h="$(find_h)"
+    if [[ -z "${h}" ]]; then
+        echo "pre-push: harness no encontrado; omitiendo verificación" >&2
+        exit 0
+    fi
+    while read -r local_ref local_sha remote_ref remote_sha; do
+        : "${remote_ref}" "${remote_sha}"
+        branch="${local_ref#refs/heads/}"
+        case "${branch}" in
+            feature/*)
+                "${h}" git verify-push "${branch}" "${local_sha}" || {
+                    echo "pre-push: ${branch} sin 'h test' en PASS sobre ${local_sha:0:10} (GIT-MG-02)" >&2
+                    exit 1
+                }
+                ;;
+        esac
+    done
+}
+
+main "$@"

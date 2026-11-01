@@ -1,0 +1,10 @@
+flowchart LR
+  subgraph Radar
+    R[Radar frontal]
+  end
+  subgraph Proceso
+    P[ogrid_update]:::hl
+    S[Estado seguro]:::err
+  end
+  R -- nube 50 ms --> P --> G[(Grid)]
+  P -. fallo .-> S
