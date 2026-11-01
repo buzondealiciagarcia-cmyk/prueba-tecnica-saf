@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "phases": {
+    "req": {
+      "status": "open",
+      "version": "0.1",
+      "closed_at": null,
+      "tag": null,
+      "history": []
+    },
+    "design": {
+      "status": "locked",
+      "version": "0.1",
+      "closed_at": null,
+      "tag": null,
+      "history": []
+    },
+    "impl": {
+      "status": "locked",
+      "version": "0.1",
+      "closed_at": null,
+      "tag": null,
+      "history": []
+    },
+    "offer": {
+      "status": "locked",
+      "version": "0.1",
+      "closed_at": null,
+      "tag": null,
+      "history": []
+    }
+  }
+}
