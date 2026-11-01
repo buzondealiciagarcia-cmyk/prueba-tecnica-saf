@@ -29,7 +29,7 @@ Ningún valor pendiente puede quedar al cerrar la fase.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | … (magnitud + unidad + condición) |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 Hipótesis: código H-nn en la sección Hipótesis, Tipo = Hipótesis; Prioridad, Método de
 verificación y Criterio de aceptación son opcionales.
@@ -109,7 +109,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El 100 % de las tramas procesadas durante la duración de ejecución definida en la fase de diseño incluye timestamp. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-IN-05 — Altura de montaje del radar como parámetro
 
@@ -672,7 +672,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | 0 incumplimientos de los requisitos durante la duración de ejecución definida en la fase de diseño en modo normal. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-SAF-16 — Recuperación de fallo a normal mediante reset
 
