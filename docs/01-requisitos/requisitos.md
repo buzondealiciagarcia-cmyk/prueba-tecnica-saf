@@ -72,7 +72,7 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | Derivado de requisitos.txt (Requisitos, L6) |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Se reciben nubes de puntos con periodo de 50 ms (tolerancia fijada en diseño) durante 1 h de ejecución. |
+| Criterio de aceptación | Se reciben nubes de puntos con periodo de 50 ms (tolerancia fijada en diseño) durante la duración de ejecución definida en la fase de diseño. |
 | Estado | Aprobado |
 
 ### SYS-IN-02 — Recepción de la velocidad del tranvía
@@ -108,7 +108,7 @@ verificación y Criterio de aceptación son opcionales.
 | Origen | R2, Derivado de requisitos.txt (Tranvía, L41; Condiciones de fallo, L52) |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | El 100 % de las tramas procesadas en 1 h de ejecución incluye timestamp. |
+| Criterio de aceptación | El 100 % de las tramas procesadas durante la duración de ejecución definida en la fase de diseño incluye timestamp. |
 | Estado | Aprobado |
 
 ### SYS-IN-05 — Altura de montaje del radar como parámetro
@@ -952,6 +952,7 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | Q-035 | SYS-SAF-12 | Número de mediciones consecutivas sin ningún eco antes de pasar a degradado. Parámetro calibrable. |
 | Q-031 | SYS-SAF-14 | Tiempo máximo de degradado continuado antes de pasar a fallo. Parámetro calibrable. |
 | Q-005 | SYS-OUT-07, SYS-OUT-09 | Topic MQTT de estado y diagnóstico y formato del log CRIT (STD-MQTT, STD-LOG). |
+| — | SYS-IN-01, SYS-IN-04 | Duración de la ejecución de prueba de los criterios de aceptación (antes fijada en 1 h). |
 
 ## Historial de cambios
 
