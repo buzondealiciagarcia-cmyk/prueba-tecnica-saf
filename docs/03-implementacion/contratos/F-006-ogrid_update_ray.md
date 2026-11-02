@@ -41,6 +41,14 @@ ogrid_status_t ogrid_update_ray(ogrid_t *grid_io, const uint32_t *cells_in, uint
 | PRE-4 | Todos los índices de `cells_in[0..cell_count−1]` son < `OGRID_CELL_COUNT` | devuelve `OGRID_ERR_RANGE` sin modificar nada |
 | PRE-5 | Si `has_echo`, `echo_pos` < `cell_count` | devuelve `OGRID_ERR_RANGE` sin modificar nada |
 
+Aclaraciones:
+
+- **Orden de comprobación:** primero los parámetros (`grid_io` nulo, o `cells_in` nulo con `cell_count` > 0, `OGRID_ERR_PARAM`), después el rango (`cell_count`, todos los índices de `cells_in` aunque estén detrás del eco, y `echo_pos`, `OGRID_ERR_RANGE`) y por último el estado de las celdas (`OGRID_ERR_STATE`). Si falla más de una, se devuelve el error de la primera.
+- **`cell_count` = 0:** con `has_echo` falso devuelve `OGRID_OK` sin hacer nada; con `has_echo` verdadero devuelve `OGRID_ERR_RANGE`, porque no puede haber un eco entre cero celdas.
+- **Celdas ocultas:** las celdas detrás del eco no se leen ni se modifican, así que una celda corrupta situada detrás del eco no produce `OGRID_ERR_STATE`.
+- **Tras `OGRID_ERR_STATE`:** las celdas anteriores a la corrupta pueden estar ya actualizadas; la celda corrupta y las posteriores no cambian. Es lo único que se garantiza.
+- **Voto de paso y de eco:** ambos dejan `observed` = `OGRID_OBSERVED_YES` (lo hace F-004).
+
 ## 5. Postcondiciones (`post`)
 
 | ID | Condición (con tolerancia si es numérica) |
