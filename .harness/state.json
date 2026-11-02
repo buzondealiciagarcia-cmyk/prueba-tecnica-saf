@@ -2,10 +2,10 @@
   "version": 1,
   "phases": {
     "req": {
-      "status": "open",
-      "version": "1.1",
-      "closed_at": "2026-11-02T18:00:23",
-      "tag": "req-v1.1",
+      "status": "closed",
+      "version": "1.2",
+      "closed_at": "2026-11-02T22:54:36",
+      "tag": "req-v1.2",
       "history": [
         {
           "event": "close",
@@ -26,11 +26,16 @@
           "event": "reopen",
           "at": "2026-11-02T22:48:30",
           "reason": "corregir SYS-OUT-06"
+        },
+        {
+          "event": "close",
+          "at": "2026-11-02T22:54:36",
+          "version": "1.2"
         }
       ]
     },
     "design": {
-      "status": "locked",
+      "status": "open",
       "version": "1.0",
       "closed_at": "2026-11-02T19:05:05",
       "tag": "design-v1.0",
