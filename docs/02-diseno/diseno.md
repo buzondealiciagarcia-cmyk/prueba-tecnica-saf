@@ -74,7 +74,7 @@ Funcionalidades en el orden del ciclo (SW):
 | 8 | Descarta lo que está por encima del techo (evita falsos positivos por puentes); se traza a SYS-DET-04 solo como medio para reducir falsas alarmas (H-006) | SYS-DET-04 |
 | 9 | Descarta raíles: detecciones muy cercanas a las coordenadas de los raíles | SYS-PR-03 |
 | 10 | Actualiza el grid: celda con detección estática suma +0,85; celda atravesada por la luz recibe un voto «libre»; celda no observada recibe «desconocido» | SYS-PR-08 |
-| 11 | Extrae las celdas con p > 0,8, agrupa las contiguas y obtiene posición, tamaño y altura de cada objeto | SYS-PR-04, SYS-OUT-01, SYS-OUT-02 |
+| 11 | Extrae las celdas con p > 0,85 (H-026), agrupa las contiguas y obtiene posición, tamaño y altura de cada objeto | SYS-PR-04, SYS-OUT-01, SYS-OUT-02 |
 | 11b | Descarta los objetos con alguna dimensión menor de 0,6 m (H-015) | SYS-DET-02, SYS-DET-08 |
 | 12 | Compara los objetos con los del ciclo anterior y los reporta si llevan más de 2 ciclos seguidos, es decir N = 3 (H-005) | SYS-PR-09, SYS-OUT-10 |
 | 13 | Calcula confianza e incertidumbre de cada objeto según distancia, ciclos confirmados, incertidumbre de la curva y error del radar (precisión de azimut y altura y localización, H-016, H-033); fórmula [PENDIENTE] | SYS-OUT-03, SYS-OUT-08 |
@@ -123,7 +123,7 @@ Fallos de MQTT o de la nube (H-018, H-029): durante una caída del broker se pie
 
 ### 6.2 Modelo inverso del sensor
 
-Celda con detección estática: +0,85. Celda atravesada por la luz: voto «libre». Celda no observada: «desconocido» (SW paso 10). El voto +0,85 se suma en escala log-odds (H-013): partiendo de p = 0,5, una detección da p ≈ 0,70 y dos seguidas p ≈ 0,85, por lo que el umbral p > 0,8 (log-odds > 1,39) no se alcanza en un solo ciclo. Estados de celda derivados (H-012): ocupado si p > 0,8; zona no estudiada si la celda nunca se ha observado o se ha reiniciado; probabilidad baja de obstáculo si ha sido observada y p ≤ 0,8; nunca «libre». Regla general (H-024, H-031): dentro de un ciclo (conjunto de ráfagas) cada celda mantiene su valor mientras ninguna regla de este apartado le aplique un cambio; esto vale para las celdas no vistas en el ciclo y para las que solo reciben ecos descartados. [PENDIENTE: valor del voto «libre» y límites de saturación] (SYS-PR-08, SYS-SAF-07).
+Celda con detección estática: +0,85. Celda atravesada por la luz: voto «libre». Celda no observada: «desconocido» (SW paso 10). El voto +0,85 se suma en escala log-odds con logaritmo natural (H-013, H-026): partiendo de p = 0,5, una detección da p ≈ 0,70, dos seguidas p ≈ 0,845 y tres seguidas p ≈ 0,93, por lo que el umbral p > 0,85 no se alcanza hasta la tercera detección, coherente con N = 3. Estados de celda derivados (H-012): ocupado si p > 0,85; zona no estudiada si la celda nunca se ha observado o se ha reiniciado; probabilidad baja de obstáculo si ha sido observada y p ≤ 0,85; nunca «libre». Regla general (H-024, H-031): dentro de un ciclo (conjunto de ráfagas) cada celda mantiene su valor mientras ninguna regla de este apartado le aplique un cambio; esto vale para las celdas no vistas en el ciclo y para las que solo reciben ecos descartados. [PENDIENTE: valor del voto «libre» y límites de saturación] (SYS-PR-08, SYS-SAF-07).
 
 ### 6.3 Actualización y dinámica (decaimiento, estáticos vs. móviles)
 
@@ -131,7 +131,7 @@ Los elementos dinámicos se descartan antes de actualizar el grid (SW paso 5, SY
 
 ### 6.4 Flujo por ciclo
 
-Ver §4 (pasos 1 a 15) y la figura de arquitectura software. Umbral de extracción de objetos: p > 0,8. Confirmación: el objeto se reporta si lleva más de 2 ciclos seguidos, N = 3 (H-005, SYS-PR-09), independiente de las 3 mediciones de SYS-SAF-12. Aviso (H-025): se considera aviso la notificación del objeto en la lista de objetos, es decir, cuando se reporta tras N ciclos; el estado por celdas (SYS-OUT-06) es información de celda y puede mostrar «ocupado» antes. Salida: celdas ocupadas, probabilidad baja de obstáculo o zona no estudiada; nunca «libre» (SYS-SAF-07, SYS-OUT-06).
+Ver §4 (pasos 1 a 15) y la figura de arquitectura software. Umbral de extracción de objetos: p > 0,85 (H-026). Confirmación: el objeto se reporta si lleva más de 2 ciclos seguidos, N = 3 (H-005, SYS-PR-09), independiente de las 3 mediciones de SYS-SAF-12. Aviso (H-025): se considera aviso la notificación del objeto en la lista de objetos, es decir, cuando se reporta tras N ciclos; el estado por celdas (SYS-OUT-06) es información de celda y puede mostrar «ocupado» antes. Salida: celdas ocupadas, probabilidad baja de obstáculo o zona no estudiada; nunca «libre» (SYS-SAF-07, SYS-OUT-06).
 
 ## 7. Modos y estados del sistema
 
@@ -194,7 +194,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 ## 9. Rendimiento y presupuesto temporal
 
 - Periodo del radar y de las velocidades: 50 ms (SYS-IN-01, SYS-IN-02, SYS-IN-03).
-- Tiempo máximo de entrega de objetos: 128 ms (SYS-T-01), distinto del timeout de trama. El timeout de ausencia de tramas es un parámetro distinto, [PENDIENTE] en múltiplos de 50 ms (H-008, SYS-SAF-08).
+- Tiempo máximo de entrega de objetos: 128 ms (SYS-T-01), entendido como latencia de proceso de cada ciclo desde la recepción de la nube (H-026), distinto del timeout de trama. El timeout de ausencia de tramas es un parámetro distinto, [PENDIENTE] en múltiplos de 50 ms (H-008, SYS-SAF-08).
 - [PENDIENTE: presupuesto temporal por paso del ciclo, hardware de la ECU y margen de CPU; no aportados].
 
 ## 10. Configuración (STD-CFG)
@@ -208,7 +208,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | Alcance | 220 m | SYS-DET-01, SYS-PR-11 |
 | Velocidad máxima del tranvía | 50 km/h = 13,9 m/s | H-07 |
 | Voto de celda estática | +0,85 en log-odds | SYS-PR-08 |
-| Umbral de extracción de objetos | p > 0,8 | SYS-PR-04 |
+| Umbral de extracción de objetos | p > 0,85 | SYS-PR-04 |
 | Ciclos de confirmación N | 3 (más de 2 seguidos) | SYS-PR-09 |
 | Mediciones sin detección ni raíles para degradado | 3 mediciones | SYS-SAF-12 |
 | Timeout de trama para fallo | [PENDIENTE: múltiplo de 50 ms] | SYS-SAF-08 |
