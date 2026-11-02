@@ -117,7 +117,8 @@
       "cabecera": "include/ogrid/ogrid_extract_occupied.h",
       "fuente": "src/ogrid/ogrid_extract_occupied.c",
       "test": "tests/unit/test_ogrid_extract_occupied.c",
-      "estado": "contrato"
+      "estado": "en-curso",
+      "iteraciones": 0
     }
   ]
 }
