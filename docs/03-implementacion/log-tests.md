@@ -261,3 +261,27 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+### Cambio · 2026-11-02 22:21 · F-004
+
+- Agente: implementador
+- Causa raíz: Unreachable defensive branch in apply_delta, coverage below 100 percent
+- Cambio aplicado: Remove second validation; clamp status explicitly discarded
+- Commit: `be3b7b1074`
+
+## 2026-11-02 22:21 · F-004 · ogrid_update_cell · ejecución 3 · PASS
+
+- Rama: `feature/SYS-PR-08-ogrid-update-cell` · commit `be3b7b1074`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 32 casos, 0 fallos |
+| coverage | PASS | ogrid_update_cell.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
