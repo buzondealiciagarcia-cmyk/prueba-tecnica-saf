@@ -82,7 +82,7 @@
       "cabecera": "include/ogrid/ogrid_get_cell_state.h",
       "fuente": "src/ogrid/ogrid_get_cell_state.c",
       "test": "tests/unit/test_ogrid_get_cell_state.c",
-      "estado": "en-curso",
+      "estado": "integrada",
       "iteraciones": 0
     },
     {
