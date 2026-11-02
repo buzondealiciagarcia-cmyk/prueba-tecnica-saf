@@ -179,3 +179,20 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+## 2026-11-02 22:16 · F-003 · ogrid_clamp_log_odds · ejecución 1 · PASS
+
+- Rama: `feature/SYS-PR-08-ogrid-clamp-log-odds` · commit `cf5b7b6865`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 23 casos, 0 fallos |
+| coverage | PASS | ogrid_clamp_log_odds.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |

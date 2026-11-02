@@ -46,7 +46,8 @@
       "cabecera": "include/ogrid/ogrid_clamp_log_odds.h",
       "fuente": "src/ogrid/ogrid_clamp_log_odds.c",
       "test": "tests/unit/test_ogrid_clamp_log_odds.c",
-      "estado": "contrato"
+      "estado": "en-curso",
+      "iteraciones": 0
     },
     {
       "id": "F-004",
