@@ -2,7 +2,7 @@
   "version": 1,
   "phases": {
     "req": {
-      "status": "closed",
+      "status": "open",
       "version": "1.1",
       "closed_at": "2026-11-02T18:00:23",
       "tag": "req-v1.1",
@@ -21,11 +21,16 @@
           "event": "close",
           "at": "2026-11-02T18:00:23",
           "version": "1.1"
+        },
+        {
+          "event": "reopen",
+          "at": "2026-11-02T22:48:30",
+          "reason": "corregir SYS-OUT-06"
         }
       ]
     },
     "design": {
-      "status": "closed",
+      "status": "locked",
       "version": "1.0",
       "closed_at": "2026-11-02T19:05:05",
       "tag": "design-v1.0",
@@ -39,15 +44,26 @@
           "event": "close",
           "at": "2026-11-02T19:05:05",
           "version": "1.0"
+        },
+        {
+          "event": "locked-by-reopen",
+          "at": "2026-11-02T22:48:30",
+          "of": "req"
         }
       ]
     },
     "impl": {
-      "status": "open",
+      "status": "locked",
       "version": "0.1",
       "closed_at": null,
       "tag": null,
-      "history": []
+      "history": [
+        {
+          "event": "locked-by-reopen",
+          "at": "2026-11-02T22:48:30",
+          "of": "req"
+        }
+      ]
     },
     "offer": {
       "status": "locked",
