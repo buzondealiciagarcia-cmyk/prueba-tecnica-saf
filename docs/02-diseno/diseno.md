@@ -4,10 +4,10 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-DIS |
-| Versión | 0.1 |
-| Fecha | 2026-11-01 |
+| Versión | 1.0 |
+| Fecha | 2026-11-02 |
 | Autor | Alicia Garcia |
-| Estado | Borrador |
+| Estado | Cerrado |
 
 > Este documento recoge **solo** el diseño definido por el usuario (STD-DOC DOC-GEN-01). Los valores que dependen del hardware elegido se fijan según la regla de §10.
 
@@ -286,3 +286,4 @@ SYS-IMP-12 (borrador de oferta) corresponde a la fase de Oferta.
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 2026-11-01 | Alicia Garcia | Creación a partir del diseño aportado por el usuario |
+| 1.0 | 2026-11-02 | Alicia Garcia | Revisión de diseño completa (41 hallazgos resueltos), votos del grid, 0,1° de precisión angular, topics MQTT, entregables y cierre de la fase |
