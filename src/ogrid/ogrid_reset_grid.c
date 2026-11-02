@@ -8,7 +8,6 @@
  */
 #include "ogrid/ogrid_reset_grid.h"
 
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -24,7 +23,7 @@ ogrid_status_t ogrid_reset_grid(ogrid_t *grid_out)
         for (uint32_t i = 0U; i < OGRID_CELL_COUNT; i++)
         {
             grid_out->cells[i].log_odds_lo = OGRID_LOG_ODDS_INIT;
-            grid_out->cells[i].observed = false;
+            grid_out->cells[i].observed = OGRID_OBSERVED_NO;
         }
         status = OGRID_OK;
     }
