@@ -155,3 +155,27 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+### Cambio · 2026-11-02 22:14 · F-002
+
+- Agente: implementador
+- Causa raíz: Audit: inverted overflow comment and redundant macro
+- Cambio aplicado: Fix comment, drop OGRID_PROB_ONE
+- Commit: `e83810c986`
+
+## 2026-11-02 22:14 · F-002 · ogrid_log_odds_to_prob · ejecución 2 · PASS
+
+- Rama: `feature/SYS-PR-08-ogrid-log-odds-to-prob` · commit `e83810c986`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 27 casos, 0 fallos |
+| coverage | PASS | ogrid_log_odds_to_prob.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
