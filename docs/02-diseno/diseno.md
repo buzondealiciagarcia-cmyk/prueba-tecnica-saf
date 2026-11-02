@@ -111,7 +111,12 @@ Fallos de MQTT o de la nube (H-018, H-029): durante una caída del broker se pie
 
 | Topic | Publicador | Suscriptores | QoS | Retained | Periodo | Payload (esquema) | Requisitos |
 |---|---|---|---|---|---|---|---|
-| [PENDIENTE: topics, QoS y payload no definidos] | ECU | | | | | | SYS-OUT-07 |
+| [PROPUESTA] saf/ecu/status | ECU (LWT online/offline) | Nube | 1 | Sí | Evento en cada cambio de modo | v, seq, ts_ms, src, mode (init, normal, degraded, fault), reason | SYS-OUT-07 |
+| [PROPUESTA] saf/ecu/diagnostic | ECU | Nube | 1 | No | [PENDIENTE: periodo] | v, seq, ts_ms, src, contadores de huecos y desorden por seq (MQ-QOS-02), estado de entradas | SYS-OUT-07, SYS-IN-07 |
+| [PROPUESTA] saf/ecu/log | ECU | Nube | 1 | No | Evento | v, seq, ts_ms, src, level, msg | SYS-OUT-09, SYS-IMP-04 |
+| [PROPUESTA] saf/ecu/objects | ECU | Nube | 0 | No | 50 ms (opcional, trazabilidad) | v, seq, ts_ms, src, lista de objetos con position_s_m, position_d_m, size_m, uncertainty_m, confidence, id | SYS-OUT-11, SYS-IMP-04 |
+
+Notas de la propuesta: prefijo `saf` del código del proyecto, minúsculas y `snake_case` (MQ-TOP-02); cabecera común y unidades SI en los campos (MQ-PAY-02, MQ-PAY-04); JSON UTF-8 por ahora (MQ-PAY-01); la caída del broker no cambia el modo (H-018, H-029) y las publicaciones nunca bloquean el hilo de proceso (MQ-QOS-04). Los avisos al HMI van por IEC 61375, no por MQTT (§5).
 
 ![Figura. Secuencia de un ciclo de 50 ms](diagramas/secuencia-ciclo.svg)
 
