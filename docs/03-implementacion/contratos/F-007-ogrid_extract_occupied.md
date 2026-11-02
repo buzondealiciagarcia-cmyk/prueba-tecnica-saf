@@ -33,7 +33,7 @@ ogrid_status_t ogrid_extract_occupied(const ogrid_t *grid, bool *mask_out);
 |---|---|---|
 | PRE-1 | `grid` y `mask_out` no son `NULL` | devuelve `OGRID_ERR_PARAM` sin modificar salidas |
 
-Orden de comprobación: PRE-1 y después el estado de cada celda. Si `grid` o `mask_out` es `NULL` se devuelve `OGRID_ERR_PARAM` sin recorrer nada. Con varias celdas corruptas se devuelve un único `OGRID_ERR_STATE` al terminar de recorrer todas. Cualquier error distinto de `OGRID_ERR_STATE` que devolviera F-005 se trata como `OGRID_ERR_STATE`: la máscara queda en false en esa celda.
+Orden de comprobación: PRE-1 y después el estado de cada celda. Si `grid` o `mask_out` es `NULL` se devuelve `OGRID_ERR_PARAM` sin recorrer nada. Con varias celdas corruptas se devuelve un único `OGRID_ERR_STATE` al terminar de recorrer todas. No debe haber ramas que ningún caso de prueba del contrato pueda alcanzar: los índices que se pasan a F-005 son siempre válidos.
 
 ## 5. Postcondiciones (`post`)
 
