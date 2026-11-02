@@ -34,12 +34,14 @@ ogrid_status_t ogrid_log_odds_to_prob(ogrid_real_t log_odds_lo, ogrid_real_t *pr
 | PRE-1 | `prob_out` no es `NULL` | devuelve `OGRID_ERR_PARAM` sin modificar salidas |
 | PRE-2 | `log_odds_lo` es un número finito (no NaN ni infinito) dentro de [`OGRID_LOG_ODDS_MIN`, `OGRID_LOG_ODDS_MAX`] | devuelve `OGRID_ERR_RANGE` sin modificar salidas |
 
+Orden de comprobación: PRE-1 antes que PRE-2; si `prob_out` es `NULL` y `log_odds_lo` está fuera de rango, devuelve `OGRID_ERR_PARAM`.
+
 ## 5. Postcondiciones (`post`)
 
 | ID | Condición (con tolerancia si es numérica) |
 |---|---|
 | POST-1 | Si devuelve `OGRID_OK`, `*prob_out` = 1 / (1 + e^−`log_odds_lo`) con error absoluto ≤ 1·10⁻⁶ (float32). |
-| POST-2 | Valores de referencia con la misma tolerancia: l = 0 → 0,5; l = 0,85 → 0,7006; l = 1,70 → 0,8455; l = 2,55 → 0,9276; l = 3,4 → 0,9677; l = −0,8 → 0,3100. |
+| POST-2 | Valores de referencia con la misma tolerancia: l = 0 → 0,5; l = 0,85 → 0,7005671; l = 1,70 → 0,8455347; l = 2,55 → 0,9275735; l = 3,4 → 0,9677045; l = −0,8 → 0,3100255. |
 | POST-3 | Si devuelve `OGRID_OK`, 0 < `*prob_out` < 1, y la función es estrictamente creciente: l1 < l2 ⇒ p1 < p2. |
 | POST-4 | En l = 0 el resultado es exactamente 0,5 (tolerancia 1·10⁻⁶). |
 | POST-5 | Si devuelve error, `*prob_out` no se modifica. |

@@ -18,6 +18,9 @@
 /** Real number used for log-odds and probabilities (float32). */
 typedef float ogrid_real_t;
 
+/* The math functions used by the module (expf) assume float32. */
+_Static_assert(sizeof(ogrid_real_t) == sizeof(float), "ogrid_real_t must stay float32");
+
 /**
  * @brief State derived from a cell; there is deliberately no "free" value (SYS-SAF-07).
  */
