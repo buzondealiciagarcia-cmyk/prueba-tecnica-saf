@@ -524,13 +524,15 @@ void test_TC_F006_33_range_error_on_populated_grid(void)
 
 /** @req SYS-SAF-07 @contract err ERR_STATE celda observed corrupto en medio: se detiene ahi y las
  * posteriores no cambian */
-void test_TC_F006_34_corrupt_observed_stops_ray(void)
+void test_TC_F006_34_corrupt_log_odds_stops_ray(void)
 {
     const uint32_t cells[] = {10U, 11U, 12U, 13U};
-    set_cell(11U, 0.0F, 2U);
+    set_cell(11U, 5.0F, OGRID_OBSERVED_YES);
     const ogrid_status_t st = ogrid_update_ray(&s_grid, cells, 4U, false, 0U);
     TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_ERR_STATE, st,
                                   "[TC-F006-34][SYS-SAF-07] corrupt cell must return ERR_STATE");
+    TEST_ASSERT_TRUE_MESSAGE(cell_same(11U),
+                             "[TC-F006-34][SYS-SAF-07] the corrupt cell must not change");
     TEST_ASSERT_TRUE_MESSAGE(cell_same(12U),
                              "[TC-F006-34][SYS-SAF-07] cell after the corrupt one must not change");
     TEST_ASSERT_TRUE_MESSAGE(cell_same(13U), "[TC-F006-34][SYS-SAF-07] last cell must not change");
@@ -556,10 +558,12 @@ void test_TC_F006_35_corrupt_nan_on_echo_cell(void)
 void test_TC_F006_36_corrupt_first_cell(void)
 {
     const uint32_t cells[] = {30U, 31U, 32U};
-    set_cell(30U, 0.0F, 9U);
+    set_cell(30U, INFINITY, OGRID_OBSERVED_YES);
     const ogrid_status_t st = ogrid_update_ray(&s_grid, cells, 3U, false, 0U);
     TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_ERR_STATE, st,
                                   "[TC-F006-36][SYS-SAF-07] corrupt first cell must be ERR_STATE");
+    TEST_ASSERT_TRUE_MESSAGE(cell_same(30U),
+                             "[TC-F006-36][SYS-SAF-07] the corrupt first cell must not change");
     TEST_ASSERT_TRUE_MESSAGE(cell_same(31U),
                              "[TC-F006-36][SYS-SAF-07] cell 31 must not change after stop");
     TEST_ASSERT_TRUE_MESSAGE(cell_same(32U),
@@ -605,6 +609,114 @@ void test_TC_F006_38_deterministic_full_ray(void)
                                      "[TC-F006-38][SYS-PR-08] cell 1001 behind echo stays 0");
 }
 
+/** @req SYS-PR-08 @contract err ERR_RANGE cell_count = 0 con eco (cells_in no nulo): sin cambios */
+void test_TC_F006_39_zero_count_with_echo_is_range(void)
+{
+    const uint32_t cells[] = {1U};
+    set_cell(1U, 0.7F, OGRID_OBSERVED_YES);
+    const ogrid_status_t st = ogrid_update_ray(&s_grid, cells, 0U, true, 0U);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_ERR_RANGE, st,
+                                  "[TC-F006-39][SYS-PR-08] count 0 with echo must be ERR_RANGE");
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(0U, grid_changes(),
+                                     "[TC-F006-39][SYS-PR-08] grid must not be modified");
+}
+
+/** @req SYS-PR-08 @contract err ERR_RANGE cell_count = 0 con eco y cells_in NULL (no es PARAM) */
+void test_TC_F006_40_zero_count_null_cells_with_echo(void)
+{
+    const ogrid_status_t st = ogrid_update_ray(&s_grid, NULL, 0U, true, 0U);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_RANGE, st,
+        "[TC-F006-40][SYS-PR-08] count 0, NULL cells and echo must be ERR_RANGE");
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(0U, grid_changes(),
+                                     "[TC-F006-40][SYS-PR-08] grid must not be modified");
+}
+
+/** @req SYS-PR-08 @contract err precedencia: ERR_PARAM antes que ERR_RANGE (cells NULL y count
+ * excesivo) */
+void test_TC_F006_41_param_before_range_null_cells(void)
+{
+    const ogrid_status_t st = ogrid_update_ray(&s_grid, NULL, OGRID_CELL_COUNT + 1U, true, 99999U);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_PARAM, st,
+        "[TC-F006-41][SYS-PR-08] NULL cells must win over range errors (ERR_PARAM)");
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(0U, grid_changes(),
+                                     "[TC-F006-41][SYS-PR-08] grid must not be modified");
+}
+
+/** @req SYS-PR-08 @contract err precedencia: ERR_PARAM antes que ERR_RANGE (grid NULL y count
+ * excesivo) */
+void test_TC_F006_42_param_before_range_null_grid(void)
+{
+    const ogrid_status_t st = ogrid_update_ray(NULL, s_all, UINT32_MAX, true, UINT32_MAX);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_PARAM, st,
+        "[TC-F006-42][SYS-PR-08] NULL grid must win over range errors (ERR_PARAM)");
+}
+
+/** @req SYS-SAF-07 @contract err precedencia: ERR_RANGE (echo_pos) antes que ERR_STATE */
+void test_TC_F006_43_range_before_state_echo_pos(void)
+{
+    const uint32_t cells[] = {10U, 11U, 12U};
+    set_cell(11U, 5.0F, OGRID_OBSERVED_YES);
+    const ogrid_status_t st = ogrid_update_ray(&s_grid, cells, 3U, true, 7U);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_RANGE, st,
+        "[TC-F006-43][SYS-SAF-07] bad echo_pos must win over a corrupt cell (ERR_RANGE)");
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(
+        0U, grid_changes(),
+        "[TC-F006-43][SYS-SAF-07] grid must not be modified, healthy cell 10 included");
+}
+
+/** @req SYS-SAF-07 @contract err precedencia: ERR_RANGE (indice invalido al final) antes que
+ * ERR_STATE de una celda anterior */
+void test_TC_F006_44_range_before_state_bad_index(void)
+{
+    const uint32_t cells[] = {10U, 11U, OGRID_CELL_COUNT};
+    set_cell(11U, NAN, OGRID_OBSERVED_YES);
+    const ogrid_status_t st = ogrid_update_ray(&s_grid, cells, 3U, false, 0U);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_RANGE, st,
+        "[TC-F006-44][SYS-SAF-07] bad index must win over a corrupt cell (ERR_RANGE)");
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(
+        0U, grid_changes(),
+        "[TC-F006-44][SYS-SAF-07] grid must not be modified, healthy cell 10 included");
+}
+
+/** @req SYS-SAF-07 @contract err celda corrupta (NaN) detras del eco no se lee: OK */
+void test_TC_F006_45_corrupt_cell_behind_echo_nan(void)
+{
+    const uint32_t cells[] = {20U, 21U, 22U};
+    set_cell(22U, NAN, OGRID_OBSERVED_YES);
+    const ogrid_status_t st = ogrid_update_ray(&s_grid, cells, 3U, true, 1U);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_OK, st, "[TC-F006-45][SYS-SAF-07] corrupt cell behind the echo must give OK");
+    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(TOL, -0.40F, s_grid.cells[20].log_odds_lo,
+                                     "[TC-F006-45][SYS-SAF-07] cell 20 must get -0.40");
+    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(TOL, 0.85F, s_grid.cells[21].log_odds_lo,
+                                     "[TC-F006-45][SYS-SAF-07] echo cell must get +0.85");
+    TEST_ASSERT_TRUE_MESSAGE(cell_same(22U),
+                             "[TC-F006-45][SYS-SAF-07] hidden corrupt cell must stay untouched");
+}
+
+/** @req SYS-SAF-07 @contract err celda corrupta (fuera de rango) detras del eco en pos 0: OK */
+void test_TC_F006_46_corrupt_cell_behind_echo_out_of_range(void)
+{
+    const uint32_t cells[] = {30U, 31U, 32U};
+    set_cell(32U, -2.0F, OGRID_OBSERVED_YES);
+    set_cell(31U, INFINITY, OGRID_OBSERVED_YES);
+    s_ref.cells[32] = s_grid.cells[32];
+    const ogrid_status_t st = ogrid_update_ray(&s_grid, cells, 3U, true, 0U);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_OK, st, "[TC-F006-46][SYS-SAF-07] corrupt cells behind the echo must give OK");
+    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(TOL, 0.85F, s_grid.cells[30].log_odds_lo,
+                                     "[TC-F006-46][SYS-SAF-07] echo cell must get +0.85");
+    TEST_ASSERT_TRUE_MESSAGE(cell_same(31U),
+                             "[TC-F006-46][SYS-SAF-07] hidden corrupt cell 31 must be untouched");
+    TEST_ASSERT_TRUE_MESSAGE(cell_same(32U),
+                             "[TC-F006-46][SYS-SAF-07] hidden corrupt cell 32 must be untouched");
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -641,10 +753,18 @@ int main(void)
     RUN_TEST(test_TC_F006_31_invalid_index_first);
     RUN_TEST(test_TC_F006_32_index_bounds_valid);
     RUN_TEST(test_TC_F006_33_range_error_on_populated_grid);
-    RUN_TEST(test_TC_F006_34_corrupt_observed_stops_ray);
+    RUN_TEST(test_TC_F006_34_corrupt_log_odds_stops_ray);
     RUN_TEST(test_TC_F006_35_corrupt_nan_on_echo_cell);
     RUN_TEST(test_TC_F006_36_corrupt_first_cell);
     RUN_TEST(test_TC_F006_37_healthy_grid_never_err_state);
     RUN_TEST(test_TC_F006_38_deterministic_full_ray);
+    RUN_TEST(test_TC_F006_39_zero_count_with_echo_is_range);
+    RUN_TEST(test_TC_F006_40_zero_count_null_cells_with_echo);
+    RUN_TEST(test_TC_F006_41_param_before_range_null_cells);
+    RUN_TEST(test_TC_F006_42_param_before_range_null_grid);
+    RUN_TEST(test_TC_F006_43_range_before_state_echo_pos);
+    RUN_TEST(test_TC_F006_44_range_before_state_bad_index);
+    RUN_TEST(test_TC_F006_45_corrupt_cell_behind_echo_nan);
+    RUN_TEST(test_TC_F006_46_corrupt_cell_behind_echo_out_of_range);
     return UNITY_END();
 }

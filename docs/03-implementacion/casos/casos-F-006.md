@@ -35,10 +35,18 @@
 | TC-F006-31 | SYS-PR-08, SYS-SAF-07 | pre PRE-4 / POST-7 | Índice inválido primero | [COUNT+1,11,12] | ERR_RANGE; grid sin cambios |
 | TC-F006-32 | SYS-PR-08 | pre PRE-4 | Límites mín y máx de índice | [0, COUNT-1], eco pos 1 | OK; 0=-0,40; COUNT-1=+0,85 |
 | TC-F006-33 | SYS-SAF-07 | post POST-7 | Atomicidad en grid poblado | echo_pos=5 con count 2 | ERR_RANGE; grid sin cambios |
-| TC-F006-34 | SYS-SAF-07 | err ERR_STATE | Celda corrupta (observed=2) | [10..13], 11 corrupta, sin eco | ERR_STATE; 12 y 13 sin cambios; fuera del haz sin cambios |
+| TC-F006-34 | SYS-SAF-07 | err ERR_STATE | Celda corrupta (log-odds 5,0 fuera de rango) | [10..13], 11 corrupta, sin eco | ERR_STATE; 11, 12 y 13 sin cambios; fuera del haz sin cambios |
 | TC-F006-35 | SYS-SAF-07 | err ERR_STATE | Celda corrupta (NaN) en celda de eco | [20,21,22], 21 NaN, eco pos 1 | ERR_STATE; fuera del haz sin cambios |
-| TC-F006-36 | SYS-SAF-07 | err ERR_STATE | Corrupción en la primera celda | 30 con observed=9 | ERR_STATE; 31 y 32 sin cambios |
+| TC-F006-36 | SYS-SAF-07 | err ERR_STATE | Corrupción (infinito) en la primera celda | 30 con log-odds +inf | ERR_STATE; 30, 31 y 32 sin cambios |
 | TC-F006-37 | SYS-SAF-07 | err OGRID_OK | Partición: grid sano | 6 haces alternando eco/sin eco | siempre OK |
 | TC-F006-38 | SYS-PR-08 | perf / post | Determinismo, haz máximo | dos grids, count=COUNT, eco pos 1000 | mismo resultado; 1000=+0,85; 1001=0 |
+| TC-F006-39 | SYS-PR-08 | err ERR_RANGE | Límite count=0 con eco | cells no nulo, count 0, eco | ERR_RANGE; grid sin cambios |
+| TC-F006-40 | SYS-PR-08 | err ERR_RANGE | Límite count=0 con eco | cells NULL, count 0, eco | ERR_RANGE (no PARAM); grid sin cambios |
+| TC-F006-41 | SYS-PR-08 | err ERR_PARAM | Precedencia PARAM > RANGE | cells NULL, count=COUNT+1, eco pos fuera | ERR_PARAM; grid sin cambios |
+| TC-F006-42 | SYS-PR-08 | err ERR_PARAM | Precedencia PARAM > RANGE | grid NULL, count y echo_pos UINT32_MAX | ERR_PARAM |
+| TC-F006-43 | SYS-SAF-07 | err ERR_RANGE | Precedencia RANGE > STATE | echo_pos=7 con count 3, celda 11 corrupta | ERR_RANGE; grid sin cambios (celda 10 incluida) |
+| TC-F006-44 | SYS-SAF-07 | err ERR_RANGE | Precedencia RANGE > STATE | [10,11 NaN,COUNT], sin eco | ERR_RANGE; grid sin cambios (celda 10 incluida) |
+| TC-F006-45 | SYS-SAF-07 | err ERR_STATE (no aplica) | Celda corrupta oculta | [20,21,22], 22 NaN, eco pos 1 | OK; 20=-0,40; 21=+0,85; 22 sin cambios |
+| TC-F006-46 | SYS-SAF-07 | err ERR_STATE (no aplica) | Celdas corruptas ocultas, eco pos 0 | [30,31,32], 31 +inf, 32 -2,0, eco pos 0 | OK; 30=+0,85; 31 y 32 sin cambios |
 
 Tolerancia numérica: 1e-5 (error float32 de pocas sumas con magnitud ≤ 3,4 es < 1e-6; separación mínima entre valores esperados distintos 0,05).
