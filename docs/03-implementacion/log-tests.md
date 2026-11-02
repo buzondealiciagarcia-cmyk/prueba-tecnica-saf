@@ -481,3 +481,19 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+## 2026-11-02 23:08 · Integración completa · ejecución 1 · PASS
+
+- Rama: `test/integration` · commit `ba9707c0be`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit+integration | PASS |  |
+| coverage | PASS | ogrid_clamp_log_odds.c L 100.0 % R 100.0 %; ogrid_extract_occupied.c L 100.0 % R 100.0 %; ogrid_get_cell_state.c L 100.0 % R 100.0 %; ogrid_log_odds_to_prob.c L 100.0 % R 100.0 %; ogrid_reset_grid.c L 100.0 % R 100.0 %; ogrid_update_cell.c L 100.0 % R 100.0 %; ogrid_update_ray.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
