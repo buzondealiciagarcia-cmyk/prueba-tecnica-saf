@@ -73,7 +73,7 @@ Funcionalidades en el orden del ciclo (SW):
 | 7 | Descarta lo que está fuera de la vía | SYS-DET-05 |
 | 8 | Descarta lo que está por encima del techo (evita falsos positivos por puentes); se traza a SYS-DET-04 solo como medio para reducir falsas alarmas (H-006) | SYS-DET-04 |
 | 9 | Descarta raíles: detecciones muy cercanas a las coordenadas de los raíles | SYS-PR-03 |
-| 10 | Actualiza el grid: celda con detección estática suma +0,85; celda atravesada por la luz recibe un voto «libre»; celda no observada recibe «desconocido» | SYS-PR-08 |
+| 10 | Actualiza el grid en log-odds, que empieza en 0: por cada haz, eco en la celda suma +0,85; onda que pasa sin eco suma −0,40; celda oculta detrás de un eco no cambia | SYS-PR-08 |
 | 11 | Extrae las celdas con p > 0,85 (H-026), agrupa las contiguas y obtiene posición, tamaño y altura de cada objeto | SYS-PR-04, SYS-OUT-01, SYS-OUT-02 |
 | 11b | Descarta los objetos con alguna dimensión menor de 0,6 m (H-015) | SYS-DET-02, SYS-DET-08 |
 | 12 | Compara los objetos con los del ciclo anterior y los reporta si llevan más de 2 ciclos seguidos, es decir N = 3 (H-005) | SYS-PR-09, SYS-OUT-10 |
@@ -123,7 +123,7 @@ Fallos de MQTT o de la nube (H-018, H-029): durante una caída del broker se pie
 
 ### 6.2 Modelo inverso del sensor
 
-Celda con detección estática: +0,85. Celda atravesada por la luz: voto «libre». Celda no observada: «desconocido» (SW paso 10). El voto +0,85 se suma en escala log-odds con logaritmo natural (H-013, H-026): partiendo de p = 0,5, una detección da p ≈ 0,70, dos seguidas p ≈ 0,845 y tres seguidas p ≈ 0,93, por lo que el umbral p > 0,85 no se alcanza hasta la tercera detección, coherente con N = 3. Estados de celda derivados (H-012): ocupado si p > 0,85; zona no estudiada si la celda nunca se ha observado o se ha reiniciado; probabilidad baja de obstáculo si ha sido observada y p ≤ 0,85; nunca «libre». Regla general (H-024, H-031): dentro de un ciclo (conjunto de ráfagas) cada celda mantiene su valor mientras ninguna regla de este apartado le aplique un cambio; esto vale para las celdas no vistas en el ciclo y para las que solo reciben ecos descartados. [PENDIENTE: valor del voto «libre» y límites de saturación] (SYS-PR-08, SYS-SAF-07).
+Cada celda guarda un log-odds l que empieza en 0 (decisión del usuario, 2026-11-02). Por cada haz del radar: si hay eco en la celda se suma +0,85; si la onda pasa por la celda sin eco se suma −0,40; si la celda está detrás de un eco (oculta) no cambia (SW paso 10). La escala es log-odds con logaritmo natural (H-013, H-026), con p = 1 / (1 + e^−l): una detección da p ≈ 0,70, dos seguidas p ≈ 0,845 y tres seguidas p ≈ 0,93, por lo que el umbral p > 0,85 (l > 1,73) no se alcanza hasta la tercera detección, coherente con N = 3; cada paso sin eco resta 0,40. Estados de celda derivados (H-012): ocupado si p > 0,85; zona no estudiada si la celda nunca se ha observado o se ha reiniciado; probabilidad baja de obstáculo si ha sido observada y p ≤ 0,85; nunca «libre». Regla general (H-024, H-031): dentro de un ciclo (conjunto de ráfagas) cada celda mantiene su valor mientras ninguna regla de este apartado le aplique un cambio; esto vale para las celdas no vistas en el ciclo y para las que solo reciben ecos descartados. [PENDIENTE: límites de saturación del log-odds] (SYS-PR-08, SYS-SAF-07).
 
 ### 6.3 Actualización y dinámica (decaimiento, estáticos vs. móviles)
 
@@ -167,7 +167,7 @@ Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`)
 - Resuelto (H-010): un reset de nivel equivocado se rechaza, se mantiene el modo y se registra un log.
 - Resuelto (H-009): la persistencia del último estado queda [PENDIENTE] y no cuenta como mitigación vigente.
 - Resuelto (H-003): el reset de degradado a normal exige reset nivel 1, condiciones limpias y 4 ciclos correctos a la vez.
-- Abierto (H-001): el usuario decide que SYS-SAF-01 pida tres modos como mínimo en lugar de exactamente tres; requiere reabrir requisitos (`/fase-reabrir req`).
+- Resuelto (H-001): SYS-SAF-01 pide tres modos como mínimo (requisitos v1.1), por lo que INIT es un cuarto estado admitido.
 
 ## 8. Gestión de fallos y seguridad funcional (STD-SAF)
 
@@ -207,7 +207,9 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | Error de localización | 0,005 m (provisional) | SYS-DET-06 |
 | Alcance | 220 m | SYS-DET-01, SYS-PR-11 |
 | Velocidad máxima del tranvía | 50 km/h = 13,9 m/s | H-07 |
-| Voto de celda estática | +0,85 en log-odds | SYS-PR-08 |
+| Voto por eco | +0,85 en log-odds | SYS-PR-08 |
+| Voto por paso de la onda sin eco | −0,40 en log-odds | SYS-PR-08 |
+| Log-odds inicial de la celda | 0 | SYS-PR-08 |
 | Umbral de extracción de objetos | p > 0,85 | SYS-PR-04 |
 | Ciclos de confirmación N | 3 (más de 2 seguidos) | SYS-PR-09 |
 | Mediciones sin detección ni raíles para degradado | 3 mediciones | SYS-SAF-12 |
@@ -230,7 +232,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | SYS-IN-07 | 4, 8 (cobertura parcial: filas de datos corruptos y huecos de seq pendientes) |
 | SYS-PR-01, SYS-PR-02, SYS-PR-06, SYS-PR-07 | 4 |
 | SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-09 | 4, 6 (cobertura parcial: parámetros de filtro, vecindad, criterio de velocidad y semántica de N pendientes) |
-| SYS-PR-08 | 4, 6 (cobertura parcial: voto «libre» y saturación pendientes) |
+| SYS-PR-08 | 4, 6 (cobertura parcial: saturación pendiente) |
 | SYS-DET-02, SYS-DET-08 | 4 (paso 11b) |
 | SYS-PR-11, SYS-DET-01 | 3, 4, 10 |
 | SYS-DET-05, SYS-DET-06, SYS-DET-07 | 3, 4, 10 |
