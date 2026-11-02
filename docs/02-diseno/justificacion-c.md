@@ -45,6 +45,8 @@ Comparación por criterios técnicos generales, no por productos concretos.
 
 La comparación no se apoya en datos externos del proyecto. El criterio de decisión es el cumplimiento comprobable de SYS-IMP-01, SYS-IMP-02 y STD-C con el menor número de restricciones añadidas.
 
+![Figura. Criterios y alternativas frente a C](diagramas/comparativa-c.svg)
+
 ## 4. Riesgos de C y controles
 
 | Riesgo de C | Control en STD-C |

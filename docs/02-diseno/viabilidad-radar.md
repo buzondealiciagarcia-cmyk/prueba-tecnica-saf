@@ -40,6 +40,8 @@ El campo de visión del sistema es lo que el radar alcanza a detectar y entrega 
 
 ## 3. Limitaciones
 
+![Figura. Alcance del radar sobre la vía y el grid](diagramas/alcance-radar.svg)
+
 ### 3.1 Error lateral creciente con la distancia
 
 El error de medida en azimut y altura crece con la distancia (H-06). Se partió de 1 ° como valor provisional y se calculó si bastaba:
@@ -87,6 +89,8 @@ Los siguientes valores no tienen valor por defecto en el diseño y los aporta el
 | Objetos pequeños | Alertas por objetos menores que el mínimo | Descarte de objetos con alguna dimensión menor de 0,6 m (paso 11b) | SYS-DET-02, SYS-DET-08 |
 | Pérdida de ecos o del radar | Sin vigilancia | Modos INIT, NORMAL, DEGRADADO y FALLO; 3 mediciones sin detección ni raíles llevan a DEGRADADO; timeout de trama de 100 ms lleva a FALLO; la salida nunca entrega «libre» | SYS-SAF-01, SYS-SAF-07, SYS-SAF-08, SYS-SAF-12 |
 | Exceso de falsas alarmas | Pérdida de utilidad | Paso a DEGRADADO; el máximo se mide por hora de operación y se valida en test con el cliente | SYS-SAF-18, SYS-DET-04 |
+
+![Figura. Riesgos y mitigaciones del diseño](diagramas/riesgos-mitigaciones.svg)
 
 ## 5. Hipótesis de partida
 
