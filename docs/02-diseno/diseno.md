@@ -42,8 +42,9 @@ Parámetros de partida (HW):
 | Parámetro | Valor definido | Observación | Requisitos |
 |---|---|---|---|
 | Altura del radar | 1 m sobre el suelo | Parámetro de configuración | SYS-IN-05 |
-| Error angular del radar | 1° | Valor provisional mientras el cliente no elija radar; después se usará la especificación del radar elegido | SYS-DET-07, H-04 |
-| Error de localización | 0,005 m | Valor provisional hasta tener la especificación del radar; el error de altura crece con la distancia | SYS-DET-06, H-06 |
+| Precisión de azimut y altura del radar | 1° | Valor provisional mientras el cliente no elija radar; después se usará la especificación del radar elegido (H-033) | SYS-DET-06, H-06 |
+| Error de desalineación del radar respecto al eje | [PENDIENTE: valor] | Parámetro distinto de la precisión del radar (H-033) | SYS-DET-07, SYS-SAF-13, H-04 |
+| Error de localización | 0,005 m en distancia (provisional); error lateral = distancia × tan(precisión de azimut): 3,8 m a 220 m con 1°, y solo cabe en 0,5 m hasta ≈ 29 m | Valor provisional hasta tener la especificación del radar; el error de altura crece con la distancia. Límite de discriminación lateral a 220 m: [PENDIENTE] (H-033) | SYS-DET-06, SYS-DET-05, H-06 |
 | Velocidad máxima del tranvía | 50 km/h = 13,9 m/s (velocidad regulada en Vitoria-Gasteiz) | | H-07 |
 | Alcance de detección | 220 m a lo largo de la vía (SW, paso 5) | | SYS-DET-01, SYS-PR-11 |
 
@@ -76,7 +77,7 @@ Funcionalidades en el orden del ciclo (SW):
 | 11 | Extrae las celdas con p > 0,8, agrupa las contiguas y obtiene posición, tamaño y altura de cada objeto | SYS-PR-04, SYS-OUT-01, SYS-OUT-02 |
 | 11b | Descarta los objetos con alguna dimensión menor de 0,6 m (H-015) | SYS-DET-02, SYS-DET-08 |
 | 12 | Compara los objetos con los del ciclo anterior y los reporta si llevan más de 2 ciclos seguidos, es decir N = 3 (H-005) | SYS-PR-09, SYS-OUT-10 |
-| 13 | Calcula confianza e incertidumbre de cada objeto según distancia, ciclos confirmados, incertidumbre de la curva y error del radar (angular y de localización, H-016); fórmula [PENDIENTE] | SYS-OUT-03, SYS-OUT-08 |
+| 13 | Calcula confianza e incertidumbre de cada objeto según distancia, ciclos confirmados, incertidumbre de la curva y error del radar (precisión de azimut y altura y localización, H-016, H-033); fórmula [PENDIENTE] | SYS-OUT-03, SYS-OUT-08 |
 | 14 | Gestiona el modo según la máquina de estados | SYS-SAF-01 |
 | 15 | Crea la salida según el modo | SYS-OUT-06, SYS-OUT-11, SYS-SAF-05, SYS-SAF-06 |
 
@@ -201,7 +202,8 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | Parámetro | Valor definido | Requisito |
 |---|---|---|
 | Altura del radar | 1 m | SYS-IN-05 |
-| Error angular | 1° (provisional) | SYS-DET-07 |
+| Precisión de azimut y altura del radar | 1° (provisional) | SYS-DET-06 |
+| Error de desalineación respecto al eje | [PENDIENTE] | SYS-DET-07 |
 | Error de localización | 0,005 m (provisional) | SYS-DET-06 |
 | Alcance | 220 m | SYS-DET-01, SYS-PR-11 |
 | Velocidad máxima del tranvía | 50 km/h = 13,9 m/s | H-07 |
