@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-REQ |
-| Versión | 1.1 |
+| Versión | 1.2 |
 | Fecha | 2026-11-02 |
 | Autor | Alicia Garcia |
 | Estado | Cerrado |
@@ -239,22 +239,22 @@ verificación y Criterio de aceptación son opcionales.
 |---|---|
 | Descripción | El sistema deberá mantener para cada celda de la vía una probabilidad numérica de ocupación interna y derivar de ella únicamente el estado de la celda como ocupado, probabilidad baja de obstáculo o zona no estudiada, sin derivar nunca un estado libre. |
 | Tipo | Funcional |
-| Origen | R2, R3, Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037; respuesta del usuario a Q-021 |
+| Origen | R2, R3, Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037; respuesta del usuario a Q-021; respuesta del usuario a Q-060, Q-064 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | La probabilidad de ocupación de cada celda se actualiza en cada ciclo de 50 ms; el estado derivado toma uno de tres valores (ocupado, probabilidad baja de obstáculo, zona no estudiada) y 0 estados «libre» en el 100 % de los ciclos. |
+| Criterio de aceptación | La probabilidad de ocupación de cada celda se actualiza en cada ciclo de 50 ms; el estado derivado toma uno de tres valores (ocupado, probabilidad baja de obstáculo, zona no estudiada) y 0 estados «libre» en el 100 % de los ciclos; se verifica en la interfaz del módulo del grid, porque el estado por celdas es interno y no sale al HMI. |
 | Estado | Aprobado |
 
 ### SYS-PR-09 — Confirmación del obstáculo antes del aviso
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá confirmar un obstáculo estático en N ciclos consecutivos antes de emitir el aviso, con N fijado en diseño. |
+| Descripción | El sistema deberá confirmar un obstáculo estático en N ciclos consecutivos antes de incluirlo en la lista de SYS-OUT-11 (emitir el aviso), con N fijado en diseño. |
 | Tipo | Funcional |
-| Origen | R2, Derivado de requisitos.txt (Tranvía, L42); Derivado de revisión de diseño (H-007, H-024) |
+| Origen | R2, Derivado de requisitos.txt (Tranvía, L42); Derivado de revisión de diseño (H-007, H-024); respuesta del usuario a Q-063 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | El aviso se emite en el ciclo N de confirmación (N calibrable, STD-CFG) y no antes. |
+| Criterio de aceptación | El objeto aparece en la lista de SYS-OUT-11 en el ciclo N de confirmación (N calibrable, STD-CFG) y no antes. |
 | Estado | Aprobado |
 
 ### SYS-PR-10 — Rechazo de datos con velocidad del tranvía negativa
@@ -299,12 +299,12 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá alertar de un objeto estático detectado sobre la vía cuyas tres dimensiones sean mayores o iguales a 0,6 m × 0,6 m × 0,6 m. |
+| Descripción | El sistema deberá incluir en la lista de SYS-OUT-11 (alertar de) un objeto estático detectado sobre la vía cuyas tres dimensiones sean mayores o iguales a 0,6 m × 0,6 m × 0,6 m. |
 | Tipo | Funcional |
-| Origen | R1, R2, Derivado de requisitos.txt (Requisitos, L5); respuesta del usuario a Q-008, Q-011 y Q-040 (sustituye «≥ 0,6 m²» de requisitos.txt); Derivado de revisión de diseño (H-007, H-024) |
+| Origen | R1, R2, Derivado de requisitos.txt (Requisitos, L5); respuesta del usuario a Q-008, Q-011 y Q-040 (sustituye «≥ 0,6 m²» de requisitos.txt); Derivado de revisión de diseño (H-007, H-024); respuesta del usuario a Q-063 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Alerta ante un objeto estático de 0,6 m × 0,6 m × 0,6 m dentro del ancho de la vía y del alcance de 220 m. |
+| Criterio de aceptación | El objeto aparece en la lista de SYS-OUT-11 ante un objeto estático de 0,6 m × 0,6 m × 0,6 m dentro del ancho de la vía y del alcance de 220 m. |
 | Estado | Aprobado |
 
 ### SYS-DET-04 — Número máximo de falsas alarmas
@@ -430,18 +430,6 @@ verificación y Criterio de aceptación son opcionales.
 | Criterio de aceptación | El 100 % de las detecciones incluye alcance con el error de localización de SYS-DET-06. |
 | Estado | Aprobado |
 
-### SYS-OUT-06 — Publicación del estado de la vía por celdas
-
-| Campo | Valor |
-|---|---|
-| Descripción | El sistema deberá publicar el estado de la vía por celdas como ocupado, probabilidad baja de obstáculo o zona no estudiada en cada ciclo, sin publicar la probabilidad numérica de ocupación y sin marcar como ocupada la celda de un objeto clasificado como en movimiento. |
-| Tipo | Funcional |
-| Origen | R2, R3, Derivado de requisitos.txt (Requisitos, L31); respuesta del usuario a Q-037; Derivado de revisión de diseño (H-007, H-024) |
-| Prioridad | Must |
-| Método de verificación | Test |
-| Criterio de aceptación | Una publicación por cada ciclo de 50 ms con uno de los tres valores para cada celda, 0 publicaciones de la probabilidad numérica y 0 celdas marcadas como ocupadas únicamente por un objeto en movimiento. |
-| Estado | Aprobado |
-
 ### SYS-OUT-07 — Aviso MQTT de modo degradado o fallo
 
 | Campo | Valor |
@@ -494,12 +482,12 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá publicar en cada ciclo la lista de objetos estáticos detectados, con los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10 por cada objeto. |
+| Descripción | El sistema deberá publicar en cada ciclo la lista de objetos estáticos detectados, con los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10 por cada objeto, e incluir en cada publicación el modo del sistema y un indicador de vigilancia, de modo que una lista vacía no se interprete como ausencia de obstáculo. |
 | Tipo | Funcional |
-| Origen | R2, Derivado de respuesta del usuario a Q-045; Derivado de revisión de diseño (H-007, H-024) |
+| Origen | R2, Derivado de respuesta del usuario a Q-045; Derivado de revisión de diseño (H-007, H-024); respuesta del usuario a Q-060, Q-062 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | Una publicación por cada ciclo de 50 ms con la lista de objetos estáticos detectados, y el 100 % de los objetos incluye todos los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10. |
+| Criterio de aceptación | Una publicación por cada ciclo de 50 ms con la lista de objetos estáticos detectados, y el 100 % de los objetos incluye todos los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10, y el 100 % de las publicaciones incluye el modo del sistema y el indicador de vigilancia. |
 | Estado | Aprobado |
 
 ## Tiempo
@@ -546,36 +534,36 @@ verificación y Criterio de aceptación son opcionales.
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el sistema está en modo degradado, entonces el sistema deberá seguir emitiendo alertas con confianza reducida, sobre todo en los casos en que no se detecta obstáculo. |
+| Descripción | Si el sistema está en modo degradado, entonces el sistema deberá seguir incluyendo objetos en la lista de SYS-OUT-11 con confianza reducida, sobre todo en los casos en que no se detecta obstáculo. |
 | Tipo | Funcional |
-| Origen | R2, Derivado de requisitos.txt (Modos, L47); respuesta del usuario a Q-003 y Q-037 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L47); respuesta del usuario a Q-003 y Q-037; respuesta del usuario a Q-061 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | En modo degradado, el 100 % de las salidas de cada ciclo de 50 ms lleva confianza reducida; escala fijada en diseño. |
+| Criterio de aceptación | En modo degradado, el 100 % de los objetos de la lista de SYS-OUT-11 de cada ciclo de 50 ms lleva confianza reducida; escala fijada en diseño. |
 | Estado | Aprobado |
 
 ### SYS-SAF-06 — No dar vía libre en modo fallo
 
 | Campo | Valor |
 |---|---|
-| Descripción | Si el sistema está en modo fallo, entonces el sistema deberá no entregar nada como vía libre y comunicar que no hay vigilancia. |
+| Descripción | Si el sistema está en modo fallo, entonces el sistema deberá no entregar nada como vía libre y comunicar que no hay vigilancia mediante el indicador de vigilancia de SYS-OUT-11. |
 | Tipo | Funcional |
-| Origen | R2, Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037; respuesta del usuario a Q-061, Q-062 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | En modo fallo, 0 salidas de vía libre o de ausencia de obstáculo por ciclo de 50 ms y el 100 % de los ciclos comunica «sin vigilancia». |
+| Criterio de aceptación | En modo fallo, 0 salidas de vía libre o de ausencia de obstáculo por ciclo de 50 ms y el 100 % de los ciclos comunica «sin vigilancia» en el indicador de vigilancia de SYS-OUT-11. |
 | Estado | Aprobado |
 
 ### SYS-SAF-07 — Nunca declarar ausencia de obstáculo
 
 | Campo | Valor |
 |---|---|
-| Descripción | El sistema deberá informar de la vía solo como ocupada, con probabilidad baja de obstáculo o como zona no estudiada, y no declarar nunca la ausencia de obstáculo. |
+| Descripción | El sistema deberá no comunicar nunca la ausencia de obstáculo: una lista vacía de SYS-OUT-11 va siempre acompañada del modo del sistema y del indicador de vigilancia y no se interpreta como vía libre. |
 | Tipo | Funcional |
-| Origen | R2, Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037 |
+| Origen | R2, Derivado de requisitos.txt (Modos, L48); respuesta del usuario a Q-037; respuesta del usuario a Q-061, Q-062 |
 | Prioridad | Must |
 | Método de verificación | Test |
-| Criterio de aceptación | 0 salidas de «no hay obstáculo» o «vía libre» por ciclo de 50 ms en el 100 % de los casos de prueba, incluidos los de inyección de fallo. |
+| Criterio de aceptación | 0 salidas de «no hay obstáculo» o «vía libre» por ciclo de 50 ms en el 100 % de los casos de prueba, incluidos los de inyección de fallo, y el 100 % de las listas vacías lleva el modo y el indicador de vigilancia. |
 | Estado | Aprobado |
 
 ### SYS-SAF-08 — Fallo por ausencia de tramas
@@ -914,8 +902,8 @@ El campo Origen combina R1–R4 (puntos del enunciado, en `entradas/enunciado.tx
 | Enunciado | Requisitos de entregable | Requisitos de comportamiento y restricción relacionados |
 |---|---|---|
 | R1 | SYS-IMP-06 | SYS-IN-01, SYS-GEN-02, SYS-DET-01, SYS-DET-02, SYS-DET-04, SYS-DET-05, SYS-DET-06, SYS-DET-07, SYS-DET-08, SYS-T-01, H-01, H-04, H-05, H-06, H-07, H-08 |
-| R2 | SYS-IMP-07, SYS-IMP-08 | SYS-IN-01, SYS-GEN-01, SYS-IN-02, SYS-IN-03, SYS-IN-04, SYS-IN-05, SYS-IN-06, SYS-IN-07, SYS-PR-01, SYS-PR-02, SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-06, SYS-PR-07, SYS-PR-08, SYS-PR-09, SYS-PR-10, SYS-PR-11, SYS-DET-01, SYS-DET-02, SYS-DET-04, SYS-DET-05, SYS-DET-06, SYS-DET-07, SYS-DET-08, SYS-OUT-01, SYS-OUT-02, SYS-OUT-03, SYS-OUT-04, SYS-OUT-05, SYS-OUT-06, SYS-OUT-07, SYS-OUT-08, SYS-OUT-09, SYS-OUT-10, SYS-OUT-11, SYS-T-01, SYS-SAF-01, SYS-SAF-04, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07, SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11, SYS-SAF-12, SYS-SAF-13, SYS-SAF-14, SYS-SAF-15, SYS-SAF-16, SYS-SAF-18, SYS-SAF-19, SYS-IMP-01, SYS-IMP-02, SYS-IMP-03, H-02, H-03 |
-| R3 | SYS-IMP-10, SYS-IMP-11 | SYS-PR-08, SYS-OUT-06, SYS-IMP-01, SYS-IMP-02 |
+| R2 | SYS-IMP-07, SYS-IMP-08 | SYS-IN-01, SYS-GEN-01, SYS-IN-02, SYS-IN-03, SYS-IN-04, SYS-IN-05, SYS-IN-06, SYS-IN-07, SYS-PR-01, SYS-PR-02, SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-06, SYS-PR-07, SYS-PR-08, SYS-PR-09, SYS-PR-10, SYS-PR-11, SYS-DET-01, SYS-DET-02, SYS-DET-04, SYS-DET-05, SYS-DET-06, SYS-DET-07, SYS-DET-08, SYS-OUT-01, SYS-OUT-02, SYS-OUT-03, SYS-OUT-04, SYS-OUT-05, SYS-OUT-07, SYS-OUT-08, SYS-OUT-09, SYS-OUT-10, SYS-OUT-11, SYS-T-01, SYS-SAF-01, SYS-SAF-04, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07, SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11, SYS-SAF-12, SYS-SAF-13, SYS-SAF-14, SYS-SAF-15, SYS-SAF-16, SYS-SAF-18, SYS-SAF-19, SYS-IMP-01, SYS-IMP-02, SYS-IMP-03, H-02, H-03 |
+| R3 | SYS-IMP-10, SYS-IMP-11 | SYS-PR-08, SYS-IMP-01, SYS-IMP-02 |
 | R4 | SYS-IMP-12 |  |
 
 ## Decisiones aplazadas a diseño
@@ -932,7 +920,7 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | Q-051 | SYS-SAF-08 | Tiempo máximo sin trama antes de pasar a fallo. Parámetro calibrable. |
 | Q-035 | SYS-SAF-12 | Semántica y valor de «3 mediciones consecutivas» y su relación con las N confirmaciones de SYS-PR-09. Parámetro calibrable. |
 | Q-036 | SYS-SAF-08 a SYS-SAF-14 | Transiciones finas: condiciones de fallo estando en degradado, reset con la causa aún presente, otras vías de transición. |
-| Q-038 | SYS-PR-08, SYS-OUT-06, SYS-SAF-05 | Nombres, codificación y escala de confianza; nombres de los tres valores del estado de la vía y escala de probabilidad. |
+| Q-038 | SYS-PR-08, SYS-SAF-05 (retirado SYS-OUT-06) | Nombres, codificación y escala de confianza; nombres de los tres valores del estado de la vía y escala de probabilidad. |
 | Q-009 | SYS-IN-05 | Altura de montaje del radar (parámetro de configuración, STD-CFG). |
 | Q-012 | SYS-DET-03 (retirado) | Probabilidad de detección: valor, casos de prueba y entorno de medida. |
 | Q-041 | SYS-DET-04, SYS-SAF-18 | Número máximo de falsas alarmas, su unidad y ventana. Parámetro calibrable. |
@@ -942,7 +930,7 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | Q-016 | SYS-IN-02, SYS-IN-03, H-07 | Resolución de velocidad y ω y velocidad máxima del tranvía. |
 | Q-018 | H-02 | Horizonte del giro constante. |
 | Q-019, Q-052 | SYS-SAF-13, SYS-DET-07 | Umbral de desalineación del radar, error angular máximo de SYS-DET-07 (ambos parámetros calibrables) y método de detección. |
-| Q-021 | SYS-PR-08, SYS-OUT-06 | Tamaño y resolución de las celdas. Parámetro calibrable. |
+| Q-021 | SYS-PR-08 (retirado SYS-OUT-06) | Tamaño y resolución de las celdas. Parámetro calibrable. |
 | Q-022 | SYS-GEN-02 | Entorno operativo nominal y sus hipótesis. |
 | Q-023 | SYS-IN-07 | Criterio de validez de trama y contador de fallos consecutivos (FMEA). |
 | Q-025 | SYS-OUT-01 | Formato detallado de coordenadas y objeto. |
@@ -971,3 +959,4 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | 0.10 | 2026-11-01 | Alicia Garcia | Duración de ejecución de los criterios de SYS-IN-01, SYS-IN-04 y SYS-SAF-15 definida en la fase de diseño (antes 1 h); los tres vuelven a Borrador. |
 | 1.0 | 2026-11-01 | Alicia Garcia | Cierre de la fase de requisitos: 73 requisitos e hipótesis aprobados, 0 dudas abiertas. |
 | 1.1 | 2026-11-02 | Alicia Garcia | Fase reabierta por revisión de diseño: «estático» en SYS-DET-01 y SYS-PR-09, móviles no cuentan como falsa alarma en SYS-DET-04; SYS-OUT-06 sin celda ocupada por móviles; SYS-SAF-01 (H-001), SYS-SAF-04 y SYS-SAF-16 con condiciones de recuperación (H-027), objetos estáticos (SYS-PR-05, SYS-DET-02, SYS-OUT-11, título; H-007, H-024), timestamp de medida (SYS-IN-02, SYS-IN-03, H-03; H-030), SYS-OUT-07 con conexión al broker (H-029). Los requisitos modificados vuelven a Borrador. Aprobados todos los requisitos y fase cerrada en 1.1. |
+| 1.2 | 2026-11-02 | Alicia Garcia | Fase reabierta tras implementar el grid: SYS-OUT-06 retirado (código no reutilizado); el estado por celdas es solo interno (SYS-PR-08) y al HMI solo llega la lista de objetos (SYS-OUT-11), con modo e indicador de vigilancia en cada publicación (Q-060 a Q-064); aviso y alerta equivalen a incluir el objeto en la lista (SYS-PR-09, SYS-DET-02); SYS-SAF-05, 06 y 07 alineados con esa salida. Los requisitos modificados (SYS-OUT-11, SYS-DET-02, SYS-PR-09, SYS-PR-08, SYS-SAF-05, 06 y 07) vuelven a Borrador, se aprueban y la fase se cierra en 1.2 |
