@@ -32,28 +32,18 @@ static bool is_stored_value_valid(ogrid_real_t value_lo)
 
 /**
  * @brief Compute and store the new value of a cell for an echo or pass vote.
+ * @details The stored value is validated by the caller (PRE-4), so the clamp cannot reject it;
+ * its status is explicitly discarded and the cell is written only afterwards.
  * @param[in,out] cell_io Cell to update; must not be NULL.
  * @param[in] delta_lo Log-odds increment of the vote.
- * @return OGRID_OK, or OGRID_ERR_STATE when the stored value is corrupt (cell unchanged).
  */
-static ogrid_status_t apply_delta(ogrid_cell_t *cell_io, ogrid_real_t delta_lo)
+static void apply_delta(ogrid_cell_t *cell_io, ogrid_real_t delta_lo)
 {
-    ogrid_status_t status = OGRID_OK;
-    ogrid_real_t new_lo = 0.0F;
+    ogrid_real_t new_lo = cell_io->log_odds_lo;
 
-    if (!is_stored_value_valid(cell_io->log_odds_lo) ||
-        (ogrid_clamp_log_odds(cell_io->log_odds_lo + delta_lo, &new_lo) != OGRID_OK))
-    {
-        /* The clamp cannot fail for a validated value; kept as a side-effect free path. */
-        status = OGRID_ERR_STATE;
-    }
-    else
-    {
-        cell_io->log_odds_lo = new_lo;
-        cell_io->observed = true;
-    }
-
-    return status;
+    (void)ogrid_clamp_log_odds(cell_io->log_odds_lo + delta_lo, &new_lo);
+    cell_io->log_odds_lo = new_lo;
+    cell_io->observed = true;
 }
 
 ogrid_status_t ogrid_update_cell(ogrid_t *grid_io, uint32_t cell_idx, ogrid_vote_kind_t vote)
@@ -79,7 +69,7 @@ ogrid_status_t ogrid_update_cell(ogrid_t *grid_io, uint32_t cell_idx, ogrid_vote
         const ogrid_real_t delta_lo =
             (vote == OGRID_VOTE_KIND_ECHO) ? OGRID_VOTE_ECHO : OGRID_VOTE_PASS;
 
-        status = apply_delta(&grid_io->cells[cell_idx], delta_lo);
+        apply_delta(&grid_io->cells[cell_idx], delta_lo);
     }
     else
     {
