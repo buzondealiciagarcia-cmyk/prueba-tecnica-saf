@@ -6,3 +6,9 @@ unmatchedSuppression
 *:third_party/*
 # DEV-001: cláusulas de guarda al inicio de función (C-FUN-03)
 misra-c2012-15.5
+# DEV-002: tipos, etiquetas y macros de la API pública sin usar en una unidad (cabeceras)
+misra-c2012-2.3:include/ogrid/*
+misra-c2012-2.4:include/ogrid/*
+misra-c2012-2.5:include/ogrid/*
+# DEV-003: funciones públicas, una por fichero (C-NAM-06)
+misra-c2012-8.7:src/ogrid/*
