@@ -74,6 +74,7 @@ Funcionalidades en el orden del ciclo (SW):
 | 9 | Descarta raíles: detecciones muy cercanas a las coordenadas de los raíles | SYS-PR-03 |
 | 10 | Actualiza el grid: celda con detección estática suma +0,85; celda atravesada por la luz recibe un voto «libre»; celda no observada recibe «desconocido» | SYS-PR-08 |
 | 11 | Extrae las celdas con p > 0,8, agrupa las contiguas y obtiene posición, tamaño y altura de cada objeto | SYS-PR-04, SYS-OUT-01, SYS-OUT-02 |
+| 11b | Descarta los objetos con alguna dimensión menor de 0,6 m (H-015) | SYS-DET-02, SYS-DET-08 |
 | 12 | Compara los objetos con los del ciclo anterior y los reporta si llevan más de 2 ciclos seguidos, es decir N = 3 (H-005) | SYS-PR-09, SYS-OUT-10 |
 | 13 | Calcula confianza e incertidumbre de cada objeto según distancia, ciclos confirmados e incertidumbre de la curva | SYS-OUT-03, SYS-OUT-08 |
 | 14 | Gestiona el modo según la máquina de estados | SYS-SAF-01 |
@@ -133,7 +134,7 @@ Ver §4 (pasos 1 a 15) y la figura de arquitectura software. Umbral de extracci�
 
 ![Figura. Modos del sistema](diagramas/estados.svg)
 
-El último estado activo debe ser conocido al encender el tranvía de nuevo, para que el fallo no pueda resetearse de forma no segura (ME). [PENDIENTE: mecanismo de persistencia].
+El último estado activo debe ser conocido al encender el tranvía de nuevo, para que el fallo no pueda resetearse de forma no segura (ME). [PENDIENTE: mecanismo de persistencia, H-009].
 
 | Estado | Comportamiento definido (ME) | Requisitos |
 |---|---|---|
@@ -146,7 +147,7 @@ El último estado activo debe ser conocido al encender el tranvía de nuevo, par
 |---|---|---|
 | INIT → NORMAL | Autodiagnóstico del radar; datos válidos durante 1 ciclo; cálculo de predicciones durante 1 ciclo; sign in del conductor en el HMI (que también identifica la cabina activa). En el futuro la señal de INIT podría darla el arranque del tranvía | SYS-SAF-01 |
 | INIT → FALLO | Falla cualquier condición de INIT; INIT tarda más de 3 min; hay un fallo memorizado (implementación futura) | SYS-SAF-01 |
-| NORMAL → DEGRADADO | No se detecta nada en 3 mediciones seguidas pero sí los raíles (ver H-011); no se detecta nada, ni siquiera los raíles, en 3 mediciones seguidas (H-002); desalineación del radar | SYS-SAF-12, SYS-SAF-13 |
+| NORMAL → DEGRADADO | No se detecta nada, ni siquiera los raíles, en 3 mediciones seguidas (H-002); desalineación del radar | SYS-SAF-12, SYS-SAF-13 |
 | DEGRADADO → NORMAL | Se exigen a la vez (H-003): reset nivel 1 desde el HMI; condiciones que llevaron a DEGRADADO limpiadas; funcionamiento normal ininterrumpido, p. ej. mediciones correctas durante 4 ciclos seguidos del radar, es decir 200 ms (este valor podrá cambiar tras las fases de test y verificación) | SYS-SAF-04 |
 | DEGRADADO → FALLO | Estado degradado continuado en el tiempo; cualquier condición de fallo estando en degradado, p. ej. aviso de autofallo del radar | SYS-SAF-14 |
 | FALLO → DEGRADADO | No es posible | SYS-SAF-16 |
@@ -159,6 +160,9 @@ Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`)
 - [PENDIENTE: el material no recoge las transiciones por exceso de falsas alarmas (SYS-SAF-18) ni por velocidad negativa (SYS-SAF-19), ni el máximo de falsas alarmas (SYS-DET-04)].
 - Los requisitos definen tres modos (SYS-SAF-01) y el material añade INIT como cuarto estado.
 - Resuelto (H-002): «sin detección ni raíles durante 3 mediciones» lleva a DEGRADADO, como SYS-SAF-12.
+- Resuelto (H-011): se elimina la condición «con raíles → DEGRADADO».
+- Resuelto (H-010): un reset de nivel equivocado se rechaza, se mantiene el modo y se registra un log.
+- Resuelto (H-009): la persistencia del último estado queda [PENDIENTE] y no cuenta como mitigación vigente.
 - Resuelto (H-003): el reset de degradado a normal exige reset nivel 1, condiciones limpias y 4 ciclos correctos a la vez.
 - Abierto (H-001): el usuario decide que SYS-SAF-01 pida tres modos como mínimo en lugar de exactamente tres; requiere reabrir requisitos (`/fase-reabrir req`).
 
@@ -171,11 +175,10 @@ Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`)
 | Dato de entrada no disponible | Fallo del sensor de velocidad u otro | Datos incompletos | Dato ausente | Paso a FALLO | SYS-SAF-10 |
 | Fallo del radar | Autodiagnóstico del radar | Detección no fiable | Notificación del radar | Paso a FALLO | SYS-SAF-11 |
 | Sin ecos ni raíles | [PENDIENTE: causa] | Confianza reducida | 3 mediciones seguidas sin ninguna detección | Paso a DEGRADADO | SYS-SAF-12 |
-| Sin ecos de objetos pero con raíles | [PENDIENTE: causa] | Confianza reducida | 3 mediciones seguidas | Paso a DEGRADADO | SYS-SAF-12 |
 | Desalineación del radar | Montaje o golpe | Error de posición | Desalineación detectada | Paso a DEGRADADO | SYS-SAF-13 |
 | Degradado prolongado | Causa no resuelta | Detección con confianza reducida | Tiempo continuado en DEGRADADO | Paso a FALLO | SYS-SAF-14 |
 | Fallo de INIT | Autodiagnóstico o datos no válidos | Sin vigilancia | Condición de INIT falla o INIT supera 3 min | Paso a FALLO | SYS-SAF-01 |
-| Reset indebido de fallo | Reset no autorizado | Reanudar con fallo activo | Autenticación y condiciones | Reset nivel 2 con doble autenticación, solo con condiciones limpias; último estado conocido al reiniciar | SYS-SAF-16 |
+| Reset indebido de fallo | Reset no autorizado o de nivel equivocado | Reanudar con fallo activo | Autenticación, condiciones y nivel del reset | Reset nivel 2 con doble autenticación, solo con condiciones limpias; un reset del nivel equivocado se rechaza (H-010). Persistencia del último estado al reiniciar: [PENDIENTE: mecanismo, H-009]; hasta definirlo no cuenta como mitigación vigente | SYS-SAF-16 |
 
 Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propios de STD-SAF no aportados].
 
@@ -216,6 +219,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | SYS-IN-06, SYS-IN-07 | 4, 8 |
 | SYS-PR-01, SYS-PR-02, SYS-PR-06, SYS-PR-07 | 4 |
 | SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-08, SYS-PR-09 | 4, 6 |
+| SYS-DET-02, SYS-DET-08 | 4 (paso 11b) |
 | SYS-PR-11, SYS-DET-01 | 3, 4, 10 |
 | SYS-DET-05, SYS-DET-06, SYS-DET-07 | 3, 4, 10 |
 | SYS-OUT-01, SYS-OUT-02, SYS-OUT-03, SYS-OUT-08, SYS-OUT-10, SYS-OUT-11 | 4 |
@@ -228,7 +232,6 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 
 Requisitos Must sin cobertura en el material aportado:
 
-- [PENDIENTE: SYS-DET-02, SYS-DET-08 (tamaño mínimo 0,6 m; el SW no incluye un paso de filtrado por tamaño)].
 - [PENDIENTE: SYS-DET-04 (falsas alarmas), SYS-SAF-18, SYS-SAF-19, SYS-PR-10 (velocidad negativa)].
 - [PENDIENTE: SYS-OUT-04, SYS-OUT-05 (timestamp y alcance estimado a la salida)].
 - [PENDIENTE: SYS-GEN-02 (entorno operativo)].
