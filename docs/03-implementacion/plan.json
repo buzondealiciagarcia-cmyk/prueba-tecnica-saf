@@ -30,7 +30,7 @@
       "cabecera": "include/ogrid/ogrid_log_odds_to_prob.h",
       "fuente": "src/ogrid/ogrid_log_odds_to_prob.c",
       "test": "tests/unit/test_ogrid_log_odds_to_prob.c",
-      "estado": "en-curso",
+      "estado": "integrada",
       "iteraciones": 0
     },
     {
