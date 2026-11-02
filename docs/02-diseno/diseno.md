@@ -99,7 +99,7 @@ Huecos del material en este apartado:
 | ECU ↔ HMI | El que ya use el tranvía para comunicarse entre sí; lo más común Ethernet ferroviario (ECN, IEC 61375) con capa de seguridad EN 50159 | SYS-OUT-06, SYS-OUT-11 |
 | ECU → nube | MQTT con el cifrado necesario. Obligatorios (H-004): mensaje MQTT de estado y diagnóstico (QoS 1, retained) y log CRIT en cada paso a DEGRADADO o FALLO. Propuesta al cliente: telemetría adicional, actualizaciones de flota y mapas. No preocupa la latencia ni es crítico perder mensajes de telemetría | SYS-IMP-04, SYS-OUT-07, SYS-OUT-09 |
 
-Fallos de MQTT o de la nube (H-018): no se registran como fallo de la máquina de estados ni son críticos para la seguridad funcional, porque el sistema funciona completo sin la nube (SYS-IMP-04). Perder la conexión con el broker no cambia el modo. Esto se aparta de MQ-QOS-03 (pérdida del broker → evento de fallo y estado seguro) por decisión del usuario; desviación a registrar con su análisis de impacto (SAF-07): la nube no interviene en el procesamiento ni en la salida al HMI.
+Fallos de MQTT o de la nube (H-018, H-029): durante una caída del broker se pierden los mensajes MQTT, sin cola ni reenvío; no se registran como fallo de la máquina de estados ni son críticos para la seguridad funcional, porque el sistema funciona completo sin la nube (SYS-IMP-04). Perder la conexión con el broker no cambia el modo. Esto se aparta de MQ-QOS-03 (pérdida del broker → evento de fallo y estado seguro) por decisión del usuario; desviación a registrar con su análisis de impacto (SAF-07): la nube no interviene en el procesamiento ni en la salida al HMI.
 
 ### 5.1 Red y direccionamiento (STD-NET)
 
@@ -149,9 +149,9 @@ El último estado activo debe ser conocido al encender el tranvía de nuevo, par
 | Transición | Condiciones definidas (ME) | Requisitos |
 |---|---|---|
 | INIT → NORMAL | Autodiagnóstico del radar; datos válidos durante 1 ciclo; cálculo de predicciones durante 1 ciclo; sign in del conductor en el HMI (que también identifica la cabina activa). En el futuro la señal de INIT podría darla el arranque del tranvía | SYS-SAF-01 |
-| INIT → FALLO | Falla cualquier condición de INIT; INIT tarda más de 3 min; hay un fallo memorizado (implementación futura) | SYS-SAF-01 |
+| INIT → FALLO | Falla cualquier condición de INIT; INIT tarda más de 3 min desde el arranque, incluido el sign in (H-028); hay un fallo memorizado (implementación futura) | SYS-SAF-01 |
 | NORMAL → DEGRADADO | No se detecta nada, ni siquiera los raíles, en 3 mediciones seguidas (H-002); desalineación del radar | SYS-SAF-12, SYS-SAF-13 |
-| DEGRADADO → NORMAL | Se exigen a la vez (H-003): reset nivel 1 desde el HMI; condiciones que llevaron a DEGRADADO limpiadas; funcionamiento normal ininterrumpido, p. ej. mediciones correctas durante 4 ciclos seguidos del radar, es decir 200 ms (este valor podrá cambiar tras las fases de test y verificación) | SYS-SAF-04 |
+| DEGRADADO → NORMAL | Se exigen a la vez (H-003): reset nivel 1 desde el HMI; condiciones que llevaron a DEGRADADO limpiadas; funcionamiento normal ininterrumpido, p. ej. mediciones correctas durante 4 ciclos seguidos del radar, es decir 200 ms, que se cumplen antes del reset: el reset solo se acepta cuando ya se han cumplido (H-027). Este valor podrá cambiar tras las fases de test y verificación | SYS-SAF-04 |
 | DEGRADADO → FALLO | Estado degradado continuado en el tiempo; cualquier condición de fallo estando en degradado, p. ej. aviso de autofallo del radar | SYS-SAF-14 |
 | FALLO → DEGRADADO | No es posible | SYS-SAF-16 |
 | NORMAL → FALLO | No se recibe ninguna trama durante el timeout de trama (H-008, valor [PENDIENTE]; el material proponía 128 ms); el timestamp de los datos no avanza o retrocede; un dato no está disponible; fallo autodiagnosticado por el radar | SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11 |
@@ -180,7 +180,7 @@ Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`)
 | Sin ecos ni raíles | [PENDIENTE: causa] | Confianza reducida | 3 mediciones seguidas sin ninguna detección | Paso a DEGRADADO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 1, condiciones limpias y 4 ciclos (§7) | SYS-SAF-12 |
 | Desalineación del radar | Montaje o golpe | Error de posición | Desalineación detectada | Paso a DEGRADADO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 1, condiciones limpias y 4 ciclos (§7) | SYS-SAF-13 |
 | Degradado prolongado | Causa no resuelta | Detección con confianza reducida | Tiempo continuado en DEGRADADO | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-SAF-14 |
-| Fallo de INIT | Autodiagnóstico o datos no válidos | Sin vigilancia | Condición de INIT falla o INIT supera 3 min | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-SAF-01 |
+| Fallo de INIT | Autodiagnóstico o datos no válidos | Sin vigilancia | Condición de INIT falla o INIT supera 3 min desde el arranque | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-SAF-01 |
 | Reset indebido de fallo | Reset no autorizado o de nivel equivocado | Reanudar con fallo activo | Autenticación, condiciones y nivel del reset | Reset nivel 2 con doble autenticación, solo con condiciones limpias; un reset del nivel equivocado se rechaza y se registra un log (H-010). Persistencia del último estado al reiniciar: [PENDIENTE: mecanismo, H-009]; hasta definirlo no cuenta como mitigación vigente | log (nivel [PENDIENTE], LOG-02); log CRIT del paso a FALLO si procede | Reset nivel 2 válido | SYS-SAF-16 |
 | Datos corruptos de trama | [PENDIENTE] | [PENDIENTE] | Validación de cada trama (SYS-IN-07) | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-IN-07 |
 | Huecos en la numeración (seq) | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-IN-07 |
@@ -214,7 +214,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | Timeout de trama para fallo | [PENDIENTE: múltiplo de 50 ms] | SYS-SAF-08 |
 | Tiempo máximo de entrega de objetos | 128 ms | SYS-T-01 |
 | Ciclos de recuperación a normal | 4 (podrá cambiar tras test) | SYS-SAF-04 |
-| Tiempo máximo de INIT | 3 min | SYS-SAF-01 |
+| Tiempo máximo de INIT | 3 min desde el arranque | SYS-SAF-01 |
 | Tiempo máximo en DEGRADADO | [PENDIENTE] | SYS-SAF-14 |
 | Umbral de desalineación | [PENDIENTE] | SYS-SAF-13 |
 | Máximo de falsas alarmas | [PENDIENTE] | SYS-DET-04 |
