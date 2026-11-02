@@ -10,9 +10,6 @@
 #include <math.h>
 #include <stddef.h>
 
-/** Neutral element of the denominator 1 + e^-l. */
-#define OGRID_PROB_ONE (1.0F)
-
 ogrid_status_t ogrid_log_odds_to_prob(ogrid_real_t log_odds_lo, ogrid_real_t *prob_out)
 {
     ogrid_status_t status = OGRID_OK;
@@ -28,8 +25,9 @@ ogrid_status_t ogrid_log_odds_to_prob(ogrid_real_t log_odds_lo, ogrid_real_t *pr
     }
     else
     {
-        /* Domain is bounded above, so expf cannot overflow. */
-        *prob_out = OGRID_PROB_ONE / (OGRID_PROB_ONE + expf(-log_odds_lo));
+        /* The argument of expf is -log_odds_lo; the lower bound OGRID_LOG_ODDS_MIN
+         * limits it from above, so expf cannot overflow. */
+        *prob_out = 1.0F / (1.0F + expf(-log_odds_lo));
     }
 
     return status;
