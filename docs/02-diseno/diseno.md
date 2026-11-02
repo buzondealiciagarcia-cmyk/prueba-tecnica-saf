@@ -111,10 +111,10 @@ Fallos de MQTT o de la nube (H-018, H-029): durante una caída del broker se pie
 
 | Topic | Publicador | Suscriptores | QoS | Retained | Periodo | Payload (esquema) | Requisitos |
 |---|---|---|---|---|---|---|---|
-| [PROPUESTA] saf/ecu/status | ECU (LWT online/offline) | Nube | 1 | Sí | Evento en cada cambio de modo | v, seq, ts_ms, src, mode (init, normal, degraded, fault), reason | SYS-OUT-07 |
-| [PROPUESTA] saf/ecu/diagnostic | ECU | Nube | 1 | No | [PENDIENTE: periodo] | v, seq, ts_ms, src, contadores de huecos y desorden por seq (MQ-QOS-02), estado de entradas | SYS-OUT-07, SYS-IN-07 |
-| [PROPUESTA] saf/ecu/log | ECU | Nube | 1 | No | Evento | v, seq, ts_ms, src, level, msg | SYS-OUT-09, SYS-IMP-04 |
-| [PROPUESTA] saf/ecu/objects | ECU | Nube | 0 | No | 50 ms (opcional, trazabilidad) | v, seq, ts_ms, src, lista de objetos con position_s_m, position_d_m, size_m, uncertainty_m, confidence, id | SYS-OUT-11, SYS-IMP-04 |
+| saf/ecu/status | ECU (LWT online/offline) | Nube | 1 | Sí | Evento en cada cambio de modo | v, seq, ts_ms, src, mode (init, normal, degraded, fault), reason | SYS-OUT-07 |
+| saf/ecu/diagnostic | ECU | Nube | 1 | No | [PENDIENTE: periodo] | v, seq, ts_ms, src, contadores de huecos y desorden por seq (MQ-QOS-02), estado de entradas | SYS-OUT-07, SYS-IN-07 |
+| saf/ecu/log | ECU | Nube | 1 | No | Evento | v, seq, ts_ms, src, level, msg | SYS-OUT-09, SYS-IMP-04 |
+| saf/ecu/objects | ECU | Nube | 0 | No | 50 ms (opcional, trazabilidad) | v, seq, ts_ms, src, lista de objetos con position_s_m, position_d_m, size_m, uncertainty_m, confidence, id | SYS-OUT-11, SYS-IMP-04 |
 
 Notas de la propuesta: prefijo `saf` del código del proyecto, minúsculas y `snake_case` (MQ-TOP-02); cabecera común y unidades SI en los campos (MQ-PAY-02, MQ-PAY-04); JSON UTF-8 por ahora (MQ-PAY-01); la caída del broker no cambia el modo (H-018, H-029) y las publicaciones nunca bloquean el hilo de proceso (MQ-QOS-04). Los avisos al HMI van por IEC 61375, no por MQTT (§5).
 
@@ -204,27 +204,27 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 
 ## 10. Configuración (STD-CFG)
 
-| Parámetro | Valor definido | Requisito |
-|---|---|---|
-| Altura del radar | 1 m | SYS-IN-05 |
-| Precisión de azimut y altura del radar | 1° (provisional) | SYS-DET-06 |
-| Error de desalineación respecto al eje | [PENDIENTE] | SYS-DET-07 |
-| Error de localización | 0,005 m (provisional) | SYS-DET-06 |
-| Alcance | 220 m | SYS-DET-01, SYS-PR-11 |
-| Velocidad máxima del tranvía | 50 km/h = 13,9 m/s | H-07 |
-| Voto por eco | +0,85 en log-odds | SYS-PR-08 |
-| Voto por paso de la onda sin eco | −0,40 en log-odds | SYS-PR-08 |
-| Log-odds inicial de la celda | 0 | SYS-PR-08 |
-| Umbral de extracción de objetos | p > 0,85 | SYS-PR-04 |
-| Ciclos de confirmación N | 3 (más de 2 seguidos) | SYS-PR-09 |
-| Mediciones sin detección ni raíles para degradado | 3 mediciones | SYS-SAF-12 |
-| Timeout de trama para fallo | 100 ms (2 periodos del radar) | SYS-SAF-08 |
-| Tiempo máximo de entrega de objetos | 128 ms | SYS-T-01 |
-| Ciclos de recuperación a normal | 4 (podrá cambiar tras test) | SYS-SAF-04 |
-| Tiempo máximo de INIT | 3 min desde el arranque | SYS-SAF-01 |
-| Tiempo máximo en DEGRADADO | [PENDIENTE] | SYS-SAF-14 |
-| Umbral de desalineación | [PENDIENTE] | SYS-SAF-13 |
-| Máximo de falsas alarmas | [PENDIENTE] | SYS-DET-04 |
+| Parámetro | Valor definido | Unidad | Rango admitido | Requisito |
+|---|---|---|---|---|
+| Altura del radar | 1 m | m | [PENDIENTE] | SYS-IN-05 |
+| Precisión de azimut y altura del radar | 1° (provisional) | ° | [PENDIENTE] | SYS-DET-06 |
+| Error de desalineación respecto al eje | [PENDIENTE] | ° | [PENDIENTE] | SYS-DET-07 |
+| Error de localización | 0,005 m (provisional) | m | [PENDIENTE] | SYS-DET-06 |
+| Alcance | 220 m | m | [PENDIENTE] | SYS-DET-01, SYS-PR-11 |
+| Velocidad máxima del tranvía | 50 km/h = 13,9 m/s | m/s | [PENDIENTE] | H-07 |
+| Voto por eco | +0,85 en log-odds | log-odds | [PENDIENTE] | SYS-PR-08 |
+| Voto por paso de la onda sin eco | −0,40 en log-odds | log-odds | [PENDIENTE] | SYS-PR-08 |
+| Log-odds inicial de la celda | 0 | log-odds | [PENDIENTE] | SYS-PR-08 |
+| Umbral de extracción de objetos | p > 0,85 | probabilidad | [PENDIENTE] | SYS-PR-04 |
+| Ciclos de confirmación N | 3 (más de 2 seguidos) | ciclos | [PENDIENTE] | SYS-PR-09 |
+| Mediciones sin detección ni raíles para degradado | 3 mediciones | mediciones | [PENDIENTE] | SYS-SAF-12 |
+| Timeout de trama para fallo | 100 ms (2 periodos del radar) | ms | [PENDIENTE] | SYS-SAF-08 |
+| Tiempo máximo de entrega de objetos | 128 ms | ms | [PENDIENTE] | SYS-T-01 |
+| Ciclos de recuperación a normal | 4 (podrá cambiar tras test) | ciclos | [PENDIENTE] | SYS-SAF-04 |
+| Tiempo máximo de INIT | 3 min desde el arranque | s | [PENDIENTE] | SYS-SAF-01 |
+| Tiempo máximo en DEGRADADO | [PENDIENTE] | s | [PENDIENTE] | SYS-SAF-14 |
+| Umbral de desalineación | [PENDIENTE] | ° | [PENDIENTE] | SYS-SAF-13 |
+| Máximo de falsas alarmas | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-DET-04 |
 
 ## 11. Trazabilidad requisito → apartado
 
