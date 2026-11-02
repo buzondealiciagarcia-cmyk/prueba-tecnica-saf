@@ -3,6 +3,12 @@
  * @brief Apply one radar beam to the cells it crosses, nearest first.
  * @details Validates the whole beam before touching the grid, then votes pass on the cells before
  * the echo, echo on the echo cell and leaves the cells behind it unchanged (occluded).
+ * The order is deliberate. Validation comes first so that a parameter or range error leaves the
+ * grid untouched (atomicity, POST-7). Voting comes second, nearest cell first, because only a
+ * validated beam may modify the grid. Voting stops at the first OGRID_ERR_STATE returned by
+ * ogrid_update_cell, so that status is reported and no further cell is modified after it. The
+ * cells behind the echo are occluded: they are never read or voted, so their content cannot
+ * influence the result.
  * @ingroup ogrid
  */
 #include "ogrid/ogrid_update_ray.h"
@@ -30,6 +36,9 @@ static ogrid_status_t validate_ray(const uint32_t *cells_in, uint32_t cell_count
     }
     else
     {
+        /* Every index is checked, including those behind the echo: all validation is done before
+         * the grid is touched, so a parameter or range error never leaves partial changes
+         * (atomicity, POST-7). */
         for (uint32_t i = 0U; i < cell_count; i++)
         {
             if (cells_in[i] >= OGRID_CELL_COUNT)
@@ -84,6 +93,8 @@ ogrid_status_t ogrid_update_ray(ogrid_t *grid_io, const uint32_t *cells_in, uint
     {
         /* Cells behind the echo are occluded, so processing ends at the echo cell. */
         const uint32_t process_count = has_echo ? (echo_pos + 1U) : cell_count;
+        /* Sentinel: apply_votes only visits i < process_count, so an echo_idx equal to cell_count
+         * can never match and means "no echo" without a separate flag. */
         const uint32_t echo_idx = has_echo ? echo_pos : cell_count;
 
         status = apply_votes(grid_io, cells_in, process_count, echo_idx);
