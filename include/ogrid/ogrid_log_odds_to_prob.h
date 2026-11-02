@@ -14,13 +14,13 @@
  * @brief Convert log-odds to occupancy probability p = 1 / (1 + e^-l).
  * @param[in] log_odds_lo Log-odds in natural logarithm; finite, within [OGRID_LOG_ODDS_MIN,
  * OGRID_LOG_ODDS_MAX].
- * @param[out] prob_out Probability in (0, 1); must not be NULL.
+ * @param[out] prob_out Probability, dimensionless, in (0, 1); must not be NULL.
  * @return OGRID_OK when the probability was written.
  * @return OGRID_ERR_PARAM when prob_out is NULL.
  * @return OGRID_ERR_RANGE when log_odds_lo is NaN, infinite or outside the limits.
  * @pre prob_out != NULL and log_odds_lo finite within the limits.
- * @post On OGRID_OK *prob_out equals 1 / (1 + e^-l) within 1e-6 and the function is strictly
- * increasing; on error *prob_out is not modified.
+ * @post On OGRID_OK *prob_out equals 1 / (1 + e^-l) within 1e-6 (contract POST-1) and l = 0 gives
+ * exactly 0.5 (POST-4); on error *prob_out is not modified (POST-5).
  * @req SYS-PR-08
  * @contract F-002
  */
