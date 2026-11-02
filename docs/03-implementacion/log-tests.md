@@ -237,3 +237,27 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+### Cambio · 2026-11-02 22:20 · F-004
+
+- Agente: ingeniero-tests
+- Causa raíz: Contract clauses not exercised: occluded on corrupt cell and precondition order
+- Cambio aplicado: Add TC-F004-29 to 32
+- Commit: `b6dd576f3c`
+
+## 2026-11-02 22:20 · F-004 · ogrid_update_cell · ejecución 2 · FAIL
+
+- Rama: `feature/SYS-PR-08-ogrid-update-cell` · commit `b6dd576f3c`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 32 casos, 0 fallos |
+| coverage | FAIL | ogrid_update_cell.c L 96.3 % R 91.7 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
