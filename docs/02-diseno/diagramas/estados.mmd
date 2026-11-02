@@ -2,9 +2,9 @@ stateDiagram-v2
   [*] --> INIT
   INIT --> NORMAL: autodiagnóstico, datos válidos 1 ciclo, predicción 1 ciclo, sign in
   INIT --> FALLO: condición de INIT falla, más de 3 min o fallo memorizado
-  NORMAL --> DEGRADADO: sin detección 3 mediciones pero con raíles, o desalineación
-  NORMAL --> FALLO: sin trama en 128 ms, timestamp incoherente, dato no disponible, fallo del radar, sin detección ni raíles 3 mediciones
-  DEGRADADO --> NORMAL: reset nivel 1 con condiciones limpias, o 4 ciclos correctos
+  NORMAL --> DEGRADADO: sin detección 3 mediciones, con o sin raíles, o desalineación
+  NORMAL --> FALLO: sin trama en 128 ms, timestamp incoherente, dato no disponible, fallo del radar
+  DEGRADADO --> NORMAL: reset nivel 1, condiciones limpias y 4 ciclos correctos
   DEGRADADO --> FALLO: degradado continuado o cualquier fallo
   FALLO --> NORMAL: reset nivel 2, doble autenticación, grid a desconocido
   note right of FALLO

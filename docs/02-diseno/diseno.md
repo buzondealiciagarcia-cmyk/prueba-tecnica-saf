@@ -50,7 +50,7 @@ Parámetros de partida (HW):
 Evoluciones futuras sugeridas al cliente en la oferta (no son requisitos, HW):
 
 - Acceso de la ECU al sistema de freno para detener el tranvía en emergencia.
-- Acceso de la ECU a la nube para actualizaciones de la flota desde un centro de control, publicación de logs (transparencia y trazabilidad) y descarga de mapas.
+- Acceso de la ECU a la nube para actualizaciones de la flota desde un centro de control, telemetría adicional y descarga de mapas (el envío de logs y trazabilidad ya es requisito, SYS-IMP-04).
 - Segundo radar, para reducir el error de altura a gran distancia y aportar redundancia.
 
 ## 4. Arquitectura software
@@ -95,7 +95,7 @@ Huecos del material en este apartado:
 | Radar → ECU | Marcado por el fabricante del radar; lo más común Automotive Ethernet, también CAN FD en algunos casos | SYS-IN-01, SYS-IN-04 |
 | Sensor de velocidad → ECU | [PENDIENTE: no definido] | SYS-IN-02, SYS-IN-03 |
 | ECU ↔ HMI | El que ya use el tranvía para comunicarse entre sí; lo más común Ethernet ferroviario (ECN, IEC 61375) con capa de seguridad EN 50159 | SYS-OUT-06, SYS-OUT-11 |
-| ECU → nube | MQTT con el cifrado necesario, propuesto al cliente; no preocupa la latencia ni es crítico perder algún mensaje si falla parte de la cadena MQTT | SYS-IMP-04, SYS-OUT-07, SYS-OUT-09 |
+| ECU → nube | MQTT con el cifrado necesario. Obligatorios (H-004): mensaje MQTT de estado y diagnóstico (QoS 1, retained) y log CRIT en cada paso a DEGRADADO o FALLO. Propuesta al cliente: telemetría adicional, actualizaciones de flota y mapas. No preocupa la latencia ni es crítico perder mensajes de telemetría | SYS-IMP-04, SYS-OUT-07, SYS-OUT-09 |
 
 ### 5.1 Red y direccionamiento (STD-NET)
 
@@ -146,11 +146,11 @@ El último estado activo debe ser conocido al encender el tranvía de nuevo, par
 |---|---|---|
 | INIT → NORMAL | Autodiagnóstico del radar; datos válidos durante 1 ciclo; cálculo de predicciones durante 1 ciclo; sign in del conductor en el HMI (que también identifica la cabina activa). En el futuro la señal de INIT podría darla el arranque del tranvía | SYS-SAF-01 |
 | INIT → FALLO | Falla cualquier condición de INIT; INIT tarda más de 3 min; hay un fallo memorizado (implementación futura) | SYS-SAF-01 |
-| NORMAL → DEGRADADO | No se detecta nada en 3 mediciones seguidas pero sí los raíles; desalineación del radar | SYS-SAF-12, SYS-SAF-13 |
-| DEGRADADO → NORMAL | Reset nivel 1 desde el HMI, solo si las condiciones que llevaron a DEGRADADO se han limpiado; vuelta ininterrumpida a condiciones normales, p. ej. mediciones correctas durante 4 ciclos seguidos del radar (este punto podrá cambiar tras las fases de test y verificación) | SYS-SAF-04 |
+| NORMAL → DEGRADADO | No se detecta nada en 3 mediciones seguidas pero sí los raíles (ver H-011); no se detecta nada, ni siquiera los raíles, en 3 mediciones seguidas (H-002); desalineación del radar | SYS-SAF-12, SYS-SAF-13 |
+| DEGRADADO → NORMAL | Se exigen a la vez (H-003): reset nivel 1 desde el HMI; condiciones que llevaron a DEGRADADO limpiadas; funcionamiento normal ininterrumpido, p. ej. mediciones correctas durante 4 ciclos seguidos del radar, es decir 200 ms (este valor podrá cambiar tras las fases de test y verificación) | SYS-SAF-04 |
 | DEGRADADO → FALLO | Estado degradado continuado en el tiempo; cualquier condición de fallo estando en degradado, p. ej. aviso de autofallo del radar | SYS-SAF-14 |
 | FALLO → DEGRADADO | No es posible | SYS-SAF-16 |
-| NORMAL → FALLO | No se recibe ninguna trama en 128 ms; el timestamp de los datos no avanza o retrocede; un dato no está disponible; fallo autodiagnosticado por el radar; no se detecta nada en 3 mediciones seguidas (ni siquiera los raíles) | SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11 |
+| NORMAL → FALLO | No se recibe ninguna trama en 128 ms; el timestamp de los datos no avanza o retrocede; un dato no está disponible; fallo autodiagnosticado por el radar | SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11 |
 | FALLO → NORMAL | Reset nivel 2 desde el HMI: solo una persona autorizada, con doble autenticación; solo se acepta si las condiciones están limpias. El grid se reinicia a «desconocido» | SYS-SAF-16 |
 
 Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`):
@@ -158,8 +158,9 @@ Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`)
 - [PENDIENTE: tiempo máximo en DEGRADADO antes de pasar a FALLO (SYS-SAF-14) y umbral de desalineación (SYS-SAF-13)].
 - [PENDIENTE: el material no recoge las transiciones por exceso de falsas alarmas (SYS-SAF-18) ni por velocidad negativa (SYS-SAF-19), ni el máximo de falsas alarmas (SYS-DET-04)].
 - Los requisitos definen tres modos (SYS-SAF-01) y el material añade INIT como cuarto estado.
-- «Sin detección ni raíles durante 3 mediciones» lleva a FALLO en el material, mientras que SYS-SAF-12 lo lleva a DEGRADADO.
-- Reset de degradado a normal: el material cita el reset nivel 1 y, además, 4 ciclos correctos; no indica si son alternativos o acumulativos.
+- Resuelto (H-002): «sin detección ni raíles durante 3 mediciones» lleva a DEGRADADO, como SYS-SAF-12.
+- Resuelto (H-003): el reset de degradado a normal exige reset nivel 1, condiciones limpias y 4 ciclos correctos a la vez.
+- Abierto (H-001): el usuario decide que SYS-SAF-01 pida tres modos como mínimo en lugar de exactamente tres; requiere reabrir requisitos (`/fase-reabrir req`).
 
 ## 8. Gestión de fallos y seguridad funcional (STD-SAF)
 
@@ -169,7 +170,7 @@ Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`)
 | Timestamp incoherente | Reloj o datos corruptos | Datos no fiables | Timestamp que no avanza o retrocede | Paso a FALLO | SYS-SAF-09, SYS-IN-06 |
 | Dato de entrada no disponible | Fallo del sensor de velocidad u otro | Datos incompletos | Dato ausente | Paso a FALLO | SYS-SAF-10 |
 | Fallo del radar | Autodiagnóstico del radar | Detección no fiable | Notificación del radar | Paso a FALLO | SYS-SAF-11 |
-| Sin ecos ni raíles | [PENDIENTE: causa] | Sin vigilancia | 3 mediciones seguidas sin detección | Paso a FALLO (ME) | SYS-SAF-12 |
+| Sin ecos ni raíles | [PENDIENTE: causa] | Confianza reducida | 3 mediciones seguidas sin ninguna detección | Paso a DEGRADADO | SYS-SAF-12 |
 | Sin ecos de objetos pero con raíles | [PENDIENTE: causa] | Confianza reducida | 3 mediciones seguidas | Paso a DEGRADADO | SYS-SAF-12 |
 | Desalineación del radar | Montaje o golpe | Error de posición | Desalineación detectada | Paso a DEGRADADO | SYS-SAF-13 |
 | Degradado prolongado | Causa no resuelta | Detección con confianza reducida | Tiempo continuado en DEGRADADO | Paso a FALLO | SYS-SAF-14 |
@@ -196,7 +197,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | Voto de celda estática | +0,85 | SYS-PR-08 |
 | Umbral de extracción de objetos | p > 0,8 | SYS-PR-04 |
 | Ciclos de confirmación | más de 2 seguidos | SYS-PR-09 |
-| Sin detección para degradado o fallo | 3 mediciones | SYS-SAF-12 |
+| Mediciones sin detección ni raíles para degradado | 3 mediciones | SYS-SAF-12 |
 | Sin trama para fallo | 128 ms | SYS-SAF-08 |
 | Ciclos de recuperación a normal | 4 (podrá cambiar tras test) | SYS-SAF-04 |
 | Tiempo máximo de INIT | 3 min | SYS-SAF-01 |
