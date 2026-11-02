@@ -370,3 +370,25 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+## 2026-11-02 22:39 · F-006 · ogrid_update_ray · ejecución 1 · FAIL
+
+- Rama: `feature/SYS-PR-08-ogrid-update-ray` · commit `4c44075586`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | FAIL | 38 casos, 2 fallos |
+| coverage | FAIL | ogrid_update_ray.c L 100.0 % R 96.2 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
+
+Casos fallados:
+
+- `TC-F006-34` SYS-SAF-07 — Expected 3 Was 0.  corrupt cell must return ERR_STATE
+- `TC-F006-36` SYS-SAF-07 — Expected 3 Was 0.  corrupt first cell must be ERR_STATE
