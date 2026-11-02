@@ -80,3 +80,20 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+## 2026-11-02 20:55 · F-001 · ogrid_reset_grid · ejecución 5 · PASS
+
+- Rama: `feature/SYS-PR-08-ogrid-reset-grid` · commit `04a6ae95fe`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 15 casos, 0 fallos |
+| coverage | PASS | ogrid_reset_grid.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
