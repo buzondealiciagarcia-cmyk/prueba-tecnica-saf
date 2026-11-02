@@ -11,7 +11,7 @@
 #include "ogrid/ogrid.h"
 
 /**
- * @brief Set every cell to log-odds 0 and "not observed".
+ * @brief Set every cell to OGRID_LOG_ODDS_INIT and "not observed".
  * @param[out] grid_out Grid to reset; must not be NULL. Previous content is not read.
  * @return OGRID_OK when all OGRID_CELL_COUNT cells were reset.
  * @return OGRID_ERR_PARAM when grid_out is NULL; nothing is modified.
