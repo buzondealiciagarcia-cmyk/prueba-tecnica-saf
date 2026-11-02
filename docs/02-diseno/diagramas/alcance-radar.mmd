@@ -1,0 +1,17 @@
+flowchart LR
+  subgraph Tranvía
+    RAD[Radar 3D a 1 m de altura]:::hl
+  end
+  subgraph Vía
+    V[Vía de 1 m de ancho]
+    A[Alcance de 220 m a lo largo de la vía]
+  end
+  subgraph Grid
+    G[Celda de 0,25 m · 880 × 4 = 3 520 celdas]
+    O[Objeto mínimo 0,6 m = 3 celdas por lado]
+  end
+  RAD -->|nube de puntos cada 50 ms| A
+  A --> V
+  V --> G
+  G --> O
+  RAD -.->|error lateral 0,38 m a 220 m con 0,1°| A

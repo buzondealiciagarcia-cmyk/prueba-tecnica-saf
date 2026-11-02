@@ -1,0 +1,9 @@
+flowchart LR
+  C1[SYS-IMP-01 · sin memoria dinámica] --> C[C con MISRA]:::hl
+  C2[SYS-IMP-02 · determinismo y tiempo acotado] --> C
+  C3[SYS-GEN-01 · reglas verificables, SIL 2] --> C
+  C4[Procesos y STD-C definidos para C] --> C
+  C --> OK[Cumple todos los criterios]
+  GC[Lenguajes con recolector o intérprete] -.->|memoria implícita, pausas| X[No cumple SYS-IMP-01 ni SYS-IMP-02]:::err
+  CP[C++] -.->|exige prohibir partes del lenguaje| Y[Posible con restricciones]:::muted
+  AR[Ada o Rust] -.->|técnicamente posibles| Z[Fuera de STD-C y del proceso definido]:::muted

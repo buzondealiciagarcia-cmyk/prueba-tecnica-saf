@@ -1,0 +1,10 @@
+flowchart LR
+  R1[Curvas] --> P3[Paso 3 · curva con velocidad y giro]:::hl
+  R2[Puentes y techo] --> P8[Paso 8 · descarte sobre el techo]:::hl
+  R3[Ecos de raíles] --> P9[Paso 9 · filtro de raíles]:::hl
+  R4[Objetos en movimiento] --> P5[Paso 5 · descarte de dinámicos]:::hl
+  R5[Objetos pequeños] --> P11[Paso 11b · filtro de 0,6 m]:::hl
+  R6[Ecos aislados y ruido] --> P10[Paso 10 · log-odds y N = 3]:::hl
+  R7[Desalineación del radar] --> M[Modo DEGRADADO]:::warn
+  R8[Pérdida de ecos o del radar] --> M
+  M -.->|degradado continuado o fallo del radar| F[Modo FALLO]:::err
