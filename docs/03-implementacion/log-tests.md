@@ -220,3 +220,85 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+## 2026-11-02 22:19 · F-004 · ogrid_update_cell · ejecución 1 · FAIL
+
+- Rama: `feature/SYS-PR-08-ogrid-update-cell` · commit `583a779e4a`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 28 casos, 0 fallos |
+| coverage | FAIL | ogrid_update_cell.c L 96.3 % R 91.7 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
+
+### Cambio · 2026-11-02 22:20 · F-004
+
+- Agente: ingeniero-tests
+- Causa raíz: Contract clauses not exercised: occluded on corrupt cell and precondition order
+- Cambio aplicado: Add TC-F004-29 to 32
+- Commit: `b6dd576f3c`
+
+## 2026-11-02 22:20 · F-004 · ogrid_update_cell · ejecución 2 · FAIL
+
+- Rama: `feature/SYS-PR-08-ogrid-update-cell` · commit `b6dd576f3c`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 32 casos, 0 fallos |
+| coverage | FAIL | ogrid_update_cell.c L 96.3 % R 91.7 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
+
+### Cambio · 2026-11-02 22:21 · F-004
+
+- Agente: implementador
+- Causa raíz: Unreachable defensive branch in apply_delta, coverage below 100 percent
+- Cambio aplicado: Remove second validation; clamp status explicitly discarded
+- Commit: `be3b7b1074`
+
+## 2026-11-02 22:21 · F-004 · ogrid_update_cell · ejecución 3 · PASS
+
+- Rama: `feature/SYS-PR-08-ogrid-update-cell` · commit `be3b7b1074`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 32 casos, 0 fallos |
+| coverage | PASS | ogrid_update_cell.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
+
+## 2026-11-02 22:22 · F-004 · ogrid_update_cell · ejecución 4 · PASS
+
+- Rama: `feature/SYS-PR-08-ogrid-update-cell` · commit `727ee011d3`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 32 casos, 0 fallos |
+| coverage | PASS | ogrid_update_cell.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |

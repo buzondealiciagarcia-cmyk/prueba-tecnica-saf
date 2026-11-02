@@ -37,6 +37,8 @@ ogrid_status_t ogrid_update_cell(ogrid_t *grid_io, uint32_t cell_idx, ogrid_vote
 | PRE-3 | `cell_idx` < `OGRID_CELL_COUNT` | devuelve `OGRID_ERR_RANGE` sin modificar nada |
 | PRE-4 | El `log_odds_lo` actual de la celda es finito y está en [−0,8; 3,4] | devuelve `OGRID_ERR_STATE` sin modificar nada |
 
+Orden de comprobación: PRE-1, PRE-2, PRE-3 y PRE-4, en ese orden; si fallan varias a la vez, se devuelve el error de la primera que falla. PRE-4 se comprueba con cualquier voto, también con `OGRID_VOTE_KIND_OCCLUDED`: una celda corrupta devuelve `OGRID_ERR_STATE` aunque ese voto no la cambie.
+
 ## 5. Postcondiciones (`post`)
 
 | ID | Condición (con tolerancia si es numérica) |
