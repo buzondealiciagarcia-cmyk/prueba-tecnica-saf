@@ -44,7 +44,7 @@ Parámetros de partida (HW):
 | Altura del radar | 1 m sobre el suelo | Parámetro de configuración | SYS-IN-05 |
 | Error angular del radar | 1° | Valor provisional mientras el cliente no elija radar; después se usará la especificación del radar elegido | SYS-DET-07, H-04 |
 | Error de localización | 0,005 m | Valor provisional hasta tener la especificación del radar; el error de altura crece con la distancia | SYS-DET-06, H-06 |
-| Velocidad máxima del tranvía | 50 km/h (velocidad regulada en Vitoria-Gasteiz) | | H-07 |
+| Velocidad máxima del tranvía | 50 km/h = 13,9 m/s (velocidad regulada en Vitoria-Gasteiz) | | H-07 |
 | Alcance de detección | 220 m a lo largo de la vía (SW, paso 5) | | SYS-DET-01, SYS-PR-11 |
 
 Evoluciones futuras sugeridas al cliente en la oferta (no son requisitos, HW):
@@ -204,7 +204,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | Error angular | 1° (provisional) | SYS-DET-07 |
 | Error de localización | 0,005 m (provisional) | SYS-DET-06 |
 | Alcance | 220 m | SYS-DET-01, SYS-PR-11 |
-| Velocidad máxima del tranvía | 50 km/h | H-07 |
+| Velocidad máxima del tranvía | 50 km/h = 13,9 m/s | H-07 |
 | Voto de celda estática | +0,85 en log-odds | SYS-PR-08 |
 | Umbral de extracción de objetos | p > 0,8 | SYS-PR-04 |
 | Ciclos de confirmación N | 3 (más de 2 seguidos) | SYS-PR-09 |
@@ -226,15 +226,17 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | SYS-IN-05 | 3, 10 |
 | SYS-IN-06, SYS-IN-07 | 4, 8 |
 | SYS-PR-01, SYS-PR-02, SYS-PR-06, SYS-PR-07 | 4 |
-| SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-08, SYS-PR-09 | 4, 6 |
+| SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-09 | 4, 6 |
+| SYS-PR-08 | 4, 6 (cobertura parcial: voto «libre» y saturación pendientes) |
 | SYS-DET-02, SYS-DET-08 | 4 (paso 11b) |
 | SYS-PR-11, SYS-DET-01 | 3, 4, 10 |
 | SYS-DET-05, SYS-DET-06, SYS-DET-07 | 3, 4, 10 |
 | SYS-OUT-01, SYS-OUT-02, SYS-OUT-03, SYS-OUT-08, SYS-OUT-10, SYS-OUT-11 | 4 |
 | SYS-OUT-06 | 4, 6, 7 |
-| SYS-OUT-07, SYS-OUT-09 | 5 (solo enlace a la nube; contenido MQTT sin definir) |
+| SYS-OUT-07, SYS-OUT-09 | 5 (cobertura parcial: contenido MQTT sin definir) |
 | SYS-T-01 | 1, 9 |
-| SYS-SAF-01, SYS-SAF-04, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07, SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11, SYS-SAF-12, SYS-SAF-13, SYS-SAF-14, SYS-SAF-15, SYS-SAF-16 | 7, 8 |
+| SYS-SAF-01, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07, SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11, SYS-SAF-12, SYS-SAF-13, SYS-SAF-14, SYS-SAF-15 | 7, 8 |
+| SYS-SAF-04, SYS-SAF-16 | 7, 8 (cobertura parcial: mecanismo de persistencia y de rechazo de reset pendientes) |
 | SYS-IMP-01, SYS-IMP-02, SYS-IMP-11 | 4 |
 | SYS-IMP-03, SYS-IMP-04 | 1, 3, 5 |
 
