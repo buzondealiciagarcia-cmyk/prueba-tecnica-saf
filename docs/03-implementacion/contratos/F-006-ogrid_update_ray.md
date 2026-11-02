@@ -47,6 +47,7 @@ Aclaraciones:
 - **`cell_count` = 0:** con `has_echo` falso devuelve `OGRID_OK` sin hacer nada; con `has_echo` verdadero devuelve `OGRID_ERR_RANGE`, porque no puede haber un eco entre cero celdas.
 - **Celdas ocultas:** las celdas detrás del eco no se leen ni se modifican, así que una celda corrupta situada detrás del eco no produce `OGRID_ERR_STATE`.
 - **Tras `OGRID_ERR_STATE`:** las celdas anteriores a la corrupta pueden estar ya actualizadas; la celda corrupta y las posteriores no cambian. Es lo único que se garantiza.
+- **Celda corrupta:** a efectos de `OGRID_ERR_STATE` es la que define F-004 (PRE-4): log-odds almacenado NaN, infinito o fuera de [−0,8; 3,4]. Un valor de `observed` distinto de 0 y 1 no produce `OGRID_ERR_STATE` en esta función: los votos de eco y de paso lo reescriben con `OGRID_OBSERVED_YES`.
 - **Voto de paso y de eco:** ambos dejan `observed` = `OGRID_OBSERVED_YES` (lo hace F-004).
 
 ## 5. Postcondiciones (`post`)
@@ -58,7 +59,7 @@ Aclaraciones:
 | POST-3 | Las celdas que no aparecen en `cells_in` no cambian. |
 | POST-4 | Todo log-odds resultante está en [−0,8; 3,4]. |
 | POST-5 | Ejemplo: celdas [10, 11, 12, 13], eco en la posición 2, grid recién reiniciado → celda 10 = −0,40, celda 11 = −0,40, celda 12 = +0,85 y `observed`, celda 13 sin cambio ni `observed`. |
-| POST-6 | Con `cell_count` = 0 devuelve `OGRID_OK` y el grid no cambia. |
+| POST-6 | Con `cell_count` = 0 y `has_echo` falso devuelve `OGRID_OK` y el grid no cambia. |
 | POST-7 | Atomicidad en errores de parámetro: se validan todos los parámetros e índices antes de modificar nada; si devuelve `OGRID_ERR_PARAM` u `OGRID_ERR_RANGE`, el grid no se modifica. |
 
 ## 6. Errores (`err`)
