@@ -34,11 +34,13 @@ ogrid_status_t ogrid_clamp_log_odds(ogrid_real_t value_lo, ogrid_real_t *clamped
 | PRE-1 | `clamped_lo_out` no es `NULL` | devuelve `OGRID_ERR_PARAM` sin modificar salidas |
 | PRE-2 | `value_lo` es un número finito | devuelve `OGRID_ERR_RANGE` sin modificar salidas |
 
+Orden de comprobación: PRE-1 antes que PRE-2; si `clamped_lo_out` es `NULL` y `value_lo` es NaN o infinito, devuelve `OGRID_ERR_PARAM`.
+
 ## 5. Postcondiciones (`post`)
 
 | ID | Condición (con tolerancia si es numérica) |
 |---|---|
-| POST-1 | Si devuelve `OGRID_OK` y `value_lo` está en [`OGRID_LOG_ODDS_MIN`, `OGRID_LOG_ODDS_MAX`], `*clamped_lo_out` = `value_lo` exacto, sin tolerancia. |
+| POST-1 | Si devuelve `OGRID_OK` y `value_lo` está en [`OGRID_LOG_ODDS_MIN`, `OGRID_LOG_ODDS_MAX`], `*clamped_lo_out` = `value_lo` exacto, sin tolerancia (el cero con signo se compara por valor: +0,0 y −0,0 son iguales). |
 | POST-2 | Si `value_lo` < `OGRID_LOG_ODDS_MIN`, `*clamped_lo_out` = `OGRID_LOG_ODDS_MIN` (−0,8) exacto. |
 | POST-3 | Si `value_lo` > `OGRID_LOG_ODDS_MAX`, `*clamped_lo_out` = `OGRID_LOG_ODDS_MAX` (3,4) exacto. |
 | POST-4 | Idempotente: limitar un valor ya limitado devuelve el mismo valor. |
