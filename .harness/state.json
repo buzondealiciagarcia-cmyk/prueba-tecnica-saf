@@ -3,14 +3,24 @@
   "phases": {
     "req": {
       "status": "closed",
-      "version": "1.0",
-      "closed_at": "2026-11-01T20:50:23",
-      "tag": "req-v1.0",
+      "version": "1.1",
+      "closed_at": "2026-11-02T18:00:23",
+      "tag": "req-v1.1",
       "history": [
         {
           "event": "close",
           "at": "2026-11-01T20:50:23",
           "version": "1.0"
+        },
+        {
+          "event": "reopen",
+          "at": "2026-11-02T17:38:26",
+          "reason": "Ajustar requisitos por decisiones de la revision de diseno: SYS-SAF-01 (tres modos como minimo), SYS-SAF-04/16, SYS-PR-05, SYS-DET-02, SYS-OUT-11, SYS-IN-02/03, H-03 y SYS-OUT-07"
+        },
+        {
+          "event": "close",
+          "at": "2026-11-02T18:00:23",
+          "version": "1.1"
         }
       ]
     },
@@ -19,7 +29,13 @@
       "version": "0.1",
       "closed_at": null,
       "tag": null,
-      "history": []
+      "history": [
+        {
+          "event": "locked-by-reopen",
+          "at": "2026-11-02T17:38:26",
+          "of": "req"
+        }
+      ]
     },
     "impl": {
       "status": "locked",
