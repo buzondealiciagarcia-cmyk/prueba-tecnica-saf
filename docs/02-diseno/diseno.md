@@ -98,6 +98,8 @@ Huecos del material en este apartado:
 | ECU ↔ HMI | El que ya use el tranvía para comunicarse entre sí; lo más común Ethernet ferroviario (ECN, IEC 61375) con capa de seguridad EN 50159 | SYS-OUT-06, SYS-OUT-11 |
 | ECU → nube | MQTT con el cifrado necesario. Obligatorios (H-004): mensaje MQTT de estado y diagnóstico (QoS 1, retained) y log CRIT en cada paso a DEGRADADO o FALLO. Propuesta al cliente: telemetría adicional, actualizaciones de flota y mapas. No preocupa la latencia ni es crítico perder mensajes de telemetría | SYS-IMP-04, SYS-OUT-07, SYS-OUT-09 |
 
+Fallos de MQTT o de la nube (H-018): no se registran como fallo de la máquina de estados ni son críticos para la seguridad funcional, porque el sistema funciona completo sin la nube (SYS-IMP-04). Perder la conexión con el broker no cambia el modo. Esto se aparta de MQ-QOS-03 (pérdida del broker → evento de fallo y estado seguro) por decisión del usuario; desviación a registrar con su análisis de impacto (SAF-07): la nube no interviene en el procesamiento ni en la salida al HMI.
+
 ### 5.1 Red y direccionamiento (STD-NET)
 
 | Nodo | Función | VLAN | IP/máscara | Puertos | Protocolo | Dirección del tráfico |
@@ -179,6 +181,8 @@ Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`)
 | Degradado prolongado | Causa no resuelta | Detección con confianza reducida | Tiempo continuado en DEGRADADO | Paso a FALLO | SYS-SAF-14 |
 | Fallo de INIT | Autodiagnóstico o datos no válidos | Sin vigilancia | Condición de INIT falla o INIT supera 3 min | Paso a FALLO | SYS-SAF-01 |
 | Reset indebido de fallo | Reset no autorizado o de nivel equivocado | Reanudar con fallo activo | Autenticación, condiciones y nivel del reset | Reset nivel 2 con doble autenticación, solo con condiciones limpias; un reset del nivel equivocado se rechaza (H-010). Persistencia del último estado al reiniciar: [PENDIENTE: mecanismo, H-009]; hasta definirlo no cuenta como mitigación vigente | SYS-SAF-16 |
+
+Fuera de esta tabla por decisión del usuario (H-018): fallos de MQTT, del broker y de la nube, que no afectan al modo ni a la seguridad funcional (§5). Filas pendientes de añadir: datos corruptos de trama (SYS-IN-07), huecos de seq, saturación de CPU y desbordamiento; y columna «Notificación» (log CRIT + topic de diagnóstico).
 
 Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propios de STD-SAF no aportados].
 
