@@ -28,6 +28,8 @@
  * nothing else changes; on error the grid is not modified.
  * @req SYS-PR-08, SYS-SAF-07
  * @contract F-004
+ * @note Constant time, no loops (contract perf); it is called many times per 50 ms cycle from
+ * ogrid_update_ray.
  */
 ogrid_status_t ogrid_update_cell(ogrid_t *grid_io, uint32_t cell_idx, ogrid_vote_kind_t vote);
 
