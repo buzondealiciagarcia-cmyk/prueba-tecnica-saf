@@ -65,7 +65,7 @@ Funcionalidades en el orden del ciclo (SW):
 | Paso | Definición del usuario | Requisitos |
 |---|---|---|
 | 1 | Recibe en paralelo la nube del radar y la velocidad lineal y de giro | SYS-IN-01, SYS-IN-02, SYS-IN-03 |
-| 2 | Valida los datos según estándares y requisitos; los timestamps se validan contra el reloj de la ECU, que es la referencia (H-017); sincronización con el reloj del radar y tolerancia [PENDIENTE] | SYS-IN-06, SYS-IN-07 |
+| 2 | Valida los datos según estándares y requisitos; los timestamps se validan contra el reloj de la ECU, que es la referencia (H-017); sincronización con el reloj del radar y tolerancia [PENDIENTE]; aquí se cuenta si la trama trae algún eco, incluidos raíles, para SYS-SAF-12 (H-034) | SYS-IN-06, SYS-IN-07 |
 | 3 | Sincroniza en la ECU, con los timestamps de medida, las velocidades al instante de la «fotografía» de la nube, interpolando si hace falta (H-020); actualiza la posición del tranvía y estima la curva (puede ser recta) | SYS-PR-02, SYS-PR-06, H-02, H-03 |
 | 4 | Convierte la nube de (r, azimut, elevación) a (x, y, z) considerando la altura del radar | SYS-PR-07, SYS-IN-05 |
 | 5 | Descarta elementos dinámicos y elementos con señal muy débil. Los objetos en movimiento sobre la vía no se reportan (H-007); un eco descartado no cambia el valor de ninguna celda (H-024) | SYS-PR-05 |
@@ -78,8 +78,8 @@ Funcionalidades en el orden del ciclo (SW):
 | 11b | Descarta los objetos con alguna dimensión menor de 0,6 m (H-015) | SYS-DET-02, SYS-DET-08 |
 | 12 | Compara los objetos con los del ciclo anterior y los reporta si llevan más de 2 ciclos seguidos, es decir N = 3 (H-005) | SYS-PR-09, SYS-OUT-10 |
 | 13 | Calcula confianza e incertidumbre de cada objeto según distancia, ciclos confirmados, incertidumbre de la curva y error del radar (precisión de azimut y altura y localización, H-016, H-033); fórmula [PENDIENTE] | SYS-OUT-03, SYS-OUT-08 |
-| 14 | Gestiona el modo según la máquina de estados | SYS-SAF-01 |
-| 15 | Crea la salida según el modo | SYS-OUT-06, SYS-OUT-11, SYS-SAF-05, SYS-SAF-06 |
+| 14 | Gestiona el modo según la máquina de estados; en cada cambio a DEGRADADO o FALLO registra un log CRIT y publica el mensaje MQTT de estado (H-035) | SYS-SAF-01, SYS-OUT-07, SYS-OUT-09 |
+| 15 | Crea la salida según el modo, en dos salidas: estado por celdas (SYS-OUT-06) y lista de objetos (SYS-OUT-11) (H-035) | SYS-OUT-06, SYS-OUT-11, SYS-SAF-05, SYS-SAF-06 |
 
 Huecos del material en este apartado:
 
@@ -154,7 +154,7 @@ El último estado activo debe ser conocido al encender el tranvía de nuevo, par
 | DEGRADADO → NORMAL | Se exigen a la vez (H-003): reset nivel 1 desde el HMI; condiciones que llevaron a DEGRADADO limpiadas; funcionamiento normal ininterrumpido, p. ej. mediciones correctas durante 4 ciclos seguidos del radar, es decir 200 ms, que se cumplen antes del reset: el reset solo se acepta cuando ya se han cumplido (H-027). Este valor podrá cambiar tras las fases de test y verificación | SYS-SAF-04 |
 | DEGRADADO → FALLO | Estado degradado continuado en el tiempo; cualquier condición de fallo estando en degradado, p. ej. aviso de autofallo del radar | SYS-SAF-14 |
 | FALLO → DEGRADADO | No es posible | SYS-SAF-16 |
-| NORMAL → FALLO | No se recibe ninguna trama durante el timeout de trama (H-008, valor [PENDIENTE]; el material proponía 128 ms); el timestamp de los datos no avanza o retrocede; un dato no está disponible; fallo autodiagnosticado por el radar | SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11 |
+| NORMAL → FALLO | No se recibe ninguna trama durante el timeout de trama de 100 ms, 2 periodos del radar (H-008, H-040); el timestamp de los datos no avanza o retrocede; un dato no está disponible; fallo autodiagnosticado por el radar | SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11 |
 | FALLO → NORMAL | Reset nivel 2 desde el HMI: solo una persona autorizada, con doble autenticación; solo se acepta si las condiciones están limpias. El grid se reinicia a «desconocido» | SYS-SAF-16 |
 
 Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`):
@@ -194,7 +194,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 ## 9. Rendimiento y presupuesto temporal
 
 - Periodo del radar y de las velocidades: 50 ms (SYS-IN-01, SYS-IN-02, SYS-IN-03).
-- Tiempo máximo de entrega de objetos: 128 ms (SYS-T-01), entendido como latencia de proceso de cada ciclo desde la recepción de la nube (H-026), distinto del timeout de trama. El timeout de ausencia de tramas es un parámetro distinto, [PENDIENTE] en múltiplos de 50 ms (H-008, SYS-SAF-08).
+- Tiempo máximo de entrega de objetos: 128 ms (SYS-T-01), entendido como latencia de proceso de cada ciclo desde la recepción de la nube (H-026), distinto del timeout de trama. El timeout de ausencia de tramas es un parámetro distinto, de 100 ms (H-008, H-040, SYS-SAF-08).
 - [PENDIENTE: presupuesto temporal por paso del ciclo, hardware de la ECU y margen de CPU; no aportados].
 
 ## 10. Configuración (STD-CFG)
@@ -211,7 +211,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | Umbral de extracción de objetos | p > 0,85 | SYS-PR-04 |
 | Ciclos de confirmación N | 3 (más de 2 seguidos) | SYS-PR-09 |
 | Mediciones sin detección ni raíles para degradado | 3 mediciones | SYS-SAF-12 |
-| Timeout de trama para fallo | [PENDIENTE: múltiplo de 50 ms] | SYS-SAF-08 |
+| Timeout de trama para fallo | 100 ms (2 periodos del radar) | SYS-SAF-08 |
 | Tiempo máximo de entrega de objetos | 128 ms | SYS-T-01 |
 | Ciclos de recuperación a normal | 4 (podrá cambiar tras test) | SYS-SAF-04 |
 | Tiempo máximo de INIT | 3 min desde el arranque | SYS-SAF-01 |
