@@ -39,7 +39,7 @@ ogrid_status_t ogrid_get_cell_state(const ogrid_t *grid, uint32_t cell_idx, ogri
 
 | ID | Condición (con tolerancia si es numérica) |
 |---|---|
-| POST-1 | Si `observed` es `OGRID_OBSERVED_NO`, `*state_out` = `OGRID_CELL_UNSURVEYED` (zona no estudiada), con cualquier valor de log-odds. |
+| POST-1 | Si `observed` es `OGRID_OBSERVED_NO`, `*state_out` = `OGRID_CELL_UNSURVEYED` (zona no estudiada), con cualquier valor de log-odds, incluidos NaN e infinitos (el log-odds de una celda no observada no se mira y no es un error). |
 | POST-2 | Si `observed` es `OGRID_OBSERVED_YES` y p > `OGRID_OCCUPIED_PROB_THRESHOLD` (0,85), `*state_out` = `OGRID_CELL_OCCUPIED`; p se calcula con F-002. Con tolerancia: l = 1,70 (p = 0,8455) no es ocupado y l = 2,55 (p = 0,9276) sí. |
 | POST-3 | Si `observed` es `OGRID_OBSERVED_YES` y p ≤ 0,85, `*state_out` = `OGRID_CELL_LOW_PROB` (probabilidad baja de obstáculo). |
 | POST-4 | La salida nunca es un valor distinto de los tres estados de `ogrid_cell_state_t`: no existe «libre» (SYS-SAF-07). |
