@@ -19,7 +19,9 @@
  * @return OGRID_OK when the cell was updated or intentionally left unchanged (occluded).
  * @return OGRID_ERR_PARAM when grid_io is NULL or vote is invalid.
  * @return OGRID_ERR_RANGE when cell_idx is out of range.
- * @return OGRID_ERR_STATE when the stored log-odds is corrupt (NaN, infinite or out of limits).
+ * @return OGRID_ERR_STATE when the stored log-odds is corrupt (NaN, infinite or out of limits),
+ * with any vote, occluded included. When several preconditions fail, the first in the order
+ * param, range, state decides.
  * @pre grid_io != NULL, vote valid, cell_idx < OGRID_CELL_COUNT, stored log-odds finite and within
  * the limits.
  * @post On OGRID_OK the cell holds clamp(previous + vote) and is observed for echo and pass,
