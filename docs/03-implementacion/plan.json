@@ -15,7 +15,7 @@
       "cabecera": "include/ogrid/ogrid_reset_grid.h",
       "fuente": "src/ogrid/ogrid_reset_grid.c",
       "test": "tests/unit/test_ogrid_reset_grid.c",
-      "estado": "integrada",
+      "estado": "en-curso",
       "iteraciones": 4
     },
     {
