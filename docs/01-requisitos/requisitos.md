@@ -7,7 +7,7 @@
 | Versión | 1.1 |
 | Fecha | 2026-11-02 |
 | Autor | Alicia Garcia |
-| Estado | Borrador |
+| Estado | Cerrado |
 
 Redacción según ISO/IEC/IEEE 29148:2018, con plantillas EARS: «El sistema deberá…» para requisitos siempre activos y «Si…, entonces el sistema deberá…» para la respuesta ante fallos.
 
@@ -970,4 +970,4 @@ Por decisión del usuario, estos temas se deciden en `docs/02-diseno/diseno.md` 
 | 0.9 | 2026-11-01 | Alicia Garcia | Ronda 9: vecindad de 8 en SYS-PR-04; sin cifra en SYS-SAF-08 (tiempo sin trama) ni en SYS-DET-07 y SYS-SAF-13 (1°), a diseño; SYS-PR-06 remite al error angular de SYS-DET-07; entregables SYS-IMP-06, 07, 08, 10, 11 y 12 se mantienen con Origen R1 a R4 |
 | 0.10 | 2026-11-01 | Alicia Garcia | Duración de ejecución de los criterios de SYS-IN-01, SYS-IN-04 y SYS-SAF-15 definida en la fase de diseño (antes 1 h); los tres vuelven a Borrador. |
 | 1.0 | 2026-11-01 | Alicia Garcia | Cierre de la fase de requisitos: 73 requisitos e hipótesis aprobados, 0 dudas abiertas. |
-| 1.1 | 2026-11-02 | Alicia Garcia | Fase reabierta por revisión de diseño: «estático» en SYS-DET-01 y SYS-PR-09, móviles no cuentan como falsa alarma en SYS-DET-04; SYS-OUT-06 sin celda ocupada por móviles; SYS-SAF-01 (H-001), SYS-SAF-04 y SYS-SAF-16 con condiciones de recuperación (H-027), objetos estáticos (SYS-PR-05, SYS-DET-02, SYS-OUT-11, título; H-007, H-024), timestamp de medida (SYS-IN-02, SYS-IN-03, H-03; H-030), SYS-OUT-07 con conexión al broker (H-029). Los requisitos modificados vuelven a Borrador. |
+| 1.1 | 2026-11-02 | Alicia Garcia | Fase reabierta por revisión de diseño: «estático» en SYS-DET-01 y SYS-PR-09, móviles no cuentan como falsa alarma en SYS-DET-04; SYS-OUT-06 sin celda ocupada por móviles; SYS-SAF-01 (H-001), SYS-SAF-04 y SYS-SAF-16 con condiciones de recuperación (H-027), objetos estáticos (SYS-PR-05, SYS-DET-02, SYS-OUT-11, título; H-007, H-024), timestamp de medida (SYS-IN-02, SYS-IN-03, H-03; H-030), SYS-OUT-07 con conexión al broker (H-029). Los requisitos modificados vuelven a Borrador. Aprobados todos los requisitos y fase cerrada en 1.1. |
