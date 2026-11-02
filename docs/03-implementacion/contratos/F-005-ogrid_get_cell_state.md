@@ -35,6 +35,8 @@ ogrid_status_t ogrid_get_cell_state(const ogrid_t *grid, uint32_t cell_idx, ogri
 | PRE-1 | `grid` y `state_out` no son `NULL` | devuelve `OGRID_ERR_PARAM` sin modificar salidas |
 | PRE-2 | `cell_idx` < `OGRID_CELL_COUNT` | devuelve `OGRID_ERR_RANGE` sin modificar salidas |
 
+Orden de comprobación: PRE-1, PRE-2 y después el estado de la celda; si falla más de una, se devuelve el error de la primera. Un índice fuera de rango da `OGRID_ERR_RANGE` aunque el grid esté corrupto.
+
 ## 5. Postcondiciones (`post`)
 
 | ID | Condición (con tolerancia si es numérica) |
