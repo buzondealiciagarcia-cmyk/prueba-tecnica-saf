@@ -7,7 +7,7 @@ flowchart LR
   end
   RAD -->|nube de puntos + timestamp · fabricante del radar| ECU
   VEL -->|velocidad lineal y giro + timestamp| ECU
-  ECU -->|avisos e información · IEC 61375 + EN 50159| HMI
+  ECU -->|lista de objetos, modo y vigilancia · IEC 61375 + EN 50159| HMI
   HMI -->|sign in y resets| ECU
   ECU -->|MQTT cifrado: estado, diagnóstico, logs y trazabilidad| NUBE[(Nube)]
   ECU -.->|propuesta: telemetría, flota y mapas| NUBE

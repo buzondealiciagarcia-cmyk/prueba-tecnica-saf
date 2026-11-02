@@ -7,5 +7,5 @@ sequenceDiagram
   R->>E: nube de puntos + timestamp
   V->>E: velocidad lineal y de giro + timestamp
   Note over E: pasos 2 a 15 del software
-  E->>H: salida según el modo: celdas y lista de objetos
+  E->>H: lista de objetos, modo e indicador de vigilancia (cada ciclo)
   Note over E: en cambio a DEGRADADO o FALLO: log CRIT y mensaje MQTT de estado

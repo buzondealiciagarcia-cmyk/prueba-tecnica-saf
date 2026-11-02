@@ -9,8 +9,8 @@ stateDiagram-v2
   DEGRADADO --> FALLO: degradado continuado o cualquier fallo
   FALLO --> NORMAL: reset nivel 2, doble autenticación, condiciones limpias, grid a desconocido
   note right of INIT
-    Entrega no hay vigilancia
+    Publica sin vigilancia
   end note
   note right of FALLO
-    No entrega celdas como libres: no hay vigilancia
+    Publica sin vigilancia: la lista nunca es vía libre
   end note

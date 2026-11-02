@@ -35,10 +35,10 @@
       ]
     },
     "design": {
-      "status": "open",
-      "version": "1.0",
-      "closed_at": "2026-11-02T19:05:05",
-      "tag": "design-v1.0",
+      "status": "closed",
+      "version": "1.1",
+      "closed_at": "2026-11-02T23:02:51",
+      "tag": "design-v1.1",
       "history": [
         {
           "event": "locked-by-reopen",
@@ -54,11 +54,16 @@
           "event": "locked-by-reopen",
           "at": "2026-11-02T22:48:30",
           "of": "req"
+        },
+        {
+          "event": "close",
+          "at": "2026-11-02T23:02:51",
+          "version": "1.1"
         }
       ]
     },
     "impl": {
-      "status": "locked",
+      "status": "open",
       "version": "0.1",
       "closed_at": null,
       "tag": null,

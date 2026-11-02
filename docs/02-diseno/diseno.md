@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-DIS |
-| Versión | 1.0 |
+| Versión | 1.1 |
 | Fecha | 2026-11-02 |
 | Autor | Alicia Garcia |
 | Estado | Cerrado |
@@ -15,7 +15,7 @@ Fuentes (sin modificar, en `entradas/`): `Diseño de Hardware.docx` (HW), `Dise�
 
 ## 1. Contexto y objetivos del diseño
 
-Sistema de detección de obstáculos en vía mediante radar frontal, con procesamiento en el borde (edge) a bordo del tranvía (SYS-IMP-03). Salida hacia el HMI del conductor (HW).
+Sistema de detección de obstáculos en vía mediante radar frontal, con procesamiento en el borde (edge) a bordo del tranvía (SYS-IMP-03). Salida hacia el HMI del conductor: la lista de objetos estáticos con el modo del sistema y el indicador de vigilancia (HW, SYS-OUT-11).
 
 Justificación de la arquitectura edge (HW): buena latencia, disponibilidad, certificable y más segura frente a ataques que el procesamiento en la nube. Se descarta el procesamiento en la nube por latencia, fiabilidad y restricciones de tiempo de procesamiento y análisis, que pondrían en riesgo el cumplimiento de los estándares del proyecto (SYS-IMP-03, SYS-T-01, SYS-GEN-01).
 
@@ -25,7 +25,7 @@ Entorno operativo nominal (SYS-GEN-02): tranvía bidireccional en Vitoria-Gastei
 
 ## 2. Requisitos de referencia
 
-Versión de requisitos: `req-v1.0`. Cada apartado cita los requisitos que cubre.
+Versión de requisitos: `req-v1.2`. Cada apartado cita los requisitos que cubre.
 
 ## 3. Arquitectura hardware
 
@@ -36,7 +36,7 @@ Versión de requisitos: `req-v1.0`. Cada apartado cita los requisitos que cubre.
 | ECU edge | Recibe los datos, procesa y publica en el HMI. Modelo, CPU y memoria: se fijan según la regla de §10 (R-HW) | SYS-IMP-03, SYS-IMP-04 |
 | Radar | Radar de ocupación dinámico 3D: distancia, azimut y altura. Proporciona timestamp de medida a la ECU. Montado a 1 m sobre el suelo. Modelo concreto pendiente de decisión del cliente (valoración funcional y presupuestaria) | SYS-IN-01, SYS-IN-04, SYS-IN-05, SYS-PR-07, H-05 |
 | Sensor de velocidad | Mide velocidad lineal y de giro. Proporciona timestamp de medida a la ECU | SYS-IN-02, SYS-IN-03, SYS-IN-04 |
-| HMI | Salida de avisos e información de la ECU; entrada de sign in y resets (ME) | SYS-OUT-06, SYS-OUT-11, SYS-SAF-04, SYS-SAF-16 |
+| HMI | Recibe de la ECU la lista de objetos estáticos con el modo del sistema y el indicador de vigilancia en cada ciclo; entrada de sign in y resets (ME) | SYS-OUT-11, SYS-SAF-04, SYS-SAF-16 |
 | Radar frontal activo | El sign in del conductor en el HMI indica qué cabina está activa y por tanto qué radar frontal se activa (los tranvías suelen ser bidireccionales) (ME). Número de radares instalados: se fija según la regla de §10 (R-HW); la propuesta al cliente es un segundo radar por redundancia | SYS-IN-01 |
 
 Parámetros de partida (HW):
@@ -101,10 +101,10 @@ Funcionalidades en el orden del ciclo (SW):
 | 10 | Actualiza el grid en log-odds, que empieza en 0: por cada haz, eco en la celda suma +0,85; onda que pasa sin eco suma −0,40; celda oculta detrás de un eco no cambia | SYS-PR-08 |
 | 11 | Extrae las celdas con p > 0,85 (H-026), agrupa las contiguas y obtiene posición, tamaño y altura de cada objeto | SYS-PR-04, SYS-OUT-01, SYS-OUT-02 |
 | 11b | Descarta los objetos con alguna dimensión menor de 0,6 m (H-015) | SYS-DET-02, SYS-DET-08 |
-| 12 | Compara los objetos con los del ciclo anterior y los reporta si llevan más de 2 ciclos seguidos, es decir N = 3 (H-005) | SYS-PR-09, SYS-OUT-10 |
+| 12 | Compara los objetos con los del ciclo anterior y los reporta si llevan más de 2 ciclos seguidos, es decir N = 3 (H-005); reportar es incluirlos en la lista de SYS-OUT-11, y aviso y alerta equivalen a aparecer en esa lista (H-055) | SYS-PR-09, SYS-OUT-10 |
 | 13 | Calcula confianza e incertidumbre de cada objeto según distancia, ciclos confirmados, incertidumbre de la curva y error del radar (precisión de azimut y altura y localización, H-016, H-033); la incertidumbre crece con la distancia (error lateral = distancia × tan(precisión de azimut)) y la confianza crece con los ciclos confirmados y decrece con la distancia y con la incertidumbre de la curva; también calcula el timestamp de la detección y su alcance estimado, igual a la coordenada s del objeto (SYS-OUT-04, SYS-OUT-05); la fórmula exacta se fija con la hoja de datos del radar (R-HW) | SYS-OUT-03, SYS-OUT-04, SYS-OUT-05, SYS-OUT-08 |
 | 14 | Gestiona el modo según la máquina de estados; en cada cambio a DEGRADADO o FALLO registra un log CRIT y publica el mensaje MQTT de estado (H-035) | SYS-SAF-01, SYS-OUT-07, SYS-OUT-09 |
-| 15 | Crea la salida según el modo, en dos salidas: estado por celdas (SYS-OUT-06) y lista de objetos (SYS-OUT-11) (H-035) | SYS-OUT-06, SYS-OUT-11, SYS-SAF-05, SYS-SAF-06 |
+| 15 | Una única salida al HMI: la lista de objetos de SYS-OUT-11 con el modo del sistema y el indicador de vigilancia (H-042). La publicación la dispara un temporizador de 50 ms de la ECU y no la llegada de la nube (H-051). En INIT y FALLO el indicador es «sin vigilancia»; en DEGRADADO los objetos llevan confianza reducida (SYS-SAF-05); una lista vacía nunca significa vía libre (SYS-SAF-07). No hay otro canal de aviso (H-055) | SYS-OUT-11, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07 |
 
 Valores fijados según la regla R-HW de §10 (dependen del radar o del vehículo elegidos): umbral de «señal muy débil» (paso 5), altura del techo del tranvía (paso 8), distancia y tolerancia a raíles y parámetros del filtro de persistencia (paso 9, SYS-PR-03) y fórmulas de confianza e incertidumbre (paso 13). La vecindad de agrupación del paso 11 es de 8 celdas (lados y diagonales), según SYS-PR-04.
 
@@ -114,7 +114,7 @@ Valores fijados según la regla R-HW de §10 (dependen del radar o del vehículo
 |---|---|---|
 | Radar → ECU | Marcado por el fabricante del radar; lo más común Automotive Ethernet, también CAN FD en algunos casos | SYS-IN-01, SYS-IN-04 |
 | Sensor de velocidad → ECU | Lo marca el fabricante del tranvía o del sensor (R-HW, §10) | SYS-IN-02, SYS-IN-03 |
-| ECU ↔ HMI | El que ya use el tranvía para comunicarse entre sí; lo más común Ethernet ferroviario (ECN, IEC 61375) con capa de seguridad EN 50159 | SYS-OUT-06, SYS-OUT-11 |
+| ECU ↔ HMI | El que ya use el tranvía para comunicarse entre sí; lo más común Ethernet ferroviario (ECN, IEC 61375) con capa de seguridad EN 50159. Transporta la lista de objetos, el modo y el indicador de vigilancia (§5.3) y, en sentido contrario, el sign in y los resets | SYS-OUT-11, SYS-SAF-04, SYS-SAF-06, SYS-SAF-16 |
 | ECU → nube | MQTT con el cifrado necesario. Obligatorios (H-004): mensaje MQTT de estado y diagnóstico (QoS 1, retained) y log CRIT en cada paso a DEGRADADO o FALLO. Propuesta al cliente: telemetría adicional, actualizaciones de flota y mapas. No preocupa la latencia ni es crítico perder mensajes de telemetría | SYS-IMP-04, SYS-OUT-07, SYS-OUT-09 |
 
 Fallos de MQTT o de la nube (H-018, H-029): durante una caída del broker se pierden los mensajes MQTT, sin cola ni reenvío; no se registran como fallo de la máquina de estados ni son críticos para la seguridad funcional, porque el sistema funciona completo sin la nube (SYS-IMP-04). Perder la conexión con el broker no cambia el modo. Esto se aparta de MQ-QOS-03 (pérdida del broker → evento de fallo y estado seguro) por decisión del usuario; desviación a registrar con su análisis de impacto (SAF-07): la nube no interviene en el procesamiento ni en la salida al HMI.
@@ -132,9 +132,27 @@ Fallos de MQTT o de la nube (H-018, H-029): durante una caída del broker se pie
 | saf/ecu/status | ECU (LWT online/offline) | Nube | 1 | Sí | Evento en cada cambio de modo | v, seq, ts_ms, src, mode (init, normal, degraded, fault), reason | SYS-OUT-07 |
 | saf/ecu/diagnostic | ECU | Nube | 1 | No | Periodo configurable (R-HW) | v, seq, ts_ms, src, contadores de huecos y desorden por seq (MQ-QOS-02), estado de entradas | SYS-OUT-07, SYS-IN-07 |
 | saf/ecu/log | ECU | Nube | 1 | No | Evento | v, seq, ts_ms, src, level, msg | SYS-OUT-09, SYS-IMP-04 |
-| saf/ecu/objects | ECU | Nube | 0 | No | 50 ms (opcional, trazabilidad) | v, seq, ts_ms, src, lista de objetos con position_s_m, position_d_m, size_m, uncertainty_m, confidence, id | SYS-OUT-11, SYS-IMP-04 |
+| saf/ecu/objects | ECU | Nube | 0 | No | 50 ms (copia opcional para trazabilidad) | v, seq, ts_ms, src, mode, surveillance, lista de objetos con id, position_s_m, position_d_m, size_m, uncertainty_m, confidence, detection_ts_ms, range_m | SYS-OUT-11, SYS-IMP-04 |
 
-Notas de la propuesta: prefijo `saf` del código del proyecto, minúsculas y `snake_case` (MQ-TOP-02); cabecera común y unidades SI en los campos (MQ-PAY-02, MQ-PAY-04); JSON UTF-8 por ahora (MQ-PAY-01); la caída del broker no cambia el modo (H-018, H-029) y las publicaciones nunca bloquean el hilo de proceso (MQ-QOS-04). Los avisos al HMI van por IEC 61375, no por MQTT (§5). No se generan esquemas JSON de los payloads (MQ-PAY-03): desviación decidida por el usuario, a registrar con su análisis de impacto (SAF-07); los tests de integración validan los mensajes contra la tabla de esta sección.
+Notas de la propuesta: prefijo `saf` del código del proyecto, minúsculas y `snake_case` (MQ-TOP-02); cabecera común y unidades SI en los campos (MQ-PAY-02, MQ-PAY-04); JSON UTF-8 por ahora (MQ-PAY-01); la caída del broker no cambia el modo (H-018, H-029) y las publicaciones nunca bloquean el hilo de proceso (MQ-QOS-04). La lista de objetos va al HMI por IEC 61375 (§5.3), no por MQTT; el topic de la nube es su copia opcional y lleva también el modo y el indicador, para que la nube distinga una lista vacía de la ausencia de vigilancia (H-058). No se generan esquemas JSON de los payloads (MQ-PAY-03): desviación decidida por el usuario, a registrar con su análisis de impacto (SAF-07); los tests de integración validan los mensajes contra la tabla de esta sección.
+
+### 5.3 Mensaje ECU → HMI (SYS-OUT-11)
+
+Una publicación por cada ciclo de 50 ms (H-049). La estructura concreta sobre IEC 61375 la fija el fabricante o el tranvía (R-HW, §10); el contenido es el siguiente:
+
+| Campo | Nivel | Descripción | Requisito |
+|---|---|---|---|
+| seq, ts_ms | mensaje | Contador de secuencia y marca de tiempo de la ECU; el HMI detecta pérdida, repetición y desorden (EN 50159) | SYS-OUT-11, SYS-SAF-06 |
+| mode | mensaje | Modo del sistema: init, normal, degraded o fault | SYS-OUT-11, SYS-SAF-01 |
+| surveillance | mensaje | Indicador de vigilancia: con vigilancia o sin vigilancia (§7, H-050) | SYS-OUT-11, SYS-SAF-06, SYS-SAF-07 |
+| id | objeto | Identificador del objeto | SYS-OUT-10 |
+| position_s_m, position_d_m | objeto | Posición en coordenadas de vía, en metros | SYS-OUT-01 |
+| size_m | objeto | Tamaño en tres dimensiones, en metros | SYS-OUT-02 |
+| uncertainty_m, confidence | objeto | Incertidumbre y confianza de la detección | SYS-OUT-03, SYS-OUT-08 |
+| detection_ts_ms | objeto | Marca de tiempo de la detección | SYS-OUT-04 |
+| range_m | objeto | Alcance estimado, igual a la coordenada s del objeto | SYS-OUT-05 |
+
+Reglas (H-049, H-051): la publicación la dispara un temporizador de 50 ms de la ECU, no la llegada de la nube; el modo y el indicador van en toda publicación, también con la lista vacía, y una lista vacía nunca significa vía libre (SYS-SAF-07); si el HMI no recibe mensajes durante el tiempo fijado según R-HW (§10), muestra «sin vigilancia» (SYS-SAF-06). El dato de cada nube llega al HMI en menos de 128 ms desde su recepción (§9, SYS-T-01).
 
 ![Figura. Secuencia de un ciclo de 50 ms](diagramas/secuencia-ciclo.svg)
 
@@ -146,7 +164,7 @@ Celda cuadrada de 0,25 m (decisión del usuario), con eje longitudinal s a lo la
 
 ### 6.2 Modelo inverso del sensor
 
-Cada celda guarda un log-odds l que empieza en 0 (decisión del usuario, 2026-11-02). Por cada haz del radar: si hay eco en la celda se suma +0,85; si la onda pasa por la celda sin eco se suma −0,40; si la celda está detrás de un eco (oculta) no cambia (SW paso 10). La escala es log-odds con logaritmo natural (H-013, H-026), con p = 1 / (1 + e^−l): una detección da p ≈ 0,70, dos seguidas p ≈ 0,845 y tres seguidas p ≈ 0,93, por lo que el umbral p > 0,85 (l > 1,73) no se alcanza hasta la tercera detección, coherente con N = 3; cada paso sin eco resta 0,40. Estados de celda derivados (H-012): ocupado si p > 0,85; zona no estudiada si la celda nunca se ha observado o se ha reiniciado; probabilidad baja de obstáculo si ha sido observada y p ≤ 0,85; nunca «libre». Regla general (H-024, H-031): dentro de un ciclo (conjunto de ráfagas) cada celda mantiene su valor mientras ninguna regla de este apartado le aplique un cambio; esto vale para las celdas no vistas en el ciclo y para las que solo reciben ecos descartados. Límites del log-odds de cada celda: máximo 3,4 (p ≈ 0,97; una celda saturada deja de ser «ocupado» en 5 ciclos, 250 ms) y mínimo −0,8 (garantiza confirmar un obstáculo en 3 ecos, N = 3) (SYS-PR-08, SYS-SAF-07).
+Cada celda guarda un log-odds l que empieza en 0 (decisión del usuario, 2026-11-02). Por cada haz del radar: si hay eco en la celda se suma +0,85; si la onda pasa por la celda sin eco se suma −0,40; si la celda está detrás de un eco (oculta) no cambia (SW paso 10). La escala es log-odds con logaritmo natural (H-013, H-026), con p = 1 / (1 + e^−l): una detección da p ≈ 0,70, dos seguidas p ≈ 0,845 y tres seguidas p ≈ 0,93, por lo que el umbral p > 0,85 (l > 1,73) no se alcanza hasta la tercera detección, coherente con N = 3; cada paso sin eco resta 0,40. Estados de celda derivados (H-012): ocupado si p > 0,85; zona no estudiada si la celda nunca se ha observado o se ha reiniciado; probabilidad baja de obstáculo si ha sido observada y p ≤ 0,85; nunca «libre». Estos estados son internos del módulo del grid: no salen al HMI ni a la nube (H-047). Regla general (H-024, H-031): dentro de un ciclo (conjunto de ráfagas) cada celda mantiene su valor mientras ninguna regla de este apartado le aplique un cambio; esto vale para las celdas no vistas en el ciclo y para las que solo reciben ecos descartados. Límites del log-odds de cada celda: máximo 3,4 (p ≈ 0,97; una celda saturada deja de ser «ocupado» en 5 ciclos, 250 ms) y mínimo −0,8 (garantiza confirmar un obstáculo en 3 ecos, N = 3) (SYS-PR-08, SYS-SAF-07).
 
 ### 6.3 Actualización y dinámica (decaimiento, estáticos vs. móviles)
 
@@ -154,7 +172,11 @@ Los elementos dinámicos se descartan antes de actualizar el grid (SW paso 5, SY
 
 ### 6.4 Flujo por ciclo
 
-Ver §4 (pasos 1 a 15) y la figura de arquitectura software. Umbral de extracción de objetos: p > 0,85 (H-026). Confirmación: el objeto se reporta si lleva más de 2 ciclos seguidos, N = 3 (H-005, SYS-PR-09), independiente de las 3 mediciones de SYS-SAF-12. Aviso (H-025): se considera aviso la notificación del objeto en la lista de objetos, es decir, cuando se reporta tras N ciclos; el estado por celdas (SYS-OUT-06) es información de celda y puede mostrar «ocupado» antes. Salida: celdas ocupadas, probabilidad baja de obstáculo o zona no estudiada; nunca «libre» (SYS-SAF-07, SYS-OUT-06).
+Ver §4 (pasos 1 a 15) y la figura de arquitectura software. Umbral de extracción de objetos: p > 0,85 (H-026). Confirmación: el objeto se reporta si lleva más de 2 ciclos seguidos, N = 3 (H-005, SYS-PR-09), independiente de las 3 mediciones de SYS-SAF-12. Aviso y alerta (H-025, H-043): equivalen a que el objeto aparece en la lista de objetos de SYS-OUT-11, es decir, cuando se reporta tras N ciclos y sus tres dimensiones son de 0,6 m o más (SYS-PR-09, SYS-DET-02). El estado de celda es interno del módulo del grid y puede ser «ocupado» antes; no llega al HMI. Salida: la lista de objetos con el modo y el indicador de vigilancia; nunca se comunica la ausencia de obstáculo (SYS-SAF-07, SYS-OUT-11).
+
+### 6.5 Interfaz del módulo del grid (SYS-PR-08)
+
+SYS-PR-08 se verifica en la interfaz del módulo del grid, porque el estado de celda no sale al HMI (H-056). El módulo ofrece: reiniciar el grid a «zona no estudiada»; aplicar un haz del radar a las celdas que atraviesa; consultar el estado de una celda, que es un tipo cerrado de tres valores (ocupado, probabilidad baja de obstáculo, zona no estudiada) sin valor «libre»; y extraer la máscara de celdas ocupadas para la agrupación en objetos (SW paso 11). Un valor corrupto de una celda se informa como error y la celda se trata como «zona no estudiada», nunca como «libre» ni como «probabilidad baja».
 
 ## 7. Modos y estados del sistema
 
@@ -164,10 +186,10 @@ El último estado activo debe ser conocido al encender el tranvía de nuevo, par
 
 | Estado | Comportamiento definido (ME) | Requisitos |
 |---|---|---|
-| INIT | Entrega «no hay vigilancia» mientras comprueba niveles básicos de funcionamiento y espera un input del conductor. Estado inicial tras el arranque | SYS-SAF-06 |
-| NORMAL | Funcionamiento normal: cumple los requisitos | SYS-SAF-15 |
-| DEGRADADO | Sigue funcionando y da alertas y datos con confianza reducida | SYS-SAF-05 |
-| FALLO | No entrega ninguna celda como libre: «no hay vigilancia» | SYS-SAF-06, SYS-SAF-07 |
+| INIT | Publica el modo init y el indicador «sin vigilancia» mientras comprueba niveles básicos de funcionamiento y espera un input del conductor. Estado inicial tras el arranque | SYS-SAF-06 |
+| NORMAL | Funcionamiento normal: cumple los requisitos; publica el indicador «con vigilancia» | SYS-SAF-15 |
+| DEGRADADO | Sigue funcionando: indicador «con vigilancia» y objetos de la lista con confianza reducida | SYS-SAF-05 |
+| FALLO | Publica el modo fault y el indicador «sin vigilancia»; la lista no se interpreta nunca como vía libre | SYS-SAF-06, SYS-SAF-07 |
 
 | Transición | Condiciones definidas (ME) | Requisitos |
 |---|---|---|
@@ -179,6 +201,8 @@ El último estado activo debe ser conocido al encender el tranvía de nuevo, par
 | FALLO → DEGRADADO | No es posible | SYS-SAF-16 |
 | NORMAL → FALLO | No se recibe ninguna trama durante el timeout de trama de 100 ms, 2 periodos del radar (H-008, H-040); el timestamp de los datos no avanza o retrocede; un dato no está disponible; fallo autodiagnosticado por el radar | SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11 |
 | FALLO → NORMAL | Reset nivel 2 desde el HMI: solo una persona autorizada, con doble autenticación; solo se acepta si las condiciones están limpias. El grid se reinicia a «desconocido» | SYS-SAF-16 |
+
+Valor del indicador de vigilancia por modo (H-050): INIT sin vigilancia; NORMAL con vigilancia; DEGRADADO con vigilancia y confianza reducida; FALLO sin vigilancia. El modo va siempre en la publicación y distingue DEGRADADO de NORMAL.
 
 Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`):
 
@@ -210,13 +234,16 @@ Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`)
 | Saturación de CPU | Carga superior a la prevista | Ciclo más largo que 50 ms o entrega mayor de 128 ms | Medida del tiempo de ciclo y de la latencia de proceso | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-T-01 |
 | Desbordamiento | Valor fuera del rango de una variable | Resultado numérico incorrecto | Comprobación de rangos (programación defensiva, SAF-04) | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-IMP-02 |
 
+Salida al HMI en los fallos (H-050, H-051): en toda fila con paso a FALLO, y mientras el sistema está en INIT, el modo publicado es fault o init y el indicador es «sin vigilancia» en el 100 % de los ciclos, porque la publicación la dispara el temporizador de 50 ms de la ECU y no la llegada de la nube. Si el HMI no recibe mensajes durante el tiempo fijado según R-HW, muestra «sin vigilancia» (§5.3).
+
 Fuera de esta tabla por decisión del usuario (H-018): fallos de MQTT, del broker y de la nube, que no afectan al modo ni a la seguridad funcional (§5).
 
 
 ## 9. Rendimiento y presupuesto temporal
 
 - Periodo del radar y de las velocidades: 50 ms (SYS-IN-01, SYS-IN-02, SYS-IN-03).
-- Tiempo máximo de entrega de objetos: 128 ms (SYS-T-01), entendido como latencia de proceso de cada ciclo desde la recepción de la nube (H-026), distinto del timeout de trama. El timeout de ausencia de tramas es un parámetro distinto, de 100 ms (H-008, H-040, SYS-SAF-08).
+- Tiempo máximo de entrega de objetos: 128 ms (SYS-T-01), entendido como latencia desde la recepción de la nube hasta la publicación de la lista de objetos al HMI (H-026, H-059), distinta del timeout de trama. El sistema completo entrega al HMI los datos de cada nube en menos de 128 ms desde que la recibe (decisión del usuario, H-051). El timeout de ausencia de tramas es un parámetro distinto, de 100 ms (H-008, H-040, SYS-SAF-08).
+- Como la publicación espera al siguiente disparo del temporizador de 50 ms (§5.3), que añade como máximo 50 ms, el procesamiento de cada nube debe terminar en el presupuesto restante, 128 ms − 50 ms = 78 ms (H-051); el margen se confirma con el hardware de la ECU (R-HW).
 - A 13,9 m/s el tranvía avanza 1,78 m durante los 128 ms de entrega. El presupuesto temporal por paso del ciclo y el margen de CPU se fijan con el hardware de la ECU elegido (R-HW, §10).
 
 ## 10. Configuración (STD-CFG)
@@ -240,10 +267,12 @@ Fuera de esta tabla por decisión del usuario (H-018): fallos de MQTT, del broke
 | Mediciones sin detección ni raíles para degradado | 3 | mediciones | Esquema CFG-01 | SYS-SAF-12 |
 | Timeout de trama para fallo | 100 ms (2 periodos del radar) | ms | Esquema CFG-01 | SYS-SAF-08 |
 | Tiempo máximo de entrega de objetos | 128 ms | ms | Esquema CFG-01 | SYS-T-01 |
+| Periodo de publicación al HMI | 50 ms | ms | Esquema CFG-01 | SYS-OUT-11 |
 | Ciclos de recuperación a normal | 4 (podrá cambiar tras test) | ciclos | Esquema CFG-01 | SYS-SAF-04 |
 | Tiempo máximo de INIT | 3 min desde el arranque | s | Esquema CFG-01 | SYS-SAF-01 |
 | Tiempo máximo en DEGRADADO | 30 s | s | Esquema CFG-01 | SYS-SAF-14 |
 | Umbral de desalineación | R-HW | ° | Esquema CFG-01 | SYS-SAF-13 |
+| Tiempo sin mensajes en el HMI para mostrar «sin vigilancia» | R-HW | ms | Esquema CFG-01 | SYS-SAF-06 |
 | Máximo de falsas alarmas | Calibrable, validado en test con el cliente | falsas alarmas por hora de operación | Esquema CFG-01 | SYS-DET-04 |
 | Umbral de señal débil, altura del techo, distancia a raíles, parámetros del filtro de persistencia, umbral de velocidad de objeto dinámico, tolerancia de reloj | R-HW | según el parámetro | Esquema CFG-01 | SYS-PR-03, SYS-PR-05, SYS-IN-06 |
 
@@ -262,16 +291,15 @@ Fuera de esta tabla por decisión del usuario (H-018): fallos de MQTT, del broke
 | SYS-IN-07 | 4, 8  |
 | SYS-PR-01, SYS-PR-02, SYS-PR-06, SYS-PR-07 | 4 |
 | SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-09 | 4, 6  |
-| SYS-PR-08 | 4, 6 |
-| SYS-DET-02, SYS-DET-08 | 4 (paso 11b) |
+| SYS-PR-08 | 4, 6 (§6.5, interfaz interna del módulo del grid) |
+| SYS-DET-02, SYS-DET-08 | 4 (paso 11b), 6.4 |
 | SYS-PR-11, SYS-DET-01 | 3, 4, 10 |
 | SYS-DET-05, SYS-DET-06, SYS-DET-07 | 3, 4, 10 |
 | SYS-OUT-01, SYS-OUT-02, SYS-OUT-03, SYS-OUT-08, SYS-OUT-10 | 4 |
-| SYS-OUT-11, SYS-OUT-04, SYS-OUT-05 | 4 (pasos 13 y 15) |
-| SYS-OUT-06 | 4, 6, 7 |
+| SYS-OUT-11, SYS-OUT-04, SYS-OUT-05 | 3, 4 (pasos 13 y 15), 5, 6.4, 7, 8 |
 | SYS-OUT-07, SYS-OUT-09 | 4 (paso 14), 5, 8 |
 | SYS-T-01 | 1, 9 |
-| SYS-SAF-01, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07, SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11, SYS-SAF-12, SYS-SAF-13, SYS-SAF-14, SYS-SAF-15 | 7, 8, 10 |
+| SYS-SAF-01, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07 (también 4 paso 15 y 5.3), SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11, SYS-SAF-12, SYS-SAF-13, SYS-SAF-14, SYS-SAF-15 | 7, 8, 10 |
 | SYS-SAF-04, SYS-SAF-16 | 7, 8 |
 | SYS-SAF-18, SYS-SAF-19, SYS-PR-10, SYS-DET-04 | 4 (paso 2), 7 |
 | SYS-GEN-02 | 1 |
@@ -287,3 +315,4 @@ SYS-IMP-12 (borrador de oferta) corresponde a la fase de Oferta.
 |---|---|---|---|
 | 0.1 | 2026-11-01 | Alicia Garcia | Creación a partir del diseño aportado por el usuario |
 | 1.0 | 2026-11-02 | Alicia Garcia | Revisión de diseño completa (41 hallazgos resueltos), votos del grid, 0,1° de precisión angular, topics MQTT, entregables y cierre de la fase |
+| 1.1 | 2026-11-02 | Alicia Garcia | Alineado con los requisitos 1.2 (hallazgos H-042 a H-062): SYS-OUT-06 retirado, una única salida al HMI (lista de objetos con modo e indicador de vigilancia), mensaje ECU→HMI (§5.3), interfaz del módulo del grid (§6.5), publicación por temporizador de 50 ms y entrega en menos de 128 ms. Fase cerrada en 1.1 |
