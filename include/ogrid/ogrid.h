@@ -2,8 +2,7 @@
  * @file ogrid.h
  * @brief Public entry point of the ogrid module (occupancy grid in log-odds).
  * @details Declares the status codes shared by every public function and pulls in the
- *          module types and limits. Per-function headers are added to the list at the end
- *          as the functions of the implementation plan are integrated.
+ *          module types and limits. Each function has its own header, ogrid_<verb>_<object>.h.
  * @ingroup ogrid
  */
 #ifndef OGRID_OGRID_H
