@@ -1,0 +1,28 @@
+flowchart TB
+  subgraph Entrada[Lo que llega de otras partes del sistema]
+    R[Haz del radar: celdas que cruza y posición del eco]
+    M[Cambio de modo: arranque o vuelta de FALLO]
+  end
+  subgraph Escritura[Escriben el grid]
+    F001[F-001 ogrid_reset_grid]
+    F006[F-006 ogrid_update_ray]
+    F004[F-004 ogrid_update_cell]
+    F003[F-003 ogrid_clamp_log_odds]
+  end
+  G[(Grid: 880 x 4 celdas, log-odds y observada)]
+  subgraph Lectura[Leen el grid]
+    F007[F-007 ogrid_extract_occupied]
+    F005[F-005 ogrid_get_cell_state]
+    F002[F-002 ogrid_log_odds_to_prob]
+  end
+  MASK[Máscara de ocupadas: entrada de la agrupación en objetos]
+  R --> F006
+  M --> F001
+  F006 -->|llama a| F004
+  F004 -->|llama a| F003
+  F001 -->|escribe| G
+  F004 -->|escribe| G
+  F007 -->|llama a| F005
+  F005 -->|llama a| F002
+  F005 -->|lee| G
+  F007 -->|entrega| MASK

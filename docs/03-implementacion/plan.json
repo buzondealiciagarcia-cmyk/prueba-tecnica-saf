@@ -1,5 +1,5 @@
 {
-  "alcance": "Grid de ocupación en log-odds (diseno.md §6, pasos 10 y salida por celdas): celda, haz, estados derivados, máscara de ocupadas y estado por celdas. Fuera de alcance: agrupación, filtro de tamaño, confirmación N=3, geometría y desplazamiento del grid.",
+  "alcance": "Grid de ocupación en log-odds (diseno.md §6, pasos 10 ): celda, haz, estados derivados, máscara de ocupadas y estado por celdas. Fuera de alcance: agrupación, filtro de tamaño, confirmación N=3, geometría y desplazamiento del grid.",
   "modulo": "ogrid",
   "funciones": [
     {
@@ -30,7 +30,7 @@
       "cabecera": "include/ogrid/ogrid_log_odds_to_prob.h",
       "fuente": "src/ogrid/ogrid_log_odds_to_prob.c",
       "test": "tests/unit/test_ogrid_log_odds_to_prob.c",
-      "estado": "pendiente"
+      "estado": "contrato"
     },
     {
       "id": "F-003",
@@ -45,7 +45,7 @@
       "cabecera": "include/ogrid/ogrid_clamp_log_odds.h",
       "fuente": "src/ogrid/ogrid_clamp_log_odds.c",
       "test": "tests/unit/test_ogrid_clamp_log_odds.c",
-      "estado": "pendiente"
+      "estado": "contrato"
     },
     {
       "id": "F-004",
@@ -62,7 +62,7 @@
       "cabecera": "include/ogrid/ogrid_update_cell.h",
       "fuente": "src/ogrid/ogrid_update_cell.c",
       "test": "tests/unit/test_ogrid_update_cell.c",
-      "estado": "pendiente"
+      "estado": "contrato"
     },
     {
       "id": "F-005",
@@ -79,7 +79,7 @@
       "cabecera": "include/ogrid/ogrid_get_cell_state.h",
       "fuente": "src/ogrid/ogrid_get_cell_state.c",
       "test": "tests/unit/test_ogrid_get_cell_state.c",
-      "estado": "pendiente"
+      "estado": "contrato"
     },
     {
       "id": "F-006",
@@ -95,7 +95,7 @@
       "cabecera": "include/ogrid/ogrid_update_ray.h",
       "fuente": "src/ogrid/ogrid_update_ray.c",
       "test": "tests/unit/test_ogrid_update_ray.c",
-      "estado": "pendiente"
+      "estado": "contrato"
     },
     {
       "id": "F-007",
@@ -106,30 +106,13 @@
         "SYS-PR-08"
       ],
       "depende_de": [
-        "F-002"
+        "F-005"
       ],
       "contrato": "docs/03-implementacion/contratos/F-007-ogrid_extract_occupied.md",
       "cabecera": "include/ogrid/ogrid_extract_occupied.h",
       "fuente": "src/ogrid/ogrid_extract_occupied.c",
       "test": "tests/unit/test_ogrid_extract_occupied.c",
-      "estado": "pendiente"
-    },
-    {
-      "id": "F-008",
-      "nombre": "ogrid_export_cell_states",
-      "descripcion": "Fill the per-cell state output without probabilities",
-      "requisitos": [
-        "SYS-OUT-06",
-        "SYS-SAF-07"
-      ],
-      "depende_de": [
-        "F-005"
-      ],
-      "contrato": "docs/03-implementacion/contratos/F-008-ogrid_export_cell_states.md",
-      "cabecera": "include/ogrid/ogrid_export_cell_states.h",
-      "fuente": "src/ogrid/ogrid_export_cell_states.c",
-      "test": "tests/unit/test_ogrid_export_cell_states.c",
-      "estado": "pendiente"
+      "estado": "contrato"
     }
   ]
 }
