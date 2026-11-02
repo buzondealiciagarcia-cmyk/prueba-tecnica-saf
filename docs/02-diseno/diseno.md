@@ -64,8 +64,8 @@ Funcionalidades en el orden del ciclo (SW):
 | Paso | Definición del usuario | Requisitos |
 |---|---|---|
 | 1 | Recibe en paralelo la nube del radar y la velocidad lineal y de giro | SYS-IN-01, SYS-IN-02, SYS-IN-03 |
-| 2 | Valida los datos según estándares y requisitos | SYS-IN-06, SYS-IN-07 |
-| 3 | Sincroniza las velocidades al instante de la «fotografía» de la nube, interpolando si hace falta; actualiza la posición del tranvía y estima la curva (puede ser recta) | SYS-PR-02, SYS-PR-06, H-02, H-03 |
+| 2 | Valida los datos según estándares y requisitos; los timestamps se validan contra el reloj de la ECU, que es la referencia (H-017); sincronización con el reloj del radar y tolerancia [PENDIENTE] | SYS-IN-06, SYS-IN-07 |
+| 3 | Sincroniza en la ECU, con los timestamps de medida, las velocidades al instante de la «fotografía» de la nube, interpolando si hace falta (H-020); actualiza la posición del tranvía y estima la curva (puede ser recta) | SYS-PR-02, SYS-PR-06, H-02, H-03 |
 | 4 | Convierte la nube de (r, azimut, elevación) a (x, y, z) considerando la altura del radar | SYS-PR-07, SYS-IN-05 |
 | 5 | Descarta elementos dinámicos y elementos con señal muy débil. Los objetos en movimiento sobre la vía no se reportan (H-007) | SYS-PR-05 |
 | 6 | Pasa de coordenadas (x, y) a coordenadas de vía (s, d) y descarta lo situado a más de 220 m a lo largo de la vía, s > 220 m (H-014) | SYS-PR-01, SYS-PR-11 |
@@ -120,7 +120,7 @@ Huecos del material en este apartado:
 
 ### 6.2 Modelo inverso del sensor
 
-Celda con detección estática: +0,85. Celda atravesada por la luz: voto «libre». Celda no observada: «desconocido» (SW paso 10). [PENDIENTE: ¿suma en probabilidad o en log-odds?, valor del voto «libre», límites de saturación] (SYS-PR-08).
+Celda con detección estática: +0,85. Celda atravesada por la luz: voto «libre». Celda no observada: «desconocido» (SW paso 10). El voto +0,85 se suma en escala log-odds (H-013): partiendo de p = 0,5, una detección da p ≈ 0,70 y dos seguidas p ≈ 0,85, por lo que el umbral p > 0,8 (log-odds > 1,39) no se alcanza en un solo ciclo. Estados de celda derivados (H-012): ocupado si p > 0,8; zona no estudiada si la celda nunca se ha observado o se ha reiniciado; probabilidad baja de obstáculo si ha sido observada y p ≤ 0,8; nunca «libre». [PENDIENTE: valor del voto «libre» y límites de saturación] (SYS-PR-08, SYS-SAF-07).
 
 ### 6.3 Actualización y dinámica (decaimiento, estáticos vs. móviles)
 
@@ -197,7 +197,7 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | Error de localización | 0,005 m (provisional) | SYS-DET-06 |
 | Alcance | 220 m | SYS-DET-01, SYS-PR-11 |
 | Velocidad máxima del tranvía | 50 km/h | H-07 |
-| Voto de celda estática | +0,85 | SYS-PR-08 |
+| Voto de celda estática | +0,85 en log-odds | SYS-PR-08 |
 | Umbral de extracción de objetos | p > 0,8 | SYS-PR-04 |
 | Ciclos de confirmación N | 3 (más de 2 seguidos) | SYS-PR-09 |
 | Mediciones sin detección ni raíles para degradado | 3 mediciones | SYS-SAF-12 |
