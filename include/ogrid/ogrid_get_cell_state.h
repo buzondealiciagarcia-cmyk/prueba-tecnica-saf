@@ -18,7 +18,9 @@
  * @return OGRID_OK when the state was written.
  * @return OGRID_ERR_PARAM when grid or state_out is NULL.
  * @return OGRID_ERR_RANGE when cell_idx is out of range.
- * @return OGRID_ERR_STATE when the cell is corrupt; *state_out is then OGRID_CELL_UNSURVEYED.
+ * @return OGRID_ERR_STATE when the cell is corrupt (observed neither OGRID_OBSERVED_NO nor
+ * OGRID_OBSERVED_YES, or invalid log-odds on an observed cell); *state_out is then
+ * OGRID_CELL_UNSURVEYED.
  * @pre grid != NULL, state_out != NULL, cell_idx < OGRID_CELL_COUNT.
  * @post On OGRID_OK the state is unsurveyed if not observed, occupied if p >
  * OGRID_OCCUPIED_PROB_THRESHOLD, otherwise low probability; the grid is not modified.

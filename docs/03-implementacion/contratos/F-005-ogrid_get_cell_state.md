@@ -39,11 +39,11 @@ ogrid_status_t ogrid_get_cell_state(const ogrid_t *grid, uint32_t cell_idx, ogri
 
 | ID | Condición (con tolerancia si es numérica) |
 |---|---|
-| POST-1 | Si `observed` es false, `*state_out` = `OGRID_CELL_UNSURVEYED` (zona no estudiada), con cualquier valor de log-odds. |
-| POST-2 | Si `observed` es true y p > `OGRID_OCCUPIED_PROB_THRESHOLD` (0,85), `*state_out` = `OGRID_CELL_OCCUPIED`; p se calcula con F-002. Con tolerancia: l = 1,70 (p = 0,8455) no es ocupado y l = 2,55 (p = 0,9276) sí. |
-| POST-3 | Si `observed` es true y p ≤ 0,85, `*state_out` = `OGRID_CELL_LOW_PROB` (probabilidad baja de obstáculo). |
+| POST-1 | Si `observed` es `OGRID_OBSERVED_NO`, `*state_out` = `OGRID_CELL_UNSURVEYED` (zona no estudiada), con cualquier valor de log-odds. |
+| POST-2 | Si `observed` es `OGRID_OBSERVED_YES` y p > `OGRID_OCCUPIED_PROB_THRESHOLD` (0,85), `*state_out` = `OGRID_CELL_OCCUPIED`; p se calcula con F-002. Con tolerancia: l = 1,70 (p = 0,8455) no es ocupado y l = 2,55 (p = 0,9276) sí. |
+| POST-3 | Si `observed` es `OGRID_OBSERVED_YES` y p ≤ 0,85, `*state_out` = `OGRID_CELL_LOW_PROB` (probabilidad baja de obstáculo). |
 | POST-4 | La salida nunca es un valor distinto de los tres estados de `ogrid_cell_state_t`: no existe «libre» (SYS-SAF-07). |
-| POST-5 | Si el log-odds almacenado de una celda observada es NaN, infinito o está fuera de [−0,8; 3,4], devuelve `OGRID_ERR_STATE` y `*state_out` = `OGRID_CELL_UNSURVEYED` (decisión de seguridad: nunca «libre» ni «probabilidad baja» ante datos corruptos). |
+| POST-5 | Si `observed` no es ni `OGRID_OBSERVED_NO` ni `OGRID_OBSERVED_YES` (celda corrupta), o si el log-odds almacenado de una celda observada es NaN, infinito o está fuera de [−0,8; 3,4], devuelve `OGRID_ERR_STATE` y `*state_out` = `OGRID_CELL_UNSURVEYED` (decisión de seguridad: nunca «libre» ni «probabilidad baja» ante datos corruptos). |
 | POST-6 | Si devuelve `OGRID_ERR_PARAM` u `OGRID_ERR_RANGE`, `*state_out` no se modifica. No modifica el grid. |
 
 ## 6. Errores (`err`)
@@ -53,7 +53,7 @@ ogrid_status_t ogrid_get_cell_state(const ogrid_t *grid, uint32_t cell_idx, ogri
 | `OGRID_OK` | Parámetros válidos y celda coherente | `*state_out` escrito (POST-1 a POST-4) |
 | `OGRID_ERR_PARAM` | `grid` o `state_out` es `NULL` | sin cambios (POST-6) |
 | `OGRID_ERR_RANGE` | `cell_idx` ≥ `OGRID_CELL_COUNT` | sin cambios (POST-6) |
-| `OGRID_ERR_STATE` | celda observada con log-odds corrupto | `*state_out` = `OGRID_CELL_UNSURVEYED` (POST-5) |
+| `OGRID_ERR_STATE` | `observed` con un valor distinto de 0 y 1, o celda observada con log-odds corrupto | `*state_out` = `OGRID_CELL_UNSURVEYED` (POST-5) |
 
 ## 7. Rendimiento (`perf`)
 

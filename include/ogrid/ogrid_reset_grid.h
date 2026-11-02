@@ -16,8 +16,9 @@
  * @return OGRID_OK when all OGRID_CELL_COUNT cells were reset.
  * @return OGRID_ERR_PARAM when grid_out is NULL; nothing is modified.
  * @pre grid_out != NULL.
- * @post On OGRID_OK every cell has log_odds_lo == OGRID_LOG_ODDS_INIT and observed == false,
- *       so its derived state is OGRID_CELL_UNSURVEYED; calling it twice gives the same result.
+ * @post On OGRID_OK every cell has log_odds_lo == OGRID_LOG_ODDS_INIT and observed ==
+ * OGRID_OBSERVED_NO, so its derived state is OGRID_CELL_UNSURVEYED; calling it twice gives the same
+ * result.
  * @req SYS-PR-08, SYS-SAF-07, SYS-IMP-01
  * @contract F-001
  */

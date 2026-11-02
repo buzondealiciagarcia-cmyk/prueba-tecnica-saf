@@ -43,8 +43,8 @@ Orden de comprobación: PRE-1, PRE-2, PRE-3 y PRE-4, en ese orden; si fallan var
 
 | ID | Condición (con tolerancia si es numérica) |
 |---|---|
-| POST-1 | `OGRID_VOTE_KIND_ECHO`: nuevo log-odds = limitar(anterior + `OGRID_VOTE_ECHO`) y `observed` = true. Desde 0, tres ecos seguidos dan 0,85 / 1,70 / 2,55 con tolerancia 1·10⁻⁶. |
-| POST-2 | `OGRID_VOTE_KIND_PASS`: nuevo log-odds = limitar(anterior + `OGRID_VOTE_PASS`) y `observed` = true. Desde 0 da −0,40; desde −0,8 se queda en −0,8. |
+| POST-1 | `OGRID_VOTE_KIND_ECHO`: nuevo log-odds = limitar(anterior + `OGRID_VOTE_ECHO`) y `observed` = `OGRID_OBSERVED_YES` (1). Desde 0, tres ecos seguidos dan 0,85 / 1,70 / 2,55 con tolerancia 1·10⁻⁶. |
+| POST-2 | `OGRID_VOTE_KIND_PASS`: nuevo log-odds = limitar(anterior + `OGRID_VOTE_PASS`) y `observed` = `OGRID_OBSERVED_YES` (1). Desde 0 da −0,40; desde −0,8 se queda en −0,8. |
 | POST-3 | `OGRID_VOTE_KIND_OCCLUDED`: ni `log_odds_lo` ni `observed` cambian (la celda no ha sido observada por el haz). |
 | POST-4 | Con cualquier voto, el log-odds resultante está siempre en [−0,8; 3,4] y las demás celdas del grid no cambian. |
 | POST-5 | Desde el mínimo (−0,8), tres ecos seguidos dejan la celda con p > 0,85 (−0,8 + 3 × 0,85 = 1,75 > 1,7346). |
