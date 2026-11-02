@@ -18,6 +18,10 @@ ogrid_status_t ogrid_clamp_log_odds(ogrid_real_t value_lo, ogrid_real_t *clamped
     {
         status = OGRID_ERR_PARAM;
     }
+    /*
+     * ogrid_real_t is fixed to float32 by a _Static_assert in ogrid_types.h, so
+     * FLT_MAX is the correct finiteness limit for this type.
+     */
     else if (!((value_lo >= -FLT_MAX) && (value_lo <= FLT_MAX)))
     {
         /* Negated form also rejects NaN, which fails every ordered comparison. */
