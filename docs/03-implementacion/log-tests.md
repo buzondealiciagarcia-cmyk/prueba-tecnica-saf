@@ -319,3 +319,20 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+## 2026-11-02 22:32 · F-004 · ogrid_update_cell · ejecución 5 · PASS
+
+- Rama: `feature/SYS-PR-08-ogrid-update-cell` · commit `427fc52924`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 32 casos, 0 fallos |
+| coverage | PASS | ogrid_update_cell.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |

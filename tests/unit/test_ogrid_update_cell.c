@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "ogrid/ogrid.h"
+#include "ogrid/ogrid_limits.h"
 #include "ogrid/ogrid_update_cell.h"
 #include "unity.h"
 
@@ -71,7 +72,7 @@ static uint32_t diff_except(uint32_t skip)
 }
 
 /** Set one cell and refresh the reference copy. */
-static void set_cell(uint32_t idx, ogrid_real_t lo, bool observed)
+static void set_cell(uint32_t idx, ogrid_real_t lo, uint8_t observed)
 {
     s_grid.cells[idx].log_odds_lo = lo;
     s_grid.cells[idx].observed = observed;
@@ -83,7 +84,7 @@ void setUp(void)
     for (uint32_t i = 0U; i < OGRID_CELL_COUNT; i++)
     {
         s_grid.cells[i].log_odds_lo = OGRID_LOG_ODDS_INIT;
-        s_grid.cells[i].observed = false;
+        s_grid.cells[i].observed = OGRID_OBSERVED_NO;
     }
     s_ref = s_grid;
 }
@@ -104,14 +105,15 @@ void test_TC_F004_01_valid_calls_return_ok(void)
                                   "[TC-F004-01][SYS-PR-08] occluded must return OGRID_OK");
 }
 
-/** @req SYS-PR-08 @contract post POST-1 eco desde 0 da 0,85 y observed = true */
+/** @req SYS-PR-08 @contract post POST-1 eco desde 0 da 0,85 y observed = OGRID_OBSERVED_YES */
 void test_TC_F004_02_echo_from_zero(void)
 {
     (void)ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_ECHO);
     TEST_ASSERT_FLOAT_WITHIN_MESSAGE(TOL, 0.85F, s_grid.cells[CELL].log_odds_lo,
                                      "[TC-F004-02][SYS-PR-08] echo from 0 must give 0.85");
-    TEST_ASSERT_TRUE_MESSAGE(s_grid.cells[CELL].observed,
-                             "[TC-F004-02][SYS-PR-08] echo must set observed");
+    TEST_ASSERT_EQUAL_UINT8_MESSAGE(
+        OGRID_OBSERVED_YES, s_grid.cells[CELL].observed,
+        "[TC-F004-02][SYS-PR-08] echo must set observed to OGRID_OBSERVED_YES");
 }
 
 /** @req SYS-PR-08 @contract post POST-1 tres ecos seguidos desde 0: 0,85 / 1,70 / 2,55 */
@@ -131,7 +133,7 @@ void test_TC_F004_03_three_echoes_sequence(void)
 /** @req SYS-SAF-07 @contract post POST-1 eco por encima del maximo se limita a 3,4 exacto */
 void test_TC_F004_04_echo_saturates_at_max(void)
 {
-    set_cell(CELL, 3.0F, true);
+    set_cell(CELL, 3.0F, OGRID_OBSERVED_YES);
     TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_OK, ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_ECHO),
                                   "[TC-F004-04][SYS-SAF-07] echo near max must return OGRID_OK");
     TEST_ASSERT_TRUE_MESSAGE(same_bits(s_grid.cells[CELL].log_odds_lo, OGRID_LOG_ODDS_MAX),
@@ -144,39 +146,41 @@ void test_TC_F004_04_echo_saturates_at_max(void)
 /** @req SYS-PR-08 @contract post POST-1 eco desde el minimo -0,8 da 0,05 */
 void test_TC_F004_05_echo_from_min(void)
 {
-    set_cell(CELL, OGRID_LOG_ODDS_MIN, true);
+    set_cell(CELL, OGRID_LOG_ODDS_MIN, OGRID_OBSERVED_YES);
     (void)ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_ECHO);
     TEST_ASSERT_FLOAT_WITHIN_MESSAGE(TOL, 0.05F, s_grid.cells[CELL].log_odds_lo,
                                      "[TC-F004-05][SYS-PR-08] -0.8 + 0.85 must give 0.05");
 }
 
-/** @req SYS-PR-08 @contract post POST-2 pase desde 0 da -0,40 y observed = true */
+/** @req SYS-PR-08 @contract post POST-2 pase desde 0 da -0,40 y observed = OGRID_OBSERVED_YES */
 void test_TC_F004_06_pass_from_zero(void)
 {
     (void)ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_PASS);
     TEST_ASSERT_FLOAT_WITHIN_MESSAGE(TOL, -0.40F, s_grid.cells[CELL].log_odds_lo,
                                      "[TC-F004-06][SYS-PR-08] pass from 0 must give -0.40");
-    TEST_ASSERT_TRUE_MESSAGE(s_grid.cells[CELL].observed,
-                             "[TC-F004-06][SYS-PR-08] pass must set observed");
+    TEST_ASSERT_EQUAL_UINT8_MESSAGE(
+        OGRID_OBSERVED_YES, s_grid.cells[CELL].observed,
+        "[TC-F004-06][SYS-PR-08] pass must set observed to OGRID_OBSERVED_YES");
 }
 
 /** @req SYS-PR-08 @contract post POST-2 pase desde el minimo se queda en -0,8 exacto, observed */
 void test_TC_F004_07_pass_at_min_stays(void)
 {
-    set_cell(CELL, OGRID_LOG_ODDS_MIN, false);
+    set_cell(CELL, OGRID_LOG_ODDS_MIN, OGRID_OBSERVED_NO);
     TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_OK, ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_PASS),
                                   "[TC-F004-07][SYS-PR-08] pass at min must return OGRID_OK");
     TEST_ASSERT_TRUE_MESSAGE(same_bits(s_grid.cells[CELL].log_odds_lo, OGRID_LOG_ODDS_MIN),
                              "[TC-F004-07][SYS-PR-08] pass at -0.8 must stay at -0.8 exactly");
-    TEST_ASSERT_TRUE_MESSAGE(s_grid.cells[CELL].observed,
-                             "[TC-F004-07][SYS-PR-08] pass must set observed even if clamped");
+    TEST_ASSERT_EQUAL_UINT8_MESSAGE(
+        OGRID_OBSERVED_YES, s_grid.cells[CELL].observed,
+        "[TC-F004-07][SYS-PR-08] pass must set observed to OGRID_OBSERVED_YES even if clamped");
 }
 
 /** @req SYS-SAF-07 @contract post POST-2 pase que cruzaria el minimo (-0,5 - 0,4) se limita a -0,8
  */
 void test_TC_F004_08_pass_crossing_min_is_clamped(void)
 {
-    set_cell(CELL, -0.5F, true);
+    set_cell(CELL, -0.5F, OGRID_OBSERVED_YES);
     (void)ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_PASS);
     TEST_ASSERT_TRUE_MESSAGE(same_bits(s_grid.cells[CELL].log_odds_lo, OGRID_LOG_ODDS_MIN),
                              "[TC-F004-08][SYS-SAF-07] -0.5 - 0.4 must clamp to -0.8 exactly");
@@ -199,19 +203,21 @@ void test_TC_F004_10_occluded_unobserved_unchanged(void)
                                   "[TC-F004-10][SYS-PR-08] occluded must return OGRID_OK");
     TEST_ASSERT_TRUE_MESSAGE(same_bits(s_grid.cells[CELL].log_odds_lo, 0.0F),
                              "[TC-F004-10][SYS-PR-08] occluded must keep log-odds 0");
-    TEST_ASSERT_FALSE_MESSAGE(s_grid.cells[CELL].observed,
-                              "[TC-F004-10][SYS-PR-08] occluded must not set observed");
+    TEST_ASSERT_EQUAL_UINT8_MESSAGE(
+        OGRID_OBSERVED_NO, s_grid.cells[CELL].observed,
+        "[TC-F004-10][SYS-PR-08] occluded must keep observed at OGRID_OBSERVED_NO");
 }
 
 /** @req SYS-PR-08 @contract post POST-3 oculta en celda observada con valor 1,25: nada cambia */
 void test_TC_F004_11_occluded_observed_unchanged(void)
 {
-    set_cell(CELL, 1.25F, true);
+    set_cell(CELL, 1.25F, OGRID_OBSERVED_YES);
     (void)ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_OCCLUDED);
     TEST_ASSERT_TRUE_MESSAGE(same_bits(s_grid.cells[CELL].log_odds_lo, 1.25F),
                              "[TC-F004-11][SYS-PR-08] occluded must keep log-odds 1.25");
-    TEST_ASSERT_TRUE_MESSAGE(s_grid.cells[CELL].observed,
-                             "[TC-F004-11][SYS-PR-08] occluded must keep observed true");
+    TEST_ASSERT_EQUAL_UINT8_MESSAGE(
+        OGRID_OBSERVED_YES, s_grid.cells[CELL].observed,
+        "[TC-F004-11][SYS-PR-08] occluded must keep observed at OGRID_OBSERVED_YES");
 }
 
 /** @req SYS-PR-08 @contract post POST-4 las demas celdas no cambian con ningun voto */
@@ -223,7 +229,7 @@ void test_TC_F004_12_other_cells_unchanged(void)
     for (uint32_t i = 0U; i < OGRID_CELL_COUNT; i++)
     {
         s_grid.cells[i].log_odds_lo = -0.8F + (0.001F * (ogrid_real_t)(i % 4200U));
-        s_grid.cells[i].observed = ((i % 3U) == 0U);
+        s_grid.cells[i].observed = ((i % 3U) == 0U) ? OGRID_OBSERVED_YES : OGRID_OBSERVED_NO;
     }
     s_ref = s_grid;
     for (size_t v = 0U; v < 3U; v++)
@@ -245,7 +251,7 @@ void test_TC_F004_13_index_boundaries_update_own_cell(void)
     {
         setUp();
         if ((ogrid_update_cell(&s_grid, idxs[k], OGRID_VOTE_KIND_ECHO) != OGRID_OK) ||
-            !s_grid.cells[idxs[k]].observed ||
+            (s_grid.cells[idxs[k]].observed != OGRID_OBSERVED_YES) ||
             (fabsf(s_grid.cells[idxs[k]].log_odds_lo - 0.85F) > TOL) ||
             (diff_except(idxs[k]) != 0U))
         {
@@ -303,7 +309,7 @@ void test_TC_F004_15_repeated_echoes_monotonic_to_max(void)
  */
 void test_TC_F004_16_three_echoes_from_min_confirm(void)
 {
-    set_cell(CELL, OGRID_LOG_ODDS_MIN, true);
+    set_cell(CELL, OGRID_LOG_ODDS_MIN, OGRID_OBSERVED_YES);
     for (uint32_t i = 0U; i < 3U; i++)
     {
         (void)ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_ECHO);
@@ -393,7 +399,7 @@ void test_TC_F004_23_non_finite_stored_is_state_error(void)
     {
         for (size_t v = 0U; v < 2U; v++)
         {
-            set_cell(CELL, bad_vals[k], true);
+            set_cell(CELL, bad_vals[k], OGRID_OBSERVED_YES);
             if (ogrid_update_cell(&s_grid, CELL, votes[v]) != OGRID_ERR_STATE)
             {
                 bad++;
@@ -419,7 +425,7 @@ void test_TC_F004_24_out_of_limits_stored_is_state_error(void)
     {
         for (size_t v = 0U; v < 2U; v++)
         {
-            set_cell(CELL, bad_vals[k], false);
+            set_cell(CELL, bad_vals[k], OGRID_OBSERVED_NO);
             if (ogrid_update_cell(&s_grid, CELL, votes[v]) != OGRID_ERR_STATE)
             {
                 bad++;
@@ -434,10 +440,10 @@ void test_TC_F004_24_out_of_limits_stored_is_state_error(void)
 void test_TC_F004_25_state_error_keeps_grid(void)
 {
     uint32_t bad = 0U;
-    set_cell(CELL, NAN, false);
+    set_cell(CELL, NAN, OGRID_OBSERVED_NO);
     (void)ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_ECHO);
     bad += diff_cells(&s_grid, &s_ref);
-    set_cell(CELL, 5.0F, true);
+    set_cell(CELL, 5.0F, OGRID_OBSERVED_YES);
     (void)ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_PASS);
     bad += diff_cells(&s_grid, &s_ref);
     TEST_ASSERT_EQUAL_UINT32_MESSAGE(
@@ -448,10 +454,10 @@ void test_TC_F004_25_state_error_keeps_grid(void)
  */
 void test_TC_F004_26_stored_limits_are_valid(void)
 {
-    set_cell(CELL, OGRID_LOG_ODDS_MIN, true);
+    set_cell(CELL, OGRID_LOG_ODDS_MIN, OGRID_OBSERVED_YES);
     TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_OK, ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_ECHO),
                                   "[TC-F004-26][SYS-SAF-07] stored -0.8 is a valid state");
-    set_cell(CELL, OGRID_LOG_ODDS_MAX, true);
+    set_cell(CELL, OGRID_LOG_ODDS_MAX, OGRID_OBSERVED_YES);
     TEST_ASSERT_EQUAL_INT_MESSAGE(OGRID_OK, ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_PASS),
                                   "[TC-F004-26][SYS-SAF-07] stored 3.4 is a valid state");
     TEST_ASSERT_FLOAT_WITHIN_MESSAGE(TOL, 3.0F, s_grid.cells[CELL].log_odds_lo,
@@ -502,7 +508,7 @@ void test_TC_F004_29_occluded_with_corrupt_cell_is_state_error(void)
     uint32_t bad = 0U;
     for (size_t k = 0U; k < 7U; k++)
     {
-        set_cell(CELL, bad_vals[k], ((k % 2U) == 0U));
+        set_cell(CELL, bad_vals[k], (((k % 2U) == 0U) ? OGRID_OBSERVED_YES : OGRID_OBSERVED_NO));
         if (ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_OCCLUDED) != OGRID_ERR_STATE)
         {
             bad++;
@@ -539,7 +545,7 @@ void test_TC_F004_31_invalid_vote_wins_over_range_and_state(void)
     TEST_ASSERT_EQUAL_INT_MESSAGE(
         OGRID_ERR_PARAM, ogrid_update_cell(&s_grid, UINT32_MAX, (ogrid_vote_kind_t)-1),
         "[TC-F004-31][SYS-SAF-07] invalid vote -1 + idx UINT32_MAX must be ERR_PARAM");
-    set_cell(CELL, NAN, true);
+    set_cell(CELL, NAN, OGRID_OBSERVED_YES);
     TEST_ASSERT_EQUAL_INT_MESSAGE(
         OGRID_ERR_PARAM, ogrid_update_cell(&s_grid, CELL, (ogrid_vote_kind_t)99),
         "[TC-F004-31][SYS-SAF-07] invalid vote + corrupt cell must be ERR_PARAM");
@@ -557,7 +563,7 @@ void test_TC_F004_32_range_wins_over_corrupt_cell(void)
     for (uint32_t i = 0U; i < OGRID_CELL_COUNT; i++)
     {
         s_grid.cells[i].log_odds_lo = NAN;
-        s_grid.cells[i].observed = true;
+        s_grid.cells[i].observed = OGRID_OBSERVED_YES;
     }
     s_ref = s_grid;
     for (size_t v = 0U; v < 3U; v++)

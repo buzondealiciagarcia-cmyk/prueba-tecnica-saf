@@ -43,7 +43,7 @@ static void apply_delta(ogrid_cell_t *cell_io, ogrid_real_t delta_lo)
 
     (void)ogrid_clamp_log_odds(cell_io->log_odds_lo + delta_lo, &new_lo);
     cell_io->log_odds_lo = new_lo;
-    cell_io->observed = true;
+    cell_io->observed = OGRID_OBSERVED_YES;
 }
 
 ogrid_status_t ogrid_update_cell(ogrid_t *grid_io, uint32_t cell_idx, ogrid_vote_kind_t vote)
