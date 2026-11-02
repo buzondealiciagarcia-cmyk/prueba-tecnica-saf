@@ -19,6 +19,11 @@
 /** Total cells held in memory (SYS-IMP-01). */
 #define OGRID_CELL_COUNT (OGRID_LENGTH_CELLS * OGRID_WIDTH_CELLS)
 
+/** Value of ogrid_cell_t.observed for a cell no beam has observed (or after a reset). */
+#define OGRID_OBSERVED_NO (0U)
+/** Value of ogrid_cell_t.observed for a cell that received an echo or pass vote. */
+#define OGRID_OBSERVED_YES (1U)
+
 /** Initial log-odds of a cell (natural logarithm, diseno.md 6.2). */
 #define OGRID_LOG_ODDS_INIT (0.0F)
 /** Log-odds added when the beam returns an echo in the cell. */

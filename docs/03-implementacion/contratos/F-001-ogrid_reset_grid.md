@@ -39,7 +39,7 @@ El contenido previo de `*grid_out` no se lee, por lo que no hay otra precondici�
 | ID | Condición (con tolerancia si es numérica) |
 |---|---|
 | POST-1 | Si devuelve `OGRID_OK`, las `OGRID_CELL_COUNT` (3 520) celdas tienen `log_odds_lo` igual a `OGRID_LOG_ODDS_INIT` (0,0), exacto, sin tolerancia. |
-| POST-2 | Si devuelve `OGRID_OK`, las `OGRID_CELL_COUNT` celdas tienen `observed` igual a `false`. |
+| POST-2 | Si devuelve `OGRID_OK`, las `OGRID_CELL_COUNT` celdas tienen `observed` igual a `OGRID_OBSERVED_NO` (0). |
 | POST-3 | Si devuelve `OGRID_OK`, `ogrid_get_cell_state` (F-005) dará `OGRID_CELL_UNSURVEYED` para toda celda; ninguna celda queda ocupada ni con probabilidad baja. |
 | POST-4 | Llamarla dos veces seguidas deja el mismo resultado (idempotente). |
 | POST-5 | Si devuelve error, no se modifica ningún dato. |

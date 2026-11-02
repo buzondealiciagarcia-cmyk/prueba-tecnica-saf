@@ -49,7 +49,7 @@ typedef enum
 typedef struct
 {
     ogrid_real_t log_odds_lo; /**< Log-odds in natural logarithm, within the configured clamp. */
-    bool observed;            /**< False until the first vote; false again after a reset. */
+    uint8_t observed;         /**< OGRID_OBSERVED_NO until the first vote; reset restores it. */
 } ogrid_cell_t;
 
 /**
