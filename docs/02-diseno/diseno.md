@@ -19,7 +19,7 @@ Sistema de detección de obstáculos en vía mediante radar frontal, con procesa
 
 Justificación de la arquitectura edge (HW): buena latencia, disponibilidad, certificable y más segura frente a ataques que el procesamiento en la nube. Se descarta el procesamiento en la nube por latencia, fiabilidad y restricciones de tiempo de procesamiento y análisis, que pondrían en riesgo el cumplimiento de los estándares del proyecto (SYS-IMP-03, SYS-T-01, SYS-GEN-01).
 
-Entregables de la fase (SYS-IMP-06, SYS-IMP-07, SYS-IMP-08, SYS-IMP-10, SYS-IMP-11): se redactan como documentos aparte en esta carpeta a partir de lo decidido aquí: `viabilidad-radar.md` (SYS-IMP-06), `pseudocodigo-grid.md` (SYS-IMP-10) y `justificacion-c.md` (SYS-IMP-11). El diseño hardware y software es este documento (SYS-IMP-07) y el diagrama pipeline de un ciclo es la figura de §4 (SYS-IMP-08). El borrador de oferta (SYS-IMP-12) corresponde a la fase de Oferta.
+Entregables de la fase (SYS-IMP-06, SYS-IMP-07, SYS-IMP-08, SYS-IMP-10, SYS-IMP-11): el plan de viabilidad del radar (SYS-IMP-06) es `viabilidad-radar.md` y la justificación del lenguaje (SYS-IMP-11) es `justificacion-c.md`. El diseño hardware y software es este documento (SYS-IMP-07) y el diagrama pipeline de un ciclo es la figura de §4 (SYS-IMP-08). El pseudocódigo (SYS-IMP-10) corresponde a «un componente del sistema»; el enunciado propone la actualización de la probabilidad de ocupación de una celda solo como ejemplo, y el componente que se desarrolla se elige antes de implementar. El borrador de oferta (SYS-IMP-12) corresponde a la fase de Oferta.
 
 Entorno operativo nominal (SYS-GEN-02): tranvía bidireccional en Vitoria-Gasteiz, velocidad máxima regulada de 50 km/h (13,9 m/s), radar frontal a 1 m sobre el suelo, ancho de vía de 1 m (H-01) y alcance de 220 m a lo largo de la vía.
 
@@ -44,9 +44,9 @@ Parámetros de partida (HW):
 | Parámetro | Valor definido | Observación | Requisitos |
 |---|---|---|---|
 | Altura del radar | 1 m sobre el suelo | Parámetro de configuración | SYS-IN-05 |
-| Precisión de azimut y altura del radar | 1° | Valor provisional mientras el cliente no elija radar; después se usará la especificación del radar elegido (H-033) | SYS-DET-06, H-06 |
+| Precisión de azimut y altura del radar | 0,1° | Precisión que debe tener el radar, calculada en la justificación siguiente; la hoja de datos del radar elegido la confirma (H-033) | SYS-DET-06, H-06 |
 | Error de desalineación del radar respecto al eje | según R-HW (§10) | Parámetro distinto de la precisión del radar (H-033) | SYS-DET-07, SYS-SAF-13, H-04 |
-| Error de localización | 0,005 m en distancia (provisional); error lateral = distancia × tan(precisión de azimut): 3,8 m a 220 m con 1°, y solo cabe en 0,5 m hasta ≈ 29 m | Valor provisional hasta tener la especificación del radar; el error de altura crece con la distancia. Límite de discriminación lateral a 220 m: según R-HW (§10) (H-033) | SYS-DET-06, SYS-DET-05, H-06 |
+| Error de localización | 0,005 m en distancia (provisional); error lateral = distancia × tan(precisión de azimut): 0,38 m a 220 m con 0,1° | Valor provisional hasta tener la especificación del radar; el error de altura crece con la distancia. Límite de discriminación lateral a 220 m: según R-HW (§10) (H-033) | SYS-DET-06, SYS-DET-05, H-06 |
 | Velocidad máxima del tranvía | 50 km/h = 13,9 m/s (velocidad regulada en Vitoria-Gasteiz) | | H-07 |
 | Alcance de detección | 220 m a lo largo de la vía (SW, paso 5) | | SYS-DET-01, SYS-PR-11 |
 
@@ -55,6 +55,27 @@ Evoluciones futuras sugeridas al cliente en la oferta (no son requisitos, HW):
 - Acceso de la ECU al sistema de freno para detener el tranvía en emergencia.
 - Acceso de la ECU a la nube para actualizaciones de la flota desde un centro de control, telemetría adicional y descarga de mapas (el envío de logs y trazabilidad ya es requisito, SYS-IMP-04). Recibir actualizaciones o mapas exigiría cambiar SYS-IMP-04, que limita la nube a enviar datos (H-032).
 - Segundo radar, para reducir el error de altura a gran distancia y aportar redundancia.
+
+### Justificación de la precisión angular de 0,1°
+
+Se partió de 1° como valor provisional. El cálculo muestra que no basta para decidir si un eco está sobre la vía:
+
+- Error lateral = distancia × tan(precisión de azimut). Con 1° a 220 m: 220 m × tan(1°) = 3,84 m, casi 4 veces el ancho de la vía (1 m, H-01) y 15 celdas de 0,25 m.
+- Criterio: para decidir si un eco está dentro o fuera de la vía (SYS-DET-05), el error lateral debe ser menor que la mitad del ancho de vía, 0,5 m.
+- Precisión máxima admisible a 220 m: atan(0,5 m / 220 m) = 0,130°. Se toma 0,1°, el valor redondo inferior.
+- Comprobación con 0,1°: 220 m × tan(0,1°) = 0,384 m, menor que 0,5 m. Con 1° el criterio solo se cumple hasta 0,5 m / tan(1°) = 28,6 m.
+
+| Distancia | Error lateral con 1° | Error lateral con 0,1° |
+|---|---|---|
+| 29 m | 0,51 m | 0,05 m |
+| 50 m | 0,87 m | 0,09 m |
+| 100 m | 1,75 m | 0,17 m |
+| 143 m | 2,50 m | 0,25 m (una celda) |
+| 220 m | 3,84 m | 0,38 m |
+
+![Figura. Error lateral frente a la distancia: 1°, 0,1° y límite de 0,5 m](diagramas/error-lateral.svg)
+
+El mismo error afecta a la altura del eco: a 220 m es de 0,38 m, menor que la altura mínima del objeto (0,6 m), lo que permite aplicar el filtro de techo (paso 8) y la altura del objeto (paso 11). Un error menor de 0,1° mejoraría el margen: 0,065° daría 0,25 m, una celda, a 220 m. Un segundo radar reduciría este error y aportaría redundancia (propuesta al cliente, §3).
 
 ## 4. Arquitectura software
 
@@ -201,7 +222,7 @@ Fuera de esta tabla por decisión del usuario (H-018): fallos de MQTT, del broke
 | Parámetro | Valor definido | Unidad | Rango admitido | Requisito |
 |---|---|---|---|---|
 | Altura del radar | 1 m | m | Esquema CFG-01 | SYS-IN-05 |
-| Precisión de azimut y altura del radar | 1° (provisional) | ° | Esquema CFG-01 | SYS-DET-06 |
+| Precisión de azimut y altura del radar | 0,1° (calculado en §3) | ° | Esquema CFG-01 | SYS-DET-06 |
 | Error de desalineación respecto al eje | R-HW | ° | Esquema CFG-01 | SYS-DET-07 |
 | Error de localización | 0,005 m (provisional) | m | Esquema CFG-01 | SYS-DET-06 |
 | Alcance | 220 m | m | Esquema CFG-01 | SYS-DET-01, SYS-PR-11 |
@@ -224,7 +245,7 @@ Fuera de esta tabla por decisión del usuario (H-018): fallos de MQTT, del broke
 | Máximo de falsas alarmas | Calibrable, validado en test con el cliente | falsas alarmas por hora de operación | Esquema CFG-01 | SYS-DET-04 |
 | Umbral de señal débil, altura del techo, distancia a raíles, parámetros del filtro de persistencia, umbral de velocidad de objeto dinámico, tolerancia de reloj | R-HW | según el parámetro | Esquema CFG-01 | SYS-PR-03, SYS-PR-05, SYS-IN-06 |
 
-**Regla R-HW.** Los valores marcados R-HW dependen del radar, la ECU, la red o el vehículo elegidos y no tienen valor por defecto en este diseño: se fijan con la hoja de datos correspondiente antes de implementar, y hasta entonces el sistema no arranca en modo operativo con ellos sin definir (CFG-02). El 1° y los 0,005 m son valores provisionales que esa hoja sustituye.
+**Regla R-HW.** Los valores marcados R-HW dependen del radar, la ECU, la red o el vehículo elegidos y no tienen valor por defecto en este diseño: se fijan con la hoja de datos correspondiente antes de implementar, y hasta entonces el sistema no arranca en modo operativo con ellos sin definir (CFG-02). La precisión angular de 0,1° sale del cálculo de §3 y la hoja de datos del radar la confirma; los 0,005 m son provisionales y esa hoja los sustituye.
 
 **Rangos.** El rango `[min, max]` de cada parámetro y su valor por defecto los fija el esquema `config/ogrid.schema.json` (CFG-01), generado a partir de esta tabla en implementación. Coherencias cruzadas que debe validar al arrancar (CFG-02): log-odds máximo mayor que el umbral de ocupado (l > 1,73); log-odds mínimo + N × voto por eco mayor que el umbral de ocupado (−0,8 + 3 × 0,85 = 1,75); timeout de trama múltiplo del periodo del radar (50 ms) y menor que el tiempo máximo de entrega; tiempo máximo en DEGRADADO mayor que el tiempo de recorrer el alcance a la velocidad máxima (15,8 s).
 
@@ -253,7 +274,7 @@ Fuera de esta tabla por decisión del usuario (H-018): fallos de MQTT, del broke
 | SYS-SAF-18, SYS-SAF-19, SYS-PR-10, SYS-DET-04 | 4 (paso 2), 7 |
 | SYS-GEN-02 | 1 |
 | SYS-IMP-01, SYS-IMP-02, SYS-IMP-11 | 4 |
-| SYS-IMP-06, SYS-IMP-07, SYS-IMP-08, SYS-IMP-10 | 1, 4 y documentos aparte de esta carpeta |
+| SYS-IMP-06, SYS-IMP-07, SYS-IMP-08, SYS-IMP-10, SYS-IMP-11 | 1, 4 y documentos aparte de esta carpeta (SYS-IMP-10: componente a elegir antes de implementar) |
 | SYS-IMP-03, SYS-IMP-04 | 1, 3, 5 |
 
 SYS-IMP-12 (borrador de oferta) corresponde a la fase de Oferta.

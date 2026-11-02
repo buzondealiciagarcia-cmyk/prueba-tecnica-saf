@@ -21,7 +21,7 @@ Este documento cubre SYS-IMP-06 (enunciado R1): capacidades y limitaciones del r
 | Objeto mínimo | 0,6 m × 0,6 m × 0,6 m | SYS-DET-02, SYS-DET-08 |
 | Ancho de vía | 1 m | H-01 |
 | Radar | 3D (distancia, azimut y altura), a 1 m sobre el suelo, periodo de 50 ms | H-05, SYS-IN-01, SYS-IN-05 |
-| Precisión de azimut y altura | 1 ° (provisional) | SYS-DET-06, H-06 |
+| Precisión de azimut y altura | 0,1 ° (calculada en §3.1; el 1 ° inicial era provisional) | SYS-DET-06, H-06 |
 | Error de localización en distancia | 0,005 m (provisional) | SYS-DET-06 |
 | Celda del grid | 0,25 m; 880 × 4 celdas | `diseno.md` §6.1 |
 
@@ -42,23 +42,29 @@ El campo de visión del sistema es lo que el radar alcanza a detectar y entrega 
 
 ### 3.1 Error lateral creciente con la distancia
 
-El error de medida en azimut y altura crece con la distancia (H-06). Con la precisión provisional de 1 °:
+El error de medida en azimut y altura crece con la distancia (H-06). Se partió de 1 ° como valor provisional y se calculó si bastaba:
 
-error lateral = distancia × tan(precisión de azimut)
+- error lateral = distancia × tan(precisión de azimut).
+- Con 1 ° a 220 m: 220 m × tan(1 °) = 3,84 m, casi 4 veces la vía (1 m, H-01) y 15 celdas de 0,25 m.
+- Criterio: para decidir si un eco está dentro o fuera de la vía (SYS-DET-05) el error lateral debe ser menor que la mitad del ancho de vía, 0,5 m.
+- Precisión máxima admisible a 220 m: atan(0,5 m / 220 m) = 0,130 °. Se toma 0,1 °.
+- Comprobación con 0,1 °: 220 m × tan(0,1 °) = 0,384 m, menor que 0,5 m. Con 1 ° el criterio solo se cumple hasta 0,5 m / tan(1 °) = 28,6 m.
 
 | Distancia | Error lateral con 1 ° | Error lateral con 0,1 ° |
 |---|---|---|
-| 29 m | 0,5 m | 0,05 m |
-| 220 m | 3,8 m | 0,38 m |
+| 29 m | 0,51 m | 0,05 m |
+| 50 m | 0,87 m | 0,09 m |
+| 100 m | 1,75 m | 0,17 m |
+| 143 m | 2,50 m | 0,25 m (una celda) |
+| 220 m | 3,84 m | 0,38 m |
 
-Consecuencias, con los datos decididos:
+![Figura. Error lateral frente a la distancia: 1 °, 0,1 ° y límite de 0,5 m](diagramas/error-lateral.svg)
 
-- El error de 1 ° solo cabe en 0,5 m, la mitad de la vía de 1 m, hasta ≈ 29 m (`diseno.md` §3).
-- A 220 m el error lateral (3,8 m) es mayor que la vía (1 m) y 15 veces mayor que la celda (0,25 m). A esa distancia no se puede distinguir con 1 ° si un eco está sobre la vía o fuera de ella (SYS-DET-05, SYS-DET-06).
-- Con 0,1 ° el error a 220 m es 0,38 m, que cabe en 0,5 m. Una precisión de 0,1 ° cubriría los 220 m.
-- El error de altura también crece con la distancia (`diseno.md` §3). Afecta al filtro de techo (paso 8) y a la altura del objeto (paso 11).
+Consecuencias:
 
-El límite de discriminación lateral a 220 m se fija con la hoja de datos del radar elegido (regla R-HW).
+- El radar debe tener una precisión angular de 0,1 ° para cubrir los 220 m. Con 1 ° la discriminación lateral solo es fiable hasta ≈ 29 m.
+- El error de altura es el mismo: 0,38 m a 220 m, menor que la altura mínima del objeto (0,6 m). Afecta al filtro de techo (paso 8) y a la altura del objeto (paso 11).
+- La hoja de datos del radar elegido confirma el valor (regla R-HW).
 
 ### 3.2 Latencia y distancia recorrida
 
@@ -99,19 +105,20 @@ Los siguientes valores no tienen valor por defecto en el diseño y los aporta el
 
 El diseño no fija el modelo de radar (`diseno.md` §3). El radar elegido debe aportar, con su hoja de datos, los valores marcados R-HW:
 
-1. Precisión de azimut y altura a 220 m, que sustituye al 1 ° provisional. Con 0,1 ° el error lateral a 220 m es 0,38 m; el valor necesario lo decide la hoja de datos con la regla de §3.1.
+1. Precisión de azimut y altura de 0,1 ° o mejor, calculada en §3.1 (error lateral de 0,38 m a 220 m); la hoja de datos del radar la confirma.
 2. Error de localización en distancia, que sustituye a los 0,005 m provisionales.
 3. Umbral de señal débil y umbral y histéresis de velocidad para clasificar un eco como dinámico.
 4. Timestamp de medida, sincronización con el reloj de la ECU y tolerancia de reloj.
 5. Autodiagnóstico y aviso de autofallo (SYS-SAF-11).
 6. Protocolo de enlace (Automotive Ethernet o CAN FD, según el fabricante) y periodo de 50 ms.
 
-Un segundo radar reduciría el error de altura a gran distancia y aportaría redundancia. Es una propuesta al cliente, no un requisito; el número de radares se fija según la regla R-HW (`diseno.md` §3).
+Se recomienda un segundo radar: reduciría el error de medida, sobre todo el de altura a gran distancia, y aportaría redundancia, que mejora la seguridad de un sistema que requiere seguridad funcional (EN 50126, EN 50128 y EN 50129, SIL 2). Es una propuesta al cliente, no un requisito; el número de radares se fija según la regla R-HW (`diseno.md` §3).
 
 ## 7. Conclusión de viabilidad
 
-- Con los datos decididos, la detección de un objeto de 0,6 m sobre la vía es compatible con el diseño de grid y filtros, y la latencia máxima corresponde a 1,78 m de recorrido.
-- Con la precisión provisional de 1 °, la ubicación lateral solo es fiable dentro de la vía hasta ≈ 29 m. Cubrir 220 m exige un radar con precisión angular del orden de 0,1 ° o inferior, o un segundo radar que mejore la discriminación.
+- El sistema es viable con los datos decididos: la detección de un objeto de 0,6 m sobre la vía es compatible con el diseño de grid y filtros, y la latencia máxima corresponde a 1,78 m de recorrido.
+- Cubrir 220 m exige un radar con precisión angular de 0,1 °, que da 0,38 m de error lateral a esa distancia (§3.1). Con 1 ° solo es fiable hasta ≈ 29 m.
+- Aun siendo viable con un radar, el sistema se beneficiaría de un segundo radar: reduce el error de medida y aporta redundancia, lo que mejora la seguridad de un sistema que requiere seguridad funcional. Se propone al cliente en la oferta.
 - La viabilidad definitiva sobre los 220 m se confirma con la hoja de datos del radar elegido (regla R-HW) y con los tests con el cliente (SYS-DET-04).
 
 ## Historial de cambios
@@ -119,3 +126,4 @@ Un segundo radar reduciría el error de altura a gran distancia y aportaría red
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 2026-11-02 | Alicia Garcia | Creación a partir de `diseno.md` y requisitos v1.1 |
+| 0.2 | 2026-11-02 | Alicia Garcia | Precisión angular de 0,1 ° con cálculo y figura; conclusión con recomendación de segundo radar |
