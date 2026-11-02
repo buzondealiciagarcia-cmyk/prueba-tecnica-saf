@@ -33,6 +33,8 @@ ogrid_status_t ogrid_extract_occupied(const ogrid_t *grid, bool *mask_out);
 |---|---|---|
 | PRE-1 | `grid` y `mask_out` no son `NULL` | devuelve `OGRID_ERR_PARAM` sin modificar salidas |
 
+Orden de comprobación: PRE-1 y después el estado de cada celda. Si `grid` o `mask_out` es `NULL` se devuelve `OGRID_ERR_PARAM` sin recorrer nada. Con varias celdas corruptas se devuelve un único `OGRID_ERR_STATE` al terminar de recorrer todas. Cualquier error distinto de `OGRID_ERR_STATE` que devolviera F-005 se trata como `OGRID_ERR_STATE`: la máscara queda en false en esa celda.
+
 ## 5. Postcondiciones (`post`)
 
 | ID | Condición (con tolerancia si es numérica) |
@@ -40,7 +42,7 @@ ogrid_status_t ogrid_extract_occupied(const ogrid_t *grid, bool *mask_out);
 | POST-1 | Si devuelve `OGRID_OK`, `mask_out[i]` es true si y solo si `ogrid_get_cell_state(grid, i)` daría `OGRID_CELL_OCCUPIED`, para las 3 520 celdas. |
 | POST-2 | Una celda no observada nunca es true, aunque su log-odds fuera alto. |
 | POST-3 | Una celda con p = 0,8455 (l = 1,70) es false y una con p = 0,9276 (l = 2,55) es true. |
-| POST-4 | Si alguna celda tiene log-odds corrupto, `mask_out[i]` = false para esa celda, el resto de la máscara se calcula igual y devuelve `OGRID_ERR_STATE`. |
+| POST-4 | Si alguna celda está corrupta según F-005 (`observed` distinto de 0 y 1, o celda observada con log-odds NaN, infinito o fuera de [−0,8; 3,4]), `mask_out[i]` = false para esa celda, el resto de la máscara se calcula igual y devuelve `OGRID_ERR_STATE`. |
 | POST-5 | No modifica el grid. Si devuelve `OGRID_ERR_PARAM`, `mask_out` no se modifica. |
 
 ## 6. Errores (`err`)
@@ -49,7 +51,7 @@ ogrid_status_t ogrid_extract_occupied(const ogrid_t *grid, bool *mask_out);
 |---|---|---|
 | `OGRID_OK` | Parámetros válidos y celdas coherentes | máscara completa (POST-1 a POST-3) |
 | `OGRID_ERR_PARAM` | `grid` o `mask_out` es `NULL` | sin cambios (POST-5) |
-| `OGRID_ERR_STATE` | alguna celda con log-odds corrupto | máscara completa, con false en las celdas corruptas (POST-4) |
+| `OGRID_ERR_STATE` | alguna celda corrupta según F-005 | máscara completa, con false en las celdas corruptas (POST-4) |
 
 ## 7. Rendimiento (`perf`)
 
