@@ -1,0 +1,124 @@
+{
+  "alcance": "Grid de ocupación en log-odds (diseno.md §6, pasos 10 ): celda, haz, estados derivados, máscara de ocupadas y estado por celdas. Fuera de alcance: agrupación, filtro de tamaño, confirmación N=3, geometría y desplazamiento del grid.",
+  "modulo": "ogrid",
+  "funciones": [
+    {
+      "id": "F-001",
+      "nombre": "ogrid_reset_grid",
+      "descripcion": "Reset every cell to unsurveyed with log-odds 0 (init and return from FALLO)",
+      "requisitos": [
+        "SYS-PR-08",
+        "SYS-SAF-07"
+      ],
+      "depende_de": [],
+      "contrato": "docs/03-implementacion/contratos/F-001-ogrid_reset_grid.md",
+      "cabecera": "include/ogrid/ogrid_reset_grid.h",
+      "fuente": "src/ogrid/ogrid_reset_grid.c",
+      "test": "tests/unit/test_ogrid_reset_grid.c",
+      "estado": "integrada",
+      "iteraciones": 4
+    },
+    {
+      "id": "F-002",
+      "nombre": "ogrid_log_odds_to_prob",
+      "descripcion": "Convert log-odds to probability p=1/(1+e^-l)",
+      "requisitos": [
+        "SYS-PR-08"
+      ],
+      "depende_de": [],
+      "contrato": "docs/03-implementacion/contratos/F-002-ogrid_log_odds_to_prob.md",
+      "cabecera": "include/ogrid/ogrid_log_odds_to_prob.h",
+      "fuente": "src/ogrid/ogrid_log_odds_to_prob.c",
+      "test": "tests/unit/test_ogrid_log_odds_to_prob.c",
+      "estado": "integrada",
+      "iteraciones": 0
+    },
+    {
+      "id": "F-003",
+      "nombre": "ogrid_clamp_log_odds",
+      "descripcion": "Clamp log-odds to [-0.8, 3.4]",
+      "requisitos": [
+        "SYS-PR-08",
+        "SYS-SAF-07"
+      ],
+      "depende_de": [],
+      "contrato": "docs/03-implementacion/contratos/F-003-ogrid_clamp_log_odds.md",
+      "cabecera": "include/ogrid/ogrid_clamp_log_odds.h",
+      "fuente": "src/ogrid/ogrid_clamp_log_odds.c",
+      "test": "tests/unit/test_ogrid_clamp_log_odds.c",
+      "estado": "integrada",
+      "iteraciones": 0
+    },
+    {
+      "id": "F-004",
+      "nombre": "ogrid_update_cell",
+      "descripcion": "Apply echo/pass/occluded vote to one cell",
+      "requisitos": [
+        "SYS-PR-08"
+      ],
+      "depende_de": [
+        "F-001",
+        "F-003"
+      ],
+      "contrato": "docs/03-implementacion/contratos/F-004-ogrid_update_cell.md",
+      "cabecera": "include/ogrid/ogrid_update_cell.h",
+      "fuente": "src/ogrid/ogrid_update_cell.c",
+      "test": "tests/unit/test_ogrid_update_cell.c",
+      "estado": "integrada",
+      "iteraciones": 2
+    },
+    {
+      "id": "F-005",
+      "nombre": "ogrid_get_cell_state",
+      "descripcion": "Derive occupied/low-probability/unsurveyed, never free",
+      "requisitos": [
+        "SYS-PR-08",
+        "SYS-SAF-07"
+      ],
+      "depende_de": [
+        "F-002"
+      ],
+      "contrato": "docs/03-implementacion/contratos/F-005-ogrid_get_cell_state.md",
+      "cabecera": "include/ogrid/ogrid_get_cell_state.h",
+      "fuente": "src/ogrid/ogrid_get_cell_state.c",
+      "test": "tests/unit/test_ogrid_get_cell_state.c",
+      "estado": "integrada",
+      "iteraciones": 0
+    },
+    {
+      "id": "F-006",
+      "nombre": "ogrid_update_ray",
+      "descripcion": "Update the cells crossed by one radar beam",
+      "requisitos": [
+        "SYS-PR-08"
+      ],
+      "depende_de": [
+        "F-004"
+      ],
+      "contrato": "docs/03-implementacion/contratos/F-006-ogrid_update_ray.md",
+      "cabecera": "include/ogrid/ogrid_update_ray.h",
+      "fuente": "src/ogrid/ogrid_update_ray.c",
+      "test": "tests/unit/test_ogrid_update_ray.c",
+      "estado": "integrada",
+      "iteraciones": 1
+    },
+    {
+      "id": "F-007",
+      "nombre": "ogrid_extract_occupied",
+      "descripcion": "Mask of cells with p > 0.85",
+      "requisitos": [
+        "SYS-PR-04",
+        "SYS-PR-08"
+      ],
+      "depende_de": [
+        "F-005"
+      ],
+      "contrato": "docs/03-implementacion/contratos/F-007-ogrid_extract_occupied.md",
+      "cabecera": "include/ogrid/ogrid_extract_occupied.h",
+      "fuente": "src/ogrid/ogrid_extract_occupied.c",
+      "test": "tests/unit/test_ogrid_extract_occupied.c",
+      "estado": "integrada",
+      "iteraciones": 0
+    }
+  ]
+}
