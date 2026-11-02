@@ -19,8 +19,8 @@
  * @return OGRID_ERR_STATE when some cell is corrupt; the mask is complete with false on those
  * cells.
  * @pre grid != NULL and mask_out != NULL pointing to OGRID_CELL_COUNT bool.
- * @post On OGRID_OK mask_out[i] is true exactly where ogrid_get_cell_state gives occupied; the grid
- * is not modified.
+ * @post On OGRID_OK mask_out[idx] is true exactly where ogrid_get_cell_state gives occupied, for
+ * every idx. With OGRID_ERR_PARAM mask_out is not modified. The grid is never modified.
  * @req SYS-PR-04, SYS-PR-08
  * @contract F-007
  */

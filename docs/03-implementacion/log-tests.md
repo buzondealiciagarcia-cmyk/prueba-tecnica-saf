@@ -440,3 +440,44 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+## 2026-11-02 22:44 · F-007 · ogrid_extract_occupied · ejecución 1 · PASS
+
+- Rama: `feature/SYS-PR-04-ogrid-extract-occupied` · commit `8a6564c5b0`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 20 casos, 0 fallos |
+| coverage | PASS | ogrid_extract_occupied.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
+
+### Cambio · 2026-11-02 22:45 · F-007
+
+- Agente: implementador
+- Causa raíz: Audit C-DOC-04: missing rationale
+- Cambio aplicado: Comment only
+- Commit: `ca457ad1b5`
+
+## 2026-11-02 22:45 · F-007 · ogrid_extract_occupied · ejecución 2 · PASS
+
+- Rama: `feature/SYS-PR-04-ogrid-extract-occupied` · commit `ca457ad1b5`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 20 casos, 0 fallos |
+| coverage | PASS | ogrid_extract_occupied.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
