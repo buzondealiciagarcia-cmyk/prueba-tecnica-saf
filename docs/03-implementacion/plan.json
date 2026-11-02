@@ -64,7 +64,8 @@
       "cabecera": "include/ogrid/ogrid_update_cell.h",
       "fuente": "src/ogrid/ogrid_update_cell.c",
       "test": "tests/unit/test_ogrid_update_cell.c",
-      "estado": "contrato"
+      "estado": "en-curso",
+      "iteraciones": 1
     },
     {
       "id": "F-005",
