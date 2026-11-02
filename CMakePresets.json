@@ -6,7 +6,7 @@
      "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}},
     {"name": "host-test", "binaryDir": "${sourceDir}/build/host-test",
      "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug", "H_TEST": "ON", "H_COVERAGE": "ON",
-                        "H_SANITIZE": "ON"}},
+                        "H_SANITIZE": "ON", "CMAKE_C_COMPILER": "gcc-16"}},
     {"name": "host-release", "binaryDir": "${sourceDir}/build/host-release",
      "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}},
     {"name": "linux-container", "binaryDir": "${sourceDir}/build/linux-container",

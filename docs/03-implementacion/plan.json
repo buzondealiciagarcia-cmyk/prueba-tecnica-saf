@@ -16,7 +16,7 @@
       "fuente": "src/ogrid/ogrid_reset_grid.c",
       "test": "tests/unit/test_ogrid_reset_grid.c",
       "estado": "en-curso",
-      "iteraciones": 3
+      "iteraciones": 4
     },
     {
       "id": "F-002",
