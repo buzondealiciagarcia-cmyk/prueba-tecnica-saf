@@ -243,7 +243,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | La probabilidad de ocupación de cada celda se actualiza en cada ciclo de 50 ms; el estado derivado toma uno de tres valores (ocupado, probabilidad baja de obstáculo, zona no estudiada) y 0 estados «libre» en el 100 % de los ciclos; se verifica en la interfaz del módulo del grid, porque el estado por celdas es interno y no sale al HMI. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-PR-09 — Confirmación del obstáculo antes del aviso
 
@@ -255,7 +255,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El objeto aparece en la lista de SYS-OUT-11 en el ciclo N de confirmación (N calibrable, STD-CFG) y no antes. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-PR-10 — Rechazo de datos con velocidad del tranvía negativa
 
@@ -305,7 +305,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El objeto aparece en la lista de SYS-OUT-11 ante un objeto estático de 0,6 m × 0,6 m × 0,6 m dentro del ancho de la vía y del alcance de 220 m. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-DET-04 — Número máximo de falsas alarmas
 
@@ -488,7 +488,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Una publicación por cada ciclo de 50 ms con la lista de objetos estáticos detectados, y el 100 % de los objetos incluye todos los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10, y el 100 % de las publicaciones incluye el modo del sistema y el indicador de vigilancia. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ## Tiempo
 
@@ -540,7 +540,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | En modo degradado, el 100 % de los objetos de la lista de SYS-OUT-11 de cada ciclo de 50 ms lleva confianza reducida; escala fijada en diseño. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-SAF-06 — No dar vía libre en modo fallo
 
@@ -552,7 +552,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | En modo fallo, 0 salidas de vía libre o de ausencia de obstáculo por ciclo de 50 ms y el 100 % de los ciclos comunica «sin vigilancia» en el indicador de vigilancia de SYS-OUT-11. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-SAF-07 — Nunca declarar ausencia de obstáculo
 
@@ -564,7 +564,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | 0 salidas de «no hay obstáculo» o «vía libre» por ciclo de 50 ms en el 100 % de los casos de prueba, incluidos los de inyección de fallo, y el 100 % de las listas vacías lleva el modo y el indicador de vigilancia. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-SAF-08 — Fallo por ausencia de tramas
 
