@@ -30,5 +30,9 @@
 | TC-F004-26 | SYS-SAF-07 | PRE-4 | Límites válidos | almacenado -0,8 (eco) y 3,4 (pase) | OGRID_OK; 3,4 - 0,4 = 3,0 |
 | TC-F004-27 | SYS-SAF-07 | POST-6 | Recuperación | errores y luego eco válido | OGRID_OK, 0,85 |
 | TC-F004-28 | SYS-PR-08 | perf (determinismo) | Determinismo | eco,pase,eco,oculta,eco en celdas 7 y 3000 | resultados idénticos bit a bit; 2,15 (tol 1e-6) |
+| TC-F004-29 | SYS-SAF-07 | PRE-4 / err STATE / POST-6 | Valores corruptos con voto oculta | celda NaN, ±inf, 1 ulp fuera de MIN/MAX, ±10; voto oculta | OGRID_ERR_STATE y grid idéntico bit a bit |
+| TC-F004-30 | SYS-SAF-07 | PRE-1 (orden) | Fallos simultáneos | grid NULL con idx 3520, con voto COUNT, y con ambos | OGRID_ERR_PARAM |
+| TC-F004-31 | SYS-SAF-07 | PRE-2 (orden) | Fallos simultáneos | voto inválido con idx 3520/UINT32_MAX, y con celda NaN | OGRID_ERR_PARAM; grid idéntico |
+| TC-F004-32 | SYS-SAF-07 | PRE-3 (orden) | Fallos simultáneos | grid con todas las celdas NaN; idx 3520/UINT32_MAX con los 3 votos; luego idx 42 | OGRID_ERR_RANGE con idx fuera; OGRID_ERR_STATE con idx válido; grid idéntico |
 
 El WCET (clausula perf) se mide en integración, no en unitarios.

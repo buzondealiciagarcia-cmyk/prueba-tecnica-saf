@@ -488,6 +488,100 @@ void test_TC_F004_28_deterministic(void)
         "[TC-F004-28][SYS-PR-08] echo,pass,echo,occluded,echo must give 2.15");
 }
 
+/** @req SYS-SAF-07 @contract pre PRE-4 con voto oculta una celda corrupta devuelve ERR_STATE sin
+ * cambios */
+void test_TC_F004_29_occluded_with_corrupt_cell_is_state_error(void)
+{
+    const ogrid_real_t bad_vals[] = {NAN,
+                                     INFINITY,
+                                     -INFINITY,
+                                     step_bits(OGRID_LOG_ODDS_MAX, true),
+                                     step_bits(OGRID_LOG_ODDS_MIN, true),
+                                     10.0F,
+                                     -10.0F};
+    uint32_t bad = 0U;
+    for (size_t k = 0U; k < 7U; k++)
+    {
+        set_cell(CELL, bad_vals[k], ((k % 2U) == 0U));
+        if (ogrid_update_cell(&s_grid, CELL, OGRID_VOTE_KIND_OCCLUDED) != OGRID_ERR_STATE)
+        {
+            bad++;
+        }
+        bad += diff_cells(&s_grid, &s_ref);
+    }
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(
+        0U, bad, "[TC-F004-29][SYS-SAF-07] occluded on corrupt cell must be ERR_STATE, no change");
+}
+
+/** @req SYS-SAF-07 @contract pre PRE-1 gana a PRE-2 y PRE-3: grid nulo con indice o voto invalidos
+ */
+void test_TC_F004_30_null_grid_wins_over_other_failures(void)
+{
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_PARAM, ogrid_update_cell(NULL, OGRID_CELL_COUNT, OGRID_VOTE_KIND_ECHO),
+        "[TC-F004-30][SYS-SAF-07] NULL grid + idx out of range must be ERR_PARAM");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_PARAM, ogrid_update_cell(NULL, CELL, OGRID_VOTE_KIND_COUNT),
+        "[TC-F004-30][SYS-SAF-07] NULL grid + invalid vote must be ERR_PARAM");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_PARAM, ogrid_update_cell(NULL, UINT32_MAX, (ogrid_vote_kind_t)99),
+        "[TC-F004-30][SYS-SAF-07] NULL grid + invalid vote + idx out must be ERR_PARAM");
+}
+
+/** @req SYS-SAF-07 @contract pre PRE-2 gana a PRE-3 y PRE-4: voto invalido con indice fuera o celda
+ * corrupta */
+void test_TC_F004_31_invalid_vote_wins_over_range_and_state(void)
+{
+    uint32_t bad = 0U;
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_PARAM, ogrid_update_cell(&s_grid, OGRID_CELL_COUNT, OGRID_VOTE_KIND_COUNT),
+        "[TC-F004-31][SYS-SAF-07] invalid vote + idx out of range must be ERR_PARAM");
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_PARAM, ogrid_update_cell(&s_grid, UINT32_MAX, (ogrid_vote_kind_t)-1),
+        "[TC-F004-31][SYS-SAF-07] invalid vote -1 + idx UINT32_MAX must be ERR_PARAM");
+    set_cell(CELL, NAN, true);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(
+        OGRID_ERR_PARAM, ogrid_update_cell(&s_grid, CELL, (ogrid_vote_kind_t)99),
+        "[TC-F004-31][SYS-SAF-07] invalid vote + corrupt cell must be ERR_PARAM");
+    bad += diff_cells(&s_grid, &s_ref);
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(0U, bad,
+                                     "[TC-F004-31][SYS-SAF-07] ERR_PARAM must not modify grid");
+}
+
+/** @req SYS-SAF-07 @contract pre PRE-3 gana a PRE-4: indice fuera de rango con grid corrupto */
+void test_TC_F004_32_range_wins_over_corrupt_cell(void)
+{
+    const ogrid_vote_kind_t votes[] = {OGRID_VOTE_KIND_ECHO, OGRID_VOTE_KIND_PASS,
+                                       OGRID_VOTE_KIND_OCCLUDED};
+    uint32_t bad = 0U;
+    for (uint32_t i = 0U; i < OGRID_CELL_COUNT; i++)
+    {
+        s_grid.cells[i].log_odds_lo = NAN;
+        s_grid.cells[i].observed = true;
+    }
+    s_ref = s_grid;
+    for (size_t v = 0U; v < 3U; v++)
+    {
+        if (ogrid_update_cell(&s_grid, OGRID_CELL_COUNT, votes[v]) != OGRID_ERR_RANGE)
+        {
+            bad++;
+        }
+        if (ogrid_update_cell(&s_grid, UINT32_MAX, votes[v]) != OGRID_ERR_RANGE)
+        {
+            bad++;
+        }
+        /* Same grid, valid index: now the corruption is what fails. */
+        if (ogrid_update_cell(&s_grid, CELL, votes[v]) != OGRID_ERR_STATE)
+        {
+            bad++;
+        }
+    }
+    bad += diff_cells(&s_grid, &s_ref);
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(
+        0U, bad,
+        "[TC-F004-32][SYS-SAF-07] idx out of range must be ERR_RANGE, valid idx ERR_STATE");
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -519,5 +613,9 @@ int main(void)
     RUN_TEST(test_TC_F004_26_stored_limits_are_valid);
     RUN_TEST(test_TC_F004_27_valid_call_after_error_works);
     RUN_TEST(test_TC_F004_28_deterministic);
+    RUN_TEST(test_TC_F004_29_occluded_with_corrupt_cell_is_state_error);
+    RUN_TEST(test_TC_F004_30_null_grid_wins_over_other_failures);
+    RUN_TEST(test_TC_F004_31_invalid_vote_wins_over_range_and_state);
+    RUN_TEST(test_TC_F004_32_range_wins_over_corrupt_cell);
     return UNITY_END();
 }
