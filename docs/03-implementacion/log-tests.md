@@ -302,3 +302,20 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+## 2026-11-02 22:25 · F-005 · ogrid_get_cell_state · ejecución 1 · FAIL
+
+- Rama: `feature/SYS-PR-08-ogrid-get-cell-state` · commit `b509729cec`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 30 casos, 0 fallos |
+| coverage | FAIL | ogrid_get_cell_state.c L 100.0 % R 92.9 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |

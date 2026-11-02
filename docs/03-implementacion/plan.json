@@ -82,7 +82,8 @@
       "cabecera": "include/ogrid/ogrid_get_cell_state.h",
       "fuente": "src/ogrid/ogrid_get_cell_state.c",
       "test": "tests/unit/test_ogrid_get_cell_state.c",
-      "estado": "contrato"
+      "estado": "en-curso",
+      "iteraciones": 1
     },
     {
       "id": "F-006",
