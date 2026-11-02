@@ -7,7 +7,10 @@ stateDiagram-v2
   NORMAL --> DEGRADADO: falsas alarmas o velocidad negativa (pendiente, SYS-SAF-18 y SYS-SAF-19)
   DEGRADADO --> NORMAL: reset nivel 1, condiciones limpias y 4 ciclos correctos
   DEGRADADO --> FALLO: degradado continuado o cualquier fallo
-  FALLO --> NORMAL: reset nivel 2, doble autenticación, grid a desconocido
+  FALLO --> NORMAL: reset nivel 2, doble autenticación, condiciones limpias, grid a desconocido
+  note right of INIT
+    Entrega no hay vigilancia
+  end note
   note right of FALLO
     No entrega celdas como libres: no hay vigilancia
   end note

@@ -9,5 +9,6 @@ flowchart LR
   VEL -->|velocidad lineal y giro + timestamp| ECU
   ECU -->|avisos e información · IEC 61375 + EN 50159| HMI
   HMI -->|sign in y resets| ECU
-  ECU -.->|MQTT cifrado · propuesta al cliente| NUBE[(Nube: logs y trazabilidad)]:::muted
+  ECU -->|MQTT cifrado: estado, diagnóstico, logs y trazabilidad| NUBE[(Nube)]
+  ECU -.->|propuesta: telemetría, flota y mapas| NUBE
   ECU -.->|futuro: frenado de emergencia| FRE[Sistema de freno]:::muted

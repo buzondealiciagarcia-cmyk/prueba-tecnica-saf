@@ -50,7 +50,7 @@ Parámetros de partida (HW):
 Evoluciones futuras sugeridas al cliente en la oferta (no son requisitos, HW):
 
 - Acceso de la ECU al sistema de freno para detener el tranvía en emergencia.
-- Acceso de la ECU a la nube para actualizaciones de la flota desde un centro de control, telemetría adicional y descarga de mapas (el envío de logs y trazabilidad ya es requisito, SYS-IMP-04).
+- Acceso de la ECU a la nube para actualizaciones de la flota desde un centro de control, telemetría adicional y descarga de mapas (el envío de logs y trazabilidad ya es requisito, SYS-IMP-04). Recibir actualizaciones o mapas exigiría cambiar SYS-IMP-04, que limita la nube a enviar datos (H-032).
 - Segundo radar, para reducir el error de altura a gran distancia y aportar redundancia.
 
 ## 4. Arquitectura software
@@ -170,21 +170,21 @@ Huecos y puntos a contrastar con los requisitos (se tratan en `/diseno-revisar`)
 
 ## 8. Gestión de fallos y seguridad funcional (STD-SAF)
 
-| Modo de fallo | Causa | Efecto | Detección | Mitigación | Notificación | Requisito |
-|---|---|---|---|---|---|---|
-| Ausencia de tramas | Radar o enlace caído | Sin datos | Ninguna trama durante el timeout de trama | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | SYS-SAF-08 |
-| Timestamp incoherente | Reloj o datos corruptos | Datos no fiables | Timestamp que no avanza o retrocede | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | SYS-SAF-09, SYS-IN-06 |
-| Dato de entrada no disponible | Fallo del sensor de velocidad u otro | Datos incompletos | Dato ausente | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | SYS-SAF-10 |
-| Fallo del radar | Autodiagnóstico del radar | Detección no fiable | Notificación del radar | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | SYS-SAF-11 |
-| Sin ecos ni raíles | [PENDIENTE: causa] | Confianza reducida | 3 mediciones seguidas sin ninguna detección | Paso a DEGRADADO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | SYS-SAF-12 |
-| Desalineación del radar | Montaje o golpe | Error de posición | Desalineación detectada | Paso a DEGRADADO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | SYS-SAF-13 |
-| Degradado prolongado | Causa no resuelta | Detección con confianza reducida | Tiempo continuado en DEGRADADO | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | SYS-SAF-14 |
-| Fallo de INIT | Autodiagnóstico o datos no válidos | Sin vigilancia | Condición de INIT falla o INIT supera 3 min | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | SYS-SAF-01 |
-| Reset indebido de fallo | Reset no autorizado o de nivel equivocado | Reanudar con fallo activo | Autenticación, condiciones y nivel del reset | Reset nivel 2 con doble autenticación, solo con condiciones limpias; un reset del nivel equivocado se rechaza (H-010). Persistencia del último estado al reiniciar: [PENDIENTE: mecanismo, H-009]; hasta definirlo no cuenta como mitigación vigente | [PENDIENTE: notificación] | SYS-SAF-16 |
-| Datos corruptos de trama | [PENDIENTE] | [PENDIENTE] | Validación de cada trama (SYS-IN-07) | [PENDIENTE] | [PENDIENTE] | SYS-IN-07 |
-| Huecos en la numeración (seq) | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-IN-07 |
-| Saturación de CPU | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-T-01 |
-| Desbordamiento | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-IMP-02 |
+| Modo de fallo | Causa | Efecto | Detección | Mitigación | Notificación | Recuperación | Requisito |
+|---|---|---|---|---|---|---|---|
+| Ausencia de tramas | Radar o enlace caído | Sin datos | Ninguna trama durante el timeout de trama | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-SAF-08 |
+| Timestamp incoherente | Reloj o datos corruptos | Datos no fiables | Timestamp que no avanza o retrocede | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-SAF-09, SYS-IN-06 |
+| Dato de entrada no disponible | Fallo del sensor de velocidad u otro | Datos incompletos | Dato ausente | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-SAF-10 |
+| Fallo del radar | Autodiagnóstico del radar | Detección no fiable | Notificación del radar | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-SAF-11 |
+| Sin ecos ni raíles | [PENDIENTE: causa] | Confianza reducida | 3 mediciones seguidas sin ninguna detección | Paso a DEGRADADO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 1, condiciones limpias y 4 ciclos (§7) | SYS-SAF-12 |
+| Desalineación del radar | Montaje o golpe | Error de posición | Desalineación detectada | Paso a DEGRADADO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 1, condiciones limpias y 4 ciclos (§7) | SYS-SAF-13 |
+| Degradado prolongado | Causa no resuelta | Detección con confianza reducida | Tiempo continuado en DEGRADADO | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-SAF-14 |
+| Fallo de INIT | Autodiagnóstico o datos no válidos | Sin vigilancia | Condición de INIT falla o INIT supera 3 min | Paso a FALLO | log CRIT y mensaje MQTT de estado (SYS-OUT-07, SYS-OUT-09) | Reset nivel 2 (§7) | SYS-SAF-01 |
+| Reset indebido de fallo | Reset no autorizado o de nivel equivocado | Reanudar con fallo activo | Autenticación, condiciones y nivel del reset | Reset nivel 2 con doble autenticación, solo con condiciones limpias; un reset del nivel equivocado se rechaza y se registra un log (H-010). Persistencia del último estado al reiniciar: [PENDIENTE: mecanismo, H-009]; hasta definirlo no cuenta como mitigación vigente | log (nivel [PENDIENTE], LOG-02); log CRIT del paso a FALLO si procede | Reset nivel 2 válido | SYS-SAF-16 |
+| Datos corruptos de trama | [PENDIENTE] | [PENDIENTE] | Validación de cada trama (SYS-IN-07) | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-IN-07 |
+| Huecos en la numeración (seq) | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-IN-07 |
+| Saturación de CPU | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-T-01 |
+| Desbordamiento | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] | SYS-IMP-02 |
 
 Fuera de esta tabla por decisión del usuario (H-018): fallos de MQTT, del broker y de la nube, que no afectan al modo ni a la seguridad funcional (§5).
 
@@ -224,27 +224,29 @@ Tabla por completar en revisión: [PENDIENTE: causas y análisis de fallo propio
 | SYS-GEN-01 | 1 |
 | SYS-IN-01, SYS-IN-02, SYS-IN-03, SYS-IN-04 | 3, 4, 5 |
 | SYS-IN-05 | 3, 10 |
-| SYS-IN-06, SYS-IN-07 | 4, 8 |
+| SYS-IN-06 | 4, 8 |
+| SYS-IN-07 | 4, 8 (cobertura parcial: filas de datos corruptos y huecos de seq pendientes) |
 | SYS-PR-01, SYS-PR-02, SYS-PR-06, SYS-PR-07 | 4 |
-| SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-09 | 4, 6 |
+| SYS-PR-03, SYS-PR-04, SYS-PR-05, SYS-PR-09 | 4, 6 (cobertura parcial: parámetros de filtro, vecindad, criterio de velocidad y semántica de N pendientes) |
 | SYS-PR-08 | 4, 6 (cobertura parcial: voto «libre» y saturación pendientes) |
 | SYS-DET-02, SYS-DET-08 | 4 (paso 11b) |
 | SYS-PR-11, SYS-DET-01 | 3, 4, 10 |
 | SYS-DET-05, SYS-DET-06, SYS-DET-07 | 3, 4, 10 |
-| SYS-OUT-01, SYS-OUT-02, SYS-OUT-03, SYS-OUT-08, SYS-OUT-10, SYS-OUT-11 | 4 |
+| SYS-OUT-01, SYS-OUT-02, SYS-OUT-03, SYS-OUT-08, SYS-OUT-10 | 4 |
+| SYS-OUT-11 | 4 (cobertura parcial: depende de SYS-OUT-04 y SYS-OUT-05, pendientes) |
 | SYS-OUT-06 | 4, 6, 7 |
 | SYS-OUT-07, SYS-OUT-09 | 5 (cobertura parcial: contenido MQTT sin definir) |
 | SYS-T-01 | 1, 9 |
-| SYS-SAF-01, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07, SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11, SYS-SAF-12, SYS-SAF-13, SYS-SAF-14, SYS-SAF-15 | 7, 8 |
+| SYS-SAF-01, SYS-SAF-05, SYS-SAF-06, SYS-SAF-07, SYS-SAF-08, SYS-SAF-09, SYS-SAF-10, SYS-SAF-11, SYS-SAF-12, SYS-SAF-13, SYS-SAF-14, SYS-SAF-15 | 7, 8 (cobertura parcial en SYS-SAF-08, SYS-SAF-13 y SYS-SAF-14: valores pendientes) |
 | SYS-SAF-04, SYS-SAF-16 | 7, 8 (cobertura parcial: mecanismo de persistencia y de rechazo de reset pendientes) |
 | SYS-IMP-01, SYS-IMP-02, SYS-IMP-11 | 4 |
 | SYS-IMP-03, SYS-IMP-04 | 1, 3, 5 |
 
 Requisitos Must sin cobertura en el material aportado:
 
-- [PENDIENTE: SYS-DET-04 (falsas alarmas), SYS-SAF-18, SYS-SAF-19, SYS-PR-10 (velocidad negativa)].
+- [PENDIENTE: SYS-DET-04 (máximo de falsas alarmas; el paso 8 solo contribuye como medio), SYS-SAF-18, SYS-SAF-19, SYS-PR-10 (velocidad negativa)].
 - [PENDIENTE: SYS-OUT-04, SYS-OUT-05 (timestamp y alcance estimado a la salida)].
-- [PENDIENTE: SYS-GEN-02 (entorno operativo)].
+- [PENDIENTE: SYS-GEN-02 (Should: entorno operativo)].
 - [PENDIENTE: SYS-IMP-06, SYS-IMP-07, SYS-IMP-08, SYS-IMP-10, SYS-IMP-12 (entregables; SYS-IMP-08 se cubre en parte con la figura de §4)].
 
 ## Historial de cambios
