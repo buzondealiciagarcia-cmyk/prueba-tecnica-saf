@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {"major": 3, "minor": 20, "patch": 0},
+  "configurePresets": [
+    {"name": "host-debug", "binaryDir": "${sourceDir}/build/host-debug",
+     "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}},
+    {"name": "host-test", "binaryDir": "${sourceDir}/build/host-test",
+     "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug", "H_TEST": "ON", "H_COVERAGE": "ON",
+                        "H_SANITIZE": "ON"}},
+    {"name": "host-release", "binaryDir": "${sourceDir}/build/host-release",
+     "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}},
+    {"name": "linux-container", "binaryDir": "${sourceDir}/build/linux-container",
+     "cacheVariables": {"CMAKE_BUILD_TYPE": "Release", "CMAKE_C_COMPILER": "gcc"}},
+    {"name": "cross-aarch64", "binaryDir": "${sourceDir}/build/cross-aarch64",
+     "toolchainFile": "${sourceDir}/cmake/aarch64-linux-gnu.cmake",
+     "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}}
+  ],
+  "buildPresets": [
+    {"name": "host-test", "configurePreset": "host-test"},
+    {"name": "host-release", "configurePreset": "host-release"}
+  ],
+  "testPresets": [
+    {"name": "host-test", "configurePreset": "host-test", "output": {"outputOnFailure": true}}
+  ]
+}
