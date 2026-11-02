@@ -85,7 +85,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Se recibe la velocidad con periodo de 50 ms y timestamp de medida que permite sincronizarla con cada nube de puntos (100 % de las muestras con timestamp), con la resolución fijada en diseño. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-IN-03 — Recepción de la velocidad de giro del tranvía
 
@@ -97,7 +97,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Se recibe ω con periodo de 50 ms y timestamp de medida que permite sincronizarla con cada nube de puntos (100 % de las muestras con timestamp), con la resolución fijada en diseño. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-IN-04 — Recepción de la marca de tiempo de cada trama
 
@@ -207,7 +207,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Clasificación correcta de los objetos de prueba estáticos y en movimiento con el umbral y la histéresis fijados en diseño (STD-CFG), y 0 objetos clasificados como en movimiento reportados en el 100 % de los casos de prueba. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-PR-06 — Cálculo del ángulo de giro a partir de ω
 
@@ -255,7 +255,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | El aviso se emite en el ciclo N de confirmación (N calibrable, STD-CFG) y no antes. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-PR-10 — Rechazo de datos con velocidad del tranvía negativa
 
@@ -293,7 +293,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Detección de un objeto estático de 0,6 m × 0,6 m × 0,6 m situado a 220 m a lo largo de la vía. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-DET-02 — Tamaño mínimo del objeto que genera alerta
 
@@ -305,7 +305,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Alerta ante un objeto estático de 0,6 m × 0,6 m × 0,6 m dentro del ancho de la vía y del alcance de 220 m. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-DET-04 — Número máximo de falsas alarmas
 
@@ -317,7 +317,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Falsas alarmas por debajo del máximo (parámetro calibrable, STD-CFG) en pruebas sin obstáculos en la vía. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-DET-05 — Exclusión de objetos fuera de la vía
 
@@ -440,7 +440,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Una publicación por cada ciclo de 50 ms con uno de los tres valores para cada celda, 0 publicaciones de la probabilidad numérica y 0 celdas marcadas como ocupadas únicamente por un objeto en movimiento. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-OUT-07 — Aviso MQTT de modo degradado o fallo
 
@@ -452,7 +452,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Un mensaje MQTT con el modo actual por cada cambio a degradado o a fallo mientras haya conexión con el broker. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-OUT-08 — Confianza de la detección
 
@@ -500,7 +500,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Una publicación por cada ciclo de 50 ms con la lista de objetos estáticos detectados, y el 100 % de los objetos incluye todos los datos de SYS-OUT-01 a SYS-OUT-05, SYS-OUT-08 y SYS-OUT-10. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ## Tiempo
 
@@ -528,7 +528,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Inspección |
 | Criterio de aceptación | El sistema se encuentra en exactamente 1 de los modos definidos en el 100 % de los ciclos. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-SAF-04 — Recuperación de degradado a normal mediante reset
 
@@ -540,7 +540,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Con las condiciones de recuperación cumplidas, tras el reset de degradado el modo es normal; si no se cumplen, se rechaza el reset, se mantiene el modo degradado y se registra un log; el reset de fallo no produce esa transición. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-SAF-05 — Confianza reducida en modo degradado
 
@@ -684,7 +684,7 @@ verificación y Criterio de aceptación son opcionales.
 | Prioridad | Must |
 | Método de verificación | Test |
 | Criterio de aceptación | Con las condiciones de recuperación cumplidas, tras el reset de fallo el modo es normal; si no se cumplen, se rechaza el reset, se mantiene el modo fallo y se registra un log; el reset de degradado no produce esa transición. |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### SYS-SAF-18 — Degradado por exceso de falsas alarmas
 
@@ -860,7 +860,7 @@ verificación y Criterio de aceptación son opcionales.
 | Descripción | La velocidad y el giro llegan con el mismo periodo de 50 ms y un timestamp de medida que permite sincronizarlos con cada nube de puntos. |
 | Tipo | Hipótesis |
 | Origen | R2, Derivado de requisitos.txt (Requisitos, L24); Derivado de revisión de diseño (H-030) |
-| Estado | Borrador |
+| Estado | Aprobado |
 
 ### H-04 — Radar montado y calibrado con el eje del tranvía
 
