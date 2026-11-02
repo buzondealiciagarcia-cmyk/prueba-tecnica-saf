@@ -26,7 +26,11 @@ ogrid_status_t ogrid_extract_occupied(const ogrid_t *grid, bool *mask_out)
         {
             ogrid_cell_state_t state = OGRID_CELL_UNSURVEYED;
 
-            /* Indices are always valid, so the only failure is a corrupt cell. */
+            /* Indices are always valid, so the only failure is a corrupt cell.
+             * The contract requires a complete mask and a single OGRID_ERR_STATE at the end,
+             * so the scan does not stop at the first corrupt cell: the error is recorded and
+             * the mask entry is still written, remaining false for that cell (state keeps its
+             * non-occupied initial value). */
             if (ogrid_get_cell_state(grid, idx, &state) != OGRID_OK)
             {
                 status = OGRID_ERR_STATE;
