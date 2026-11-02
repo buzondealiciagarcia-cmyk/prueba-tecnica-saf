@@ -46,7 +46,7 @@
       "cabecera": "include/ogrid/ogrid_clamp_log_odds.h",
       "fuente": "src/ogrid/ogrid_clamp_log_odds.c",
       "test": "tests/unit/test_ogrid_clamp_log_odds.c",
-      "estado": "en-curso",
+      "estado": "integrada",
       "iteraciones": 0
     },
     {
