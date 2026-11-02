@@ -57,6 +57,23 @@ static uint32_t count_bad_log_odds(const ogrid_t *g)
     return bad;
 }
 
+/** Count cells whose guaranteed fields (log_odds_lo bits, observed) differ; padding is ignored. */
+static uint32_t count_field_diffs(const ogrid_t *a, const ogrid_t *b)
+{
+    uint32_t diffs = 0U;
+    for (uint32_t i = 0U; i < OGRID_CELL_COUNT; i++)
+    {
+        const bool same_lo =
+            (memcmp(&a->cells[i].log_odds_lo, &b->cells[i].log_odds_lo, sizeof(ogrid_real_t)) == 0);
+        const bool same_obs = (a->cells[i].observed == b->cells[i].observed);
+        if (!(same_lo && same_obs))
+        {
+            diffs++;
+        }
+    }
+    return diffs;
+}
+
 static uint32_t count_observed(const ogrid_t *g)
 {
     uint32_t n = 0U;
@@ -208,14 +225,9 @@ void test_TC_F001_10_idempotent_double_call(void)
     TEST_ASSERT_EQUAL_UINT32_MESSAGE(
         0U, count_observed(&s_grid),
         "[TC-F001-10][SYS-PR-08] observed must stay false after second call");
-    for (uint32_t i = 0U; i < OGRID_CELL_COUNT; i++)
-    {
-        TEST_ASSERT_TRUE_MESSAGE(
-            (memcmp(&s_ref.cells[i].log_odds_lo, &s_grid.cells[i].log_odds_lo,
-                    sizeof(ogrid_real_t)) == 0) &&
-                (s_ref.cells[i].observed == s_grid.cells[i].observed),
-            "[TC-F001-10][SYS-PR-08] second call must leave the same state as the first");
-    }
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(
+        0U, count_field_diffs(&s_ref, &s_grid),
+        "[TC-F001-10][SYS-PR-08] second call must leave the same state as the first");
 }
 
 /** @req SYS-PR-08 @contract post POST-4 idempotencia tras dato nuevo entre reinicios: vuelve a 0 */
@@ -245,8 +257,8 @@ void test_TC_F001_12_null_returns_err_param(void)
 void test_TC_F001_13_null_does_not_modify_other_data(void)
 {
     (void)ogrid_reset_grid(NULL);
-    TEST_ASSERT_EQUAL_MEMORY_MESSAGE(
-        &s_ref, &s_grid, sizeof(s_grid),
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(
+        0U, count_field_diffs(&s_ref, &s_grid),
         "[TC-F001-13][SYS-PR-08] a NULL call must not modify any other grid");
 }
 
@@ -279,8 +291,8 @@ void test_TC_F001_15_only_grid_out_is_modified(void)
                                   "[TC-F001-15][SYS-IMP-01] reset must return OGRID_OK");
     TEST_ASSERT_EQUAL_UINT32_MESSAGE(0U, count_bad_log_odds(&pair.a),
                                      "[TC-F001-15][SYS-IMP-01] target grid must be reset");
-    TEST_ASSERT_EQUAL_MEMORY_MESSAGE(
-        &s_ref, &pair.b, sizeof(ogrid_t),
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(
+        0U, count_field_diffs(&s_ref, &pair.b),
         "[TC-F001-15][SYS-IMP-01] neighbouring grid must not be modified");
 }
 

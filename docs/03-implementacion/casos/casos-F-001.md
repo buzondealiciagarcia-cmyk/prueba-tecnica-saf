@@ -18,4 +18,4 @@
 | TC-F001-14 | SYS-PR-08 | err | Partición de códigos | NULL | distinto de OK, ERR_RANGE y ERR_STATE |
 | TC-F001-15 | SYS-IMP-01 | perf / efectos laterales | Aislamiento de efectos | dos grids contiguos, reset del primero | primero reiniciado, segundo intacto |
 
-Notas: la comparación de 0,0 es por patrón de bits (el contrato exige exactitud, sin tolerancia), por lo que no se usa tolerancia de coma flotante. POST-3 se verifica por derivación (observed == false) porque `ogrid_get_cell_state` (F-005) no está en la API disponible. El WCET (perf) se mide en integración según el contrato.
+Notas: las comparaciones entre grids (TC-F001-10, 13, 15) se hacen campo a campo (log_odds_lo por patrón de bits y observed), nunca por bytes de estructura, porque el contrato no garantiza el relleno. La comparación de 0,0 es por patrón de bits (el contrato exige exactitud, sin tolerancia), por lo que no se usa tolerancia de coma flotante. POST-3 se verifica por derivación (observed == false) porque `ogrid_get_cell_state` (F-005) no está en la API disponible. El WCET (perf) se mide en integración según el contrato.
