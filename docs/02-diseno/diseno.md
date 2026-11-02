@@ -67,7 +67,7 @@ Funcionalidades en el orden del ciclo (SW):
 | 2 | Valida los datos según estándares y requisitos; los timestamps se validan contra el reloj de la ECU, que es la referencia (H-017); sincronización con el reloj del radar y tolerancia [PENDIENTE] | SYS-IN-06, SYS-IN-07 |
 | 3 | Sincroniza en la ECU, con los timestamps de medida, las velocidades al instante de la «fotografía» de la nube, interpolando si hace falta (H-020); actualiza la posición del tranvía y estima la curva (puede ser recta) | SYS-PR-02, SYS-PR-06, H-02, H-03 |
 | 4 | Convierte la nube de (r, azimut, elevación) a (x, y, z) considerando la altura del radar | SYS-PR-07, SYS-IN-05 |
-| 5 | Descarta elementos dinámicos y elementos con señal muy débil. Los objetos en movimiento sobre la vía no se reportan (H-007) | SYS-PR-05 |
+| 5 | Descarta elementos dinámicos y elementos con señal muy débil. Los objetos en movimiento sobre la vía no se reportan (H-007); un eco descartado no cambia el valor de ninguna celda (H-024) | SYS-PR-05 |
 | 6 | Pasa de coordenadas (x, y) a coordenadas de vía (s, d) y descarta lo situado a más de 220 m a lo largo de la vía, s > 220 m (H-014) | SYS-PR-01, SYS-PR-11 |
 | 7 | Descarta lo que está fuera de la vía | SYS-DET-05 |
 | 8 | Descarta lo que está por encima del techo (evita falsos positivos por puentes); se traza a SYS-DET-04 solo como medio para reducir falsas alarmas (H-006) | SYS-DET-04 |
@@ -122,15 +122,15 @@ Fallos de MQTT o de la nube (H-018): no se registran como fallo de la máquina d
 
 ### 6.2 Modelo inverso del sensor
 
-Celda con detección estática: +0,85. Celda atravesada por la luz: voto «libre». Celda no observada: «desconocido» (SW paso 10). El voto +0,85 se suma en escala log-odds (H-013): partiendo de p = 0,5, una detección da p ≈ 0,70 y dos seguidas p ≈ 0,85, por lo que el umbral p > 0,8 (log-odds > 1,39) no se alcanza en un solo ciclo. Estados de celda derivados (H-012): ocupado si p > 0,8; zona no estudiada si la celda nunca se ha observado o se ha reiniciado; probabilidad baja de obstáculo si ha sido observada y p ≤ 0,8; nunca «libre». [PENDIENTE: valor del voto «libre» y límites de saturación] (SYS-PR-08, SYS-SAF-07).
+Celda con detección estática: +0,85. Celda atravesada por la luz: voto «libre». Celda no observada: «desconocido» (SW paso 10). El voto +0,85 se suma en escala log-odds (H-013): partiendo de p = 0,5, una detección da p ≈ 0,70 y dos seguidas p ≈ 0,85, por lo que el umbral p > 0,8 (log-odds > 1,39) no se alcanza en un solo ciclo. Estados de celda derivados (H-012): ocupado si p > 0,8; zona no estudiada si la celda nunca se ha observado o se ha reiniciado; probabilidad baja de obstáculo si ha sido observada y p ≤ 0,8; nunca «libre». Regla general (H-024, H-031): dentro de un ciclo (conjunto de ráfagas) cada celda mantiene su valor mientras ninguna regla de este apartado le aplique un cambio; esto vale para las celdas no vistas en el ciclo y para las que solo reciben ecos descartados. [PENDIENTE: valor del voto «libre» y límites de saturación] (SYS-PR-08, SYS-SAF-07).
 
 ### 6.3 Actualización y dinámica (decaimiento, estáticos vs. móviles)
 
-Los elementos dinámicos se descartan antes de actualizar el grid (SW paso 5, SYS-PR-05). Al volver de FALLO el grid se reinicia a «desconocido» porque las mediciones anteriores no son fiables (ME). [PENDIENTE: decaimiento temporal y criterio de velocidad para clasificar un eco como dinámico].
+Los elementos dinámicos se descartan antes de actualizar el grid (SW paso 5, SYS-PR-05) y no modifican ninguna celda (H-024). Al volver de FALLO el grid se reinicia a «desconocido» porque las mediciones anteriores no son fiables (ME). [PENDIENTE: decaimiento temporal y criterio de velocidad para clasificar un eco como dinámico].
 
 ### 6.4 Flujo por ciclo
 
-Ver §4 (pasos 1 a 15) y la figura de arquitectura software. Umbral de extracción de objetos: p > 0,8. Confirmación: el objeto se reporta si lleva más de 2 ciclos seguidos, N = 3 (H-005, SYS-PR-09), independiente de las 3 mediciones de SYS-SAF-12. Salida: celdas ocupadas, probabilidad baja de obstáculo o zona no estudiada; nunca «libre» (SYS-SAF-07, SYS-OUT-06).
+Ver §4 (pasos 1 a 15) y la figura de arquitectura software. Umbral de extracción de objetos: p > 0,8. Confirmación: el objeto se reporta si lleva más de 2 ciclos seguidos, N = 3 (H-005, SYS-PR-09), independiente de las 3 mediciones de SYS-SAF-12. Aviso (H-025): se considera aviso la notificación del objeto en la lista de objetos, es decir, cuando se reporta tras N ciclos; el estado por celdas (SYS-OUT-06) es información de celda y puede mostrar «ocupado» antes. Salida: celdas ocupadas, probabilidad baja de obstáculo o zona no estudiada; nunca «libre» (SYS-SAF-07, SYS-OUT-06).
 
 ## 7. Modos y estados del sistema
 
