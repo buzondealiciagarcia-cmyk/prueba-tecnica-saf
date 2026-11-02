@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "saf_ecu_status.schema.json",
+  "title": "Payload de saf/ecu/status",
+  "description": "Mensaje de estado de la ECU en cada cambio de modo. Requisitos: SYS-OUT-07. Tabla 5.2 de diseno.md.",
+  "type": "object",
+  "properties": {
+    "v": {
+      "type": "integer",
+      "description": "Versión del esquema del payload (MQ-PAY-02)"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Número de secuencia (MQ-PAY-02, MQ-QOS-02)"
+    },
+    "ts_ms": {
+      "type": "integer",
+      "description": "Marca de tiempo en ms (MQ-PAY-02, MQ-PAY-04)"
+    },
+    "src": {
+      "type": "string",
+      "description": "Origen del mensaje (MQ-PAY-02)"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "init",
+        "normal",
+        "degraded",
+        "fault"
+      ],
+      "description": "Modo del sistema"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Motivo del cambio de modo"
+    }
+  },
+  "required": [
+    "v",
+    "seq",
+    "ts_ms",
+    "src",
+    "mode",
+    "reason"
+  ],
+  "additionalProperties": false
+}
