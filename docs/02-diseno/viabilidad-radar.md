@@ -62,6 +62,8 @@ El error de medida en azimut y altura crece con la distancia (H-06). Se partió 
 
 ![Figura. Error lateral frente a la distancia: 1 °, 0,1 ° y límite de 0,5 m](diagramas/error-lateral.svg)
 
+**Leyenda.** Azul oscuro: error lateral con 1° de precisión angular. Gris: error lateral con 0,1°. Azul claro (horizontal): límite de 0,5 m, la mitad del ancho de vía.
+
 Consecuencias:
 
 - El radar debe tener una precisión angular de 0,1 ° para cubrir los 220 m. Con 1 ° la discriminación lateral solo es fiable hasta ≈ 29 m.

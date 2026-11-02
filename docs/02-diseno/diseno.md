@@ -75,6 +75,8 @@ Se partió de 1° como valor provisional. El cálculo muestra que no basta para 
 
 ![Figura. Error lateral frente a la distancia: 1°, 0,1° y límite de 0,5 m](diagramas/error-lateral.svg)
 
+**Leyenda.** Azul oscuro: error lateral con 1° de precisión angular. Gris: error lateral con 0,1°. Azul claro (horizontal): límite de 0,5 m, la mitad del ancho de vía.
+
 El mismo error afecta a la altura del eco: a 220 m es de 0,38 m, menor que la altura mínima del objeto (0,6 m), lo que permite aplicar el filtro de techo (paso 8) y la altura del objeto (paso 11). Un error menor de 0,1° mejoraría el margen: 0,065° daría 0,25 m, una celda, a 220 m. Un segundo radar reduciría este error y aportaría redundancia (propuesta al cliente, §3).
 
 ## 4. Arquitectura software
