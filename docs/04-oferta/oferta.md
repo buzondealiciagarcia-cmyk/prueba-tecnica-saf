@@ -56,8 +56,28 @@ El trabajo se plantea por fases, con requisitos cerrados y aprobados, un diseño
 
 **Confidencialidad.** Los datos del cliente se tratan como confidenciales: se usan solo para este proyecto, los datos reales se anonimizan y se documenta su procedencia, y no se difunden ni se publican.
 
-<!-- seccion: objetivos | estado: borrador -->
+<!-- seccion: objetivos | estado: aprobado -->
 ## 4. Objetivos
+
+**Objetivo general.** Detectar obstáculos estáticos sobre la vía de un tranvía con un radar frontal 3D y entregarlos al conductor con la fiabilidad que exige un sistema con seguridad funcional.
+
+**Objetivos del sistema**, por orden de prioridad:
+
+1. **Detección.** Detectar los objetos estáticos con las tres dimensiones de 0,6 m o más, situados en la vía a menos de 220 m, usando un único radar frontal.
+2. **Tiempo.** Entregar los objetos detectados (posición, tamaño, incertidumbre y confianza) en menos de 128 ms desde la recepción de cada nube de puntos, de forma determinista y con tiempo acotado.
+3. **Seguridad funcional.** No comunicar nunca la ausencia de obstáculo; pasar a modo degradado o declarar un error ante fallos del sensor, y no dar vía libre en modo fallo.
+4. **Entradas.** Analizar los datos del radar junto con la velocidad y el giro del tranvía, compensando el movimiento.
+5. **Calidad del software.** Código en C sin memoria dinámica, verificable y trazable hasta los requisitos.
+
+**Qué cubre esta práctica (Fase A) y qué queda para la Fase B.** La Fase A demuestra la viabilidad y deja diseñados los cinco objetivos; implementa solo el módulo del grid de ocupación, que es el componente central de la detección.
+
+| Objetivo | En esta práctica (Fase A) | Queda para la Fase B |
+|---|---|---|
+| 1. Detección | Viabilidad con un radar 3D demostrada; diseño del grid y de la extracción de objetos; **implementado**: grid de ocupación y máscara de celdas ocupadas | Agrupación en objetos, filtro de tamaño, confirmación en N ciclos y geometría de vía |
+| 2. Tiempo | Presupuesto de tiempo diseñado (128 ms de entrega, 78 ms de proceso); tiempos del grid medidos en el equipo de desarrollo | Medida del ciclo completo en la ECU |
+| 3. Seguridad funcional | Modos y gestión de fallos diseñados; **implementado**: el grid nunca declara una celda libre | Máquina de estados, gestión de fallos y salida al HMI |
+| 4. Entradas | Entradas y su validación diseñadas | Recepción, validación y sincronización del radar y del tranvía |
+| 5. Calidad del software | **Aplicada** al módulo implementado: C sin memoria dinámica, verificación independiente y trazabilidad | Aplicación al resto del sistema |
 
 <!-- seccion: alcance | estado: borrador -->
 ## 5. Alcance del proyecto y de los resultados
