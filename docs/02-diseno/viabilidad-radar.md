@@ -4,12 +4,12 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-DIS-01 |
-| Versión | 0.1 |
-| Fecha | 2026-11-02 |
+| Versión | 1.0 |
+| Fecha | 2026-11-03 |
 | Autor | Alicia Garcia |
-| Estado | Borrador |
+| Estado | Cerrado |
 
-Este documento cubre SYS-IMP-06 (enunciado R1): capacidades y limitaciones del radar para detectar obstáculos en la vía. Usa solo los datos decididos en `diseno.md` y en los requisitos v1.1. Los valores que dependen del radar elegido se fijan con su hoja de datos (regla R-HW, `diseno.md` §10).
+Este documento cubre SYS-IMP-06 (enunciado R1): capacidades y limitaciones del radar para detectar obstáculos en la vía. Usa solo los datos decididos en `diseno.md` (v1.1) y en los requisitos v1.2. Los valores que dependen del radar elegido se fijan con su hoja de datos (regla R-HW, `diseno.md` §10).
 
 ## 1. Caso de uso y datos de partida
 
@@ -133,3 +133,4 @@ Se recomienda un segundo radar: reduciría el error de medida, sobre todo el de 
 |---|---|---|---|
 | 0.1 | 2026-11-02 | Alicia Garcia | Creación a partir de `diseno.md` y requisitos v1.1 |
 | 0.2 | 2026-11-02 | Alicia Garcia | Precisión angular de 0,1 ° con cálculo y figura; conclusión con recomendación de segundo radar |
+| 1.0 | 2026-11-03 | Alicia Garcia | Cierre del documento junto con el diseño: referencias a `diseno.md` v1.1 y a los requisitos v1.2 |

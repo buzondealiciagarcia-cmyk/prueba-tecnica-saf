@@ -1,13 +1,18 @@
 flowchart TB
-  A[1 Recepción: nube, velocidad lineal y giro] --> B[2 Validación y conteo de ecos]
-  B --> C[3 Sincronización, posición y curva]
-  C --> D[4 Conversión a x, y, z]
-  D --> E[5 Descartes: dinámicos, señal débil]
-  E --> F[6 Coordenadas de vía s, d y alcance 220 m]
-  F --> G[7-9 Descartes: fuera de vía, sobre el techo, raíles]
-  G --> H[10 Actualización del grid]:::hl
-  H --> I[11 Extracción y filtro de tamaño 0,6 m]
-  I --> J[12 Comparación con el ciclo anterior]
-  J --> K[13 Confianza e incertidumbre]
-  K --> L[14 Gestión de modo, log CRIT y MQTT]
-  L --> M[15 Publicación de lista, modo y vigilancia]
+  subgraph S1[Entrada y validación]
+    direction LR
+    A[1 Recepción: nube, velocidad y giro] --> B[2 Validación y conteo de ecos] --> C[3 Sincronización, posición y curva] --> D[4 Conversión a x, y, z]
+  end
+  subgraph S2[Descartes]
+    direction LR
+    E[5 Dinámicos y señal débil] --> F[6 Coordenadas de vía s, d y 220 m] --> G[7-9 Fuera de vía, techo y raíles]
+  end
+  subgraph S3[Grid y objetos]
+    direction LR
+    H[10 Actualización del grid]:::hl --> I[11 Extracción y filtro de 0,6 m] --> J[12 Comparación con el ciclo anterior]
+  end
+  subgraph S4[Cálculo y salida]
+    direction LR
+    K[13 Confianza e incertidumbre] --> L[14 Modo, log CRIT y MQTT] --> M[15 Publicación de lista, modo y vigilancia]
+  end
+  S1 --> S2 --> S3 --> S4

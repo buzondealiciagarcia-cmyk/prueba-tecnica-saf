@@ -4,8 +4,8 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-DIS |
-| Versión | 1.1 |
-| Fecha | 2026-11-02 |
+| Versión | 1.2 |
+| Fecha | 2026-11-03 |
 | Autor | Alicia Garcia |
 | Estado | Cerrado |
 
@@ -316,3 +316,4 @@ SYS-IMP-12 (borrador de oferta) corresponde a la fase de Oferta.
 | 0.1 | 2026-11-01 | Alicia Garcia | Creación a partir del diseño aportado por el usuario |
 | 1.0 | 2026-11-02 | Alicia Garcia | Revisión de diseño completa (41 hallazgos resueltos), votos del grid, 0,1° de precisión angular, topics MQTT, entregables y cierre de la fase |
 | 1.1 | 2026-11-02 | Alicia Garcia | Alineado con los requisitos 1.2 (hallazgos H-042 a H-062): SYS-OUT-06 retirado, una única salida al HMI (lista de objetos con modo e indicador de vigilancia), mensaje ECU→HMI (§5.3), interfaz del módulo del grid (§6.5), publicación por temporizador de 50 ms y entrega en menos de 128 ms. Fase cerrada en 1.1 |
+| 1.2 | 2026-11-03 | Alicia Garcia | Fase reabierta: la figura de arquitectura software (§4) se reorganiza en cuatro bloques apaisados para que sea legible en el documento Word, sin cambiar su contenido; `viabilidad-radar.md` y `justificacion-c.md` pasan a la versión 1.0 y estado Cerrado. Fase cerrada en 1.2 |
