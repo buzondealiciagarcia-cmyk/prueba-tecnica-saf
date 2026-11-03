@@ -27,7 +27,7 @@
 
 ## Guía de lectura
 
-Este dosier reúne, en el orden en que se produjeron, los documentos cerrados de las tres primeras fases del proyecto. Cada parte comienza con una breve explicación de su propósito.
+Este dosier reúne, en el orden en que se produjeron, los documentos cerrados de las tres primeras fases del proyecto. Cada parte comienza con una breve explicación de su propósito. La Tabla 1 lista los documentos incluidos, con su código, versión, fecha y fuente, y la Tabla 2 recoge el estado de las cuatro fases del proyecto.
 
 Tabla: Documentos incluidos
 
@@ -44,10 +44,10 @@ Tabla: Estado de las fases
 
 | Fase | Estado | Versión | Tag | Cerrada |
 |---|---|---|---|---|
-| Requisitos | cerrada | 1.2 | req-v1.2 | 2026-11-02T22:54 |
-| Diseño | cerrada | 1.2 | design-v1.2 | 2026-11-03T10:39 |
-| Implementación | cerrada | 1.2 | impl-v1.2 | 2026-11-03T10:44 |
-| Oferta | cerrada | 1.0 | offer-v1.0 | 2026-11-03T12:11 |
+| Requisitos | cerrada | 1.2 | req-v1.2 | 2026-11-02 |
+| Diseño | cerrada | 1.2 | design-v1.2 | 2026-11-03 |
+| Implementación | cerrada | 1.2 | impl-v1.2 | 2026-11-03 |
+| Oferta | cerrada | 1.0 | offer-v1.0 | 2026-11-03 |
 
 
 ## Parte I — Requisitos
