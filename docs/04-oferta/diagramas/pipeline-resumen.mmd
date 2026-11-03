@@ -1,0 +1,7 @@
+%%{init: {'themeVariables': {'fontSize': '22px'}, 'flowchart': {'nodeSpacing': 30, 'rankSpacing': 60, 'padding': 14, 'wrappingWidth': 420}}}%%
+flowchart LR
+  B1["<b>Entrada y validación</b><br/>1 Recepción<br/>2 Validación<br/>3 Sincronización<br/>4 Conversión a x, y, z"]
+  B2["<b>Descartes</b><br/>5 Dinámicos y señal débil<br/>6 Coordenadas de vía<br/>7-9 Fuera de vía, techo<br/>y raíles"]
+  B3["<b>Grid y objetos</b><br/>10 Actualización del grid<br/>11 Extracción y filtro<br/>12 Comparación con el<br/>ciclo anterior"]:::hl
+  B4["<b>Cálculo y salida</b><br/>13 Confianza e<br/>incertidumbre<br/>14 Modo, log y MQTT<br/>15 Publicación de la lista"]
+  B1 --> B2 --> B3 --> B4
