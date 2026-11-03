@@ -73,10 +73,10 @@
       ]
     },
     "impl": {
-      "status": "open",
-      "version": "1.1",
-      "closed_at": "2026-11-03T10:35:55",
-      "tag": "impl-v1.1",
+      "status": "closed",
+      "version": "1.2",
+      "closed_at": "2026-11-03T10:44:36",
+      "tag": "impl-v1.2",
       "history": [
         {
           "event": "locked-by-reopen",
@@ -102,6 +102,11 @@
           "event": "locked-by-reopen",
           "at": "2026-11-03T10:39:08",
           "of": "design"
+        },
+        {
+          "event": "close",
+          "at": "2026-11-03T10:44:36",
+          "version": "1.2"
         }
       ],
       "integration": {
@@ -113,7 +118,7 @@
       }
     },
     "offer": {
-      "status": "locked",
+      "status": "open",
       "version": "0.1",
       "closed_at": null,
       "tag": null,
