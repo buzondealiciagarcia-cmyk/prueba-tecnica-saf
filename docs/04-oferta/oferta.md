@@ -219,7 +219,7 @@ Tabla: Desglose del presupuesto por partidas
 - **Condiciones de pago.** Fase A: el 100 % a la aceptación de sus entregables. Fase B: el 30 % al inicio, el 40 % al entregar el software completo verificado en banco y el 30 % tras la verificación final.
 - **Garantía.** 12 meses para la corrección de defectos.
 
-<!-- seccion: plazo | estado: en revision -->
+<!-- seccion: plazo | estado: aprobado -->
 ## 9. Plazo del proyecto
 
 <!-- h:plazo:begin -->
