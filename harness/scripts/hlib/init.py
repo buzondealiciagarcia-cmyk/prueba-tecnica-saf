@@ -12,6 +12,7 @@ GITIGNORE_BLOCK = """
 /.harness/sandbox/
 /.harness/reports/
 /.harness/audit/
+/docs/export/
 .h-canary
 *.gcda
 *.gcno

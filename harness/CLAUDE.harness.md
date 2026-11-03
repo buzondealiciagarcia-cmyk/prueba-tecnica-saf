@@ -25,5 +25,5 @@ H="@@HARNESS@@/bin/h"     # h --help para ver todos los subcomandos
 | Estado de fases | `.harness/state.json` (`$H gate status`) |
 | Configuración del proyecto y de la plantilla Word | `harness.config.json`, `config/template-map.json` |
 | Documentos de fase | `docs/01-requisitos`, `docs/02-diseno`, `docs/03-implementacion`, `docs/04-oferta`, `docs/dosier` |
-| Exportaciones Word/PowerPoint | `docs/export/` (versionado; se actualiza al cerrar cada fase) |
+| Exportaciones Word/PowerPoint | `docs/export/` (no versionado) |
 | Informes de test | `.harness/reports/` · log versionado en `docs/03-implementacion/log-tests.md` |
