@@ -4,10 +4,10 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-DIS-03 |
-| Versión | 0.1 |
-| Fecha | 2026-11-02 |
+| Versión | 1.0 |
+| Fecha | 2026-11-03 |
 | Autor | Alicia Garcia |
-| Estado | Borrador |
+| Estado | Cerrado |
 
 Este documento cubre SYS-IMP-11 (enunciado R3): justifica la elección de C (C11 con MISRA, determinismo y sin memoria dinámica) frente a lenguajes alternativos. El diseño fija C por ser una ECU edge (`diseno.md` §4).
 
@@ -68,3 +68,4 @@ C11 con MISRA C:2012 cumple los requisitos del proyecto de forma verificable: 0 
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 2026-11-02 | Alicia Garcia | Creación a partir de `diseno.md` §4 y STD-C |
+| 1.0 | 2026-11-03 | Alicia Garcia | Cierre del documento junto con el diseño |
