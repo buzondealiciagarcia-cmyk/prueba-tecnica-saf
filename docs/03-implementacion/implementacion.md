@@ -4,14 +4,14 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-IMP |
-| Versión | 1.1 |
+| Versión | 1.2 |
 | Fecha | 2026-11-03 |
 | Autor | Alicia Garcia |
 | Estado | Cerrado |
 
 ## 1. Alcance implementado
 
-Se implementa el núcleo del grid de ocupación en log-odds (diseno.md §6 y paso 10, versión 1.1), por ser el componente central del sistema y el que SYS-IMP-10 toma como ejemplo. Son siete funciones, F-001 a F-007 (`plan.json`). Requisitos cubiertos: SYS-PR-08, SYS-SAF-07, SYS-PR-04 (solo la máscara de celdas ocupadas, que es la entrada de la agrupación) y SYS-IMP-01 (sin memoria dinámica).
+Se implementa el núcleo del grid de ocupación en log-odds (diseno.md §6 y paso 10, versión 1.2), por ser el componente central del sistema y el que SYS-IMP-10 toma como ejemplo. Son siete funciones, F-001 a F-007 (`plan.json`). Requisitos cubiertos: SYS-PR-08, SYS-SAF-07, SYS-PR-04 (solo la máscara de celdas ocupadas, que es la entrada de la agrupación) y SYS-IMP-01 (sin memoria dinámica).
 
 El estado por celdas no se publica al HMI: el análisis de la rejilla es interno y al HMI solo llega la lista de objetos con el modo del sistema y el indicador de vigilancia (SYS-OUT-11, diseno.md §5.3 y §6.5). SYS-OUT-06 se retiró en los requisitos v1.2. Por eso la función F-008 («estado por celdas», que publicaba ese estado) se retiró del plan.
 
@@ -660,3 +660,4 @@ El script comprueba el código de retorno de cada llamada y falla si alguna no d
 | 0.3 | 2026-11-03 | Alicia Garcia | Visor del grid: §1, §6 (cómo ejecutarlo), §7 (qué es, qué muestra, seis escenarios, origen de los números, diagrama de flujo de datos) y límites del visor |
 | 1.0 | 2026-11-03 | Alicia Garcia | Cierre de la fase de implementación: 7 funciones del grid integradas, integración completa en PASS, visor del grid aprobado y documento cerrado |
 | 1.1 | 2026-11-03 | Alicia Garcia | Fase reabierta para el WCET: apartado 4.5 (tiempos de ejecución: cuenta de operaciones, medida en el M5, contraste con contratos y con el presupuesto de 78 ms, sensibilidad), receta del benchmark en §6, §1 y «Pendientes y límites» |
+| 1.2 | 2026-11-03 | Alicia Garcia | Recierre tras reabrir el diseño (v1.2: figura de arquitectura software reorganizada y documentos de viabilidad y de justificación de C cerrados); el código del módulo no cambia y se actualiza la referencia a `diseno.md` v1.2 |
