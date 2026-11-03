@@ -10,6 +10,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(H_TEST "Construir tests (Unity)" OFF)
 option(H_COVERAGE "Instrumentar cobertura (--coverage)" OFF)
 option(H_SANITIZE "ASan + UBSan" OFF)
+option(H_BENCH "Construir las medidas de tiempo (bench_*.c); usar Release sin sanitizers" OFF)
 set(H_MODULE "ogrid" CACHE STRING "Módulo C principal")
 
 # C-LNG-02: avisos como errores
@@ -72,5 +73,16 @@ if(H_TEST)
         # Unity descubre los casos por RUN_TEST; no se exige prototipo previo en tests
         target_compile_options(${name} PRIVATE -Wno-missing-prototypes)
         add_test(NAME ${name} COMMAND ${name} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    endforeach()
+endif()
+
+# Medidas de tiempo (WCET empírico): ejecutables bench_*.c, sin Unity y sin sanitizers ni cobertura
+if(H_BENCH)
+    file(GLOB H_BENCHES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/tests/integration/bench_*.c)
+    foreach(b ${H_BENCHES})
+        get_filename_component(name ${b} NAME_WE)
+        add_executable(${name} ${b})
+        target_link_libraries(${name} PRIVATE ${H_MODULE})
+        h_apply_flags(${name})
     endforeach()
 endif()
