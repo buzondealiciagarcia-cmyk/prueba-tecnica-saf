@@ -38,8 +38,23 @@ La solución propuesta procesa los datos del radar frontal 3D en una unidad a bo
 
 El trabajo se plantea por fases, con requisitos cerrados y aprobados, un diseño revisado contra ellos y una implementación en la que el código y sus pruebas los escriben y revisan de forma independiente. Los primeros resultados confirman que el planteamiento es viable: el plan de viabilidad concluye que un radar 3D con la precisión angular exigida permite cubrir los 220 m, y el módulo central del sistema, el grid de ocupación, ya está implementado y verificado.
 
-<!-- seccion: datos | estado: borrador -->
+<!-- seccion: datos | estado: aprobado -->
 ## 3. Datos utilizados
+
+**Datos de entrada del sistema en operación**
+
+- **Nube de puntos del radar**, cada 50 ms, con los ecos (distancia, azimut y altura) y una marca de tiempo de medida por trama.
+- **Velocidad lineal y velocidad de giro del tranvía**, también cada 50 ms y con marca de tiempo de medida, para sincronizarlas con cada nube de puntos.
+- **Parámetros de configuración**, como la altura de montaje del radar (1 m). Los que dependen del radar, del tranvía o de la red se fijan con sus hojas de datos antes de implementar.
+- **Órdenes del conductor** desde el HMI: sign in y resets.
+
+**Datos que produce el sistema.** La lista de objetos estáticos detectados en cada ciclo, con posición, tamaño, incertidumbre, confianza, identificador y marca de tiempo, junto con el modo del sistema y el indicador de vigilancia.
+
+**Datos de desarrollo y verificación.** Hasta ahora se han usado entradas calculadas a mano a partir de los requisitos y del diseño. No se dispone de grabaciones reales del radar ni del tranvía.
+
+**Datos que aportaría el cliente.** Por ahora Ikerlan no aporta ningún dato. Más adelante se acordaría con Ikerlan el hardware específico (radar, sensor de velocidad y red del tranvía), y de ese acuerdo saldrían los datos que se necesiten, como las hojas de datos y, si procede, grabaciones reales.
+
+**Confidencialidad.** Los datos del cliente se tratan como confidenciales: se usan solo para este proyecto, los datos reales se anonimizan y se documenta su procedencia, y no se difunden ni se publican.
 
 <!-- seccion: objetivos | estado: borrador -->
 ## 4. Objetivos
