@@ -63,7 +63,7 @@
       ]
     },
     "impl": {
-      "status": "closed",
+      "status": "open",
       "version": "1.0",
       "closed_at": "2026-11-03T10:13:43",
       "tag": "impl-v1.0",
@@ -77,6 +77,11 @@
           "event": "close",
           "at": "2026-11-03T10:13:43",
           "version": "1.0"
+        },
+        {
+          "event": "reopen",
+          "at": "2026-11-03T10:17:17",
+          "reason": "calcular el WCET de las funciones ogrid"
         }
       ],
       "integration": {
@@ -88,11 +93,17 @@
       }
     },
     "offer": {
-      "status": "open",
+      "status": "locked",
       "version": "0.1",
       "closed_at": null,
       "tag": null,
-      "history": []
+      "history": [
+        {
+          "event": "locked-by-reopen",
+          "at": "2026-11-03T10:17:17",
+          "of": "impl"
+        }
+      ]
     }
   }
 }

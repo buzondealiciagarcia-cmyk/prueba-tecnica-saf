@@ -497,3 +497,19 @@ Casos fallados:
 | complexity | PASS |  |
 | doxygen | PASS |  |
 | forbidden | PASS |  |
+
+## 2026-11-03 10:34 · Integración completa · ejecución 2 · PASS
+
+- Rama: `docs/implementacion` · commit `1c6583cf7d`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit+integration | PASS |  |
+| coverage | PASS | ogrid_clamp_log_odds.c L 100.0 % R 100.0 %; ogrid_extract_occupied.c L 100.0 % R 100.0 %; ogrid_get_cell_state.c L 100.0 % R 100.0 %; ogrid_log_odds_to_prob.c L 100.0 % R 100.0 %; ogrid_reset_grid.c L 100.0 % R 100.0 %; ogrid_update_cell.c L 100.0 % R 100.0 %; ogrid_update_ray.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |

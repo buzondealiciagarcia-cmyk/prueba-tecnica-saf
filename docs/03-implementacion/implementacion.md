@@ -7,7 +7,7 @@
 | Versión | 1.0 |
 | Fecha | 2026-11-03 |
 | Autor | Alicia Garcia |
-| Estado | Cerrado |
+| Estado | Borrador |
 
 ## 1. Alcance implementado
 
@@ -15,9 +15,9 @@ Se implementa el núcleo del grid de ocupación en log-odds (diseno.md §6 y pas
 
 El estado por celdas no se publica al HMI: el análisis de la rejilla es interno y al HMI solo llega la lista de objetos con el modo del sistema y el indicador de vigilancia (SYS-OUT-11, diseno.md §5.3 y §6.5). SYS-OUT-06 se retiró en los requisitos v1.2. Por eso la función F-008 («estado por celdas», que publicaba ese estado) se retiró del plan.
 
-Además del módulo se entrega un visor de solo lectura que reproduce el grid paso a paso con el código C real (§7).
+Además del módulo se entrega un visor de solo lectura que reproduce el grid paso a paso con el código C real (§7). Se añade un análisis de los tiempos de ejecución (WCET empírico) del módulo en el equipo de desarrollo (§4.5).
 
-Quedan fuera de este alcance: agrupación en objetos, filtro de tamaño, confirmación de N ciclos (pasos 11 a 12), geometría y conversión a coordenadas de vía, máquina de estados y desplazamiento del grid con el avance del tranvía. Ver «Pendientes y límites» al final.
+Quedan fuera de este alcance: el WCET en la ECU (§4.5), agrupación en objetos, filtro de tamaño, confirmación de N ciclos (pasos 11 a 12), geometría y conversión a coordenadas de vía, máquina de estados y desplazamiento del grid con el avance del tranvía. Ver «Pendientes y límites» al final.
 
 Decisiones de implementación (el diseño no las fijaba), tomadas por el usuario el 2026-11-02:
 
@@ -416,6 +416,118 @@ El check `forbidden` respalda SYS-IMP-01 (sin memoria dinámica), cuyo método d
 | DEV-002 | 2.3, 2.4, 2.5 (tipos, etiquetas y macros sin usar) | `include/ogrid/*.h` | Las cabeceras declaran la API y las constantes para sus consumidores; el análisis por unidad de traducción no ve usados los que esa unidad no necesita. | Bajo: son solo declaraciones, no generan código. |
 | DEV-003 | 8.7 (símbolo con enlace externo usado en una sola unidad) | Funciones públicas de `src/ogrid/` | Una función pública por fichero (C-NAM-06): cada una forma la API y se usa desde otras unidades o desde los tests. | Bajo: el enlace externo es el pretendido. |
 
+### 4.5 Tiempos de ejecución (WCET)
+
+**Qué es y qué no es.** Es una medida empírica del tiempo de ejecución en el equipo de desarrollo: Apple M5, macOS (Darwin arm64 25.5.0), `gcc-16` (16.2.0), preset `host-bench` en Release, sin sanitizers ni cobertura (`wcet-medidas.md`). **No es el WCET de la ECU**, cuyo procesador no está elegido (regla R-HW, diseno.md §9 y §10). El valor «máx» es el máximo observado en 3 ejecuciones, no una cota demostrada. Sirve para contrastar los objetivos de la sección 7 de los contratos y el presupuesto de diseno.md §9 (SYS-T-01, SYS-IMP-02), y para estimar; no sustituye la medida en destino. Las cifras de los escenarios y la metodología están en `casos/casos-wcet-ogrid.md`; los resultados en bruto, en `wcet-medidas.md`.
+
+#### Método 1: cuenta de operaciones del peor camino
+
+Se cuenta desde el código de `src/ogrid/`, sin suponer tiempos. En ninguna función hay memoria dinámica ni recursión, y todos los bucles tienen cota estática (`OGRID_CELL_COUNT` = 880 × 4 = 3 520, `ogrid_limits.h`). La operación más costosa del módulo es la exponencial `expf` de `ogrid_log_odds_to_prob`, que se llama una vez por cada celda observada que se evalúa.
+
+| Función | Bucles y cota | Llamadas anidadas en el peor camino | Exponenciales `expf` | Resto del peor camino |
+|---|---|---|---|---|
+| F-001 `ogrid_reset_grid` | 1 bucle, 3 520 iteraciones | ninguna | 0 | 7 040 escrituras (2 por celda) y 1 comparación de puntero |
+| F-002 `ogrid_log_odds_to_prob` | ninguno | ninguna | 1 | 3 comparaciones, 1 negación, 1 suma y 1 división |
+| F-003 `ogrid_clamp_log_odds` | ninguno | ninguna | 0 | 5 comparaciones y 1 escritura |
+| F-004 `ogrid_update_cell` | ninguno | 1 a F-003 | 0 | hasta 9 comparaciones, 1 suma y 2 escrituras |
+| F-005 `ogrid_get_cell_state` | ninguno | 1 a F-002 (celda observada) | 1 | 6 comparaciones |
+| F-006 `ogrid_update_ray` | `validate_ray`: hasta 3 520 iteraciones; `apply_votes`: hasta 3 520 iteraciones | hasta 3 520 a F-004 y, por ellas, 3 520 a F-003 | 0 | 3 520 comparaciones de índice, más las de F-004 y F-003 |
+| F-007 `ogrid_extract_occupied` | 1 bucle, 3 520 iteraciones | 3 520 a F-005 y, por ellas, 3 520 a F-002 | 3 520 | 3 520 escrituras en la máscara |
+
+Notas de la cuenta:
+
+- F-006 llega a las 3 520 llamadas a F-004 cuando el haz tiene 3 520 celdas y no hay eco, o el eco está en la última celda; con eco antes, procesa hasta la celda del eco incluida (`apply_votes`, `process_count`). Las celdas detrás del eco solo se validan.
+- F-005 con la celda no observada o corrupta (`observed` distinto de 0 y 1) no llega a F-002 y no calcula `expf`. F-007 en el peor caso tiene las 3 520 celdas observadas y válidas.
+- F-002 comprueba el dominio antes de llamar a `expf` (C-LIB-03), así que no hay rutas con entradas fuera de dominio hacia `expf`.
+
+#### Método 2: medida
+
+El ejecutable es `tests/integration/bench_wcet_ogrid.c` (caja negra, solo la API pública de `include/ogrid/`). Metodología (`casos/casos-wcet-ogrid.md`):
+
+- Reloj `clock_gettime_nsec_np(CLOCK_UPTIME_RAW)` en macOS, de resolución medida 41 ns. Una lectura vacía cuesta unos 8,9 ns (escenario «reloj: lectura vacía»).
+- Lotes adaptativos: cada medida cronometra un lote de K llamadas (calibrado por escenario hasta que dura al menos 200 µs) y divide entre K. El error de cuantización (resolución / duración del lote) queda entre 0,02 % y 0,15 % en todos los escenarios, por debajo del 1 %.
+- Entradas de peor caso: rutas con exponencial, haces de 10, 880 y 3 520 celdas, con y sin eco en la última celda (sin celdas ocultas, todas se leen), y 3 520 celdas observadas en la máscara con mitad, todas y ninguna ocupadas.
+- El estado se restaura fuera del cronómetro. En los haces, cada llamada del lote usa una ventana distinta para que ninguna celda sature.
+- Precalentamiento de 50 repeticiones; 2 000 repeticiones en los escenarios rápidos y 500 en los que recorren el grid. Entradas fijas, sin aleatoriedad. Resultados anti-eliminados con variables `volatile`.
+- Se ejecutó 3 veces seguidas. Las tablas dan, por escenario, la mediana de las 3 medianas y el máximo de los 3 máximos, en ns por llamada.
+
+| Función | Escenario más costoso | Mediana (ns) | Máx. observado (ns) |
+|---|---|---:|---:|
+| F-001 `ogrid_reset_grid` | grid de 3 520 celdas sucio | 796 | 908 |
+| F-002 `ogrid_log_odds_to_prob` | barrido [−0,8; 3,4] | 1,80 | 2,08 |
+| F-002 | l = −0,8 (mínimo) | 1,77 | 2,10 |
+| F-003 `ogrid_clamp_log_odds` | por debajo (−5) | 0,808 | 14,6 (*) |
+| F-003 | por encima (10) | 0,770 | 2,39 |
+| F-004 `ogrid_update_cell` | eco desde 3,4 (saturada) | 2,08 | 3,22 |
+| F-004 | eco desde 0,0 | 2,08 | 2,35 |
+| F-004 | oculta desde 0,0 | 1,15 | 2,38 |
+| F-005 `ogrid_get_cell_state` | observada, l = 1,70 (probabilidad baja) | 2,62 | 3,29 |
+| F-005 | observada, l = 2,55 (ocupada) | 2,62 | 2,99 |
+| F-006 `ogrid_update_ray` | 10 celdas, eco en la última | 22,4 | 36,7 |
+| F-006 | 880 celdas, eco en la última | 1 780 | 2 710 |
+| F-006 | 3 520 celdas, sin eco | 7 030 | 10 100 |
+| F-006 | 3 520 celdas, eco en la última | 7 030 | 11 900 |
+| F-007 `ogrid_extract_occupied` | 3 520 observadas, todas ocupadas | 9 150 | 10 600 |
+| F-007 | 3 520 observadas, mitad ocupadas | 9 150 | 10 300 |
+| F-007 | grid sin observar (referencia inferior) | 3 200 | 3 610 |
+
+(*) Valor aislado de la ejecución 3 (las ejecuciones 1 y 2 dan 1,52 y 1,29 ns). No se ha investigado su causa; es compatible con una interrupción del sistema operativo u otro efecto de la máquina de medida, pero no está confirmado. Las medianas de las tres ejecuciones coinciden.
+
+**Coste por celda.** Con el máximo observado, los haces largos (880 y 3 520 celdas) cuestan entre 2,4 y 3,4 ns por celda, y la máscara de 3 520 celdas observadas, entre 2,8 y 3,0 ns por celda (tablas «Estimaciones por haz y por celda» de `wcet-medidas.md`). Con la mediana salen unos 2,0 ns por celda en los haces (1 780 ns / 880 y 7 030 ns / 3 520) y unos 2,6 ns en la máscara (9 150 ns / 3 520). El haz de 10 celdas sale más caro por celda (hasta 3,7 ns) porque en él pesa el coste fijo de la validación y de la llamada. Reiniciar el grid cuesta 0,23 ns por celda con la mediana (796 ns / 3 520).
+
+#### Contraste con los objetivos de los contratos
+
+Sección 7 de cada contrato, contra el máximo observado en el equipo de desarrollo (no en la ECU):
+
+| Función | Objetivo del contrato | Máx. observado en el M5 | ¿Se cumple en el M5? |
+|---|---|---:|---|
+| F-001 | muy inferior a 1 ms | 0,908 µs | Sí: unas 1 100 veces menos que 1 ms. |
+| F-002 | muy inferior a 1 µs | 2,10 ns | Sí: 0,21 % de 1 µs. |
+| F-003 | muy inferior a 1 µs | 14,6 ns (valor aislado; 2,39 ns sin él) | Sí: 1,5 % de 1 µs en el peor caso. |
+| F-004 | muy inferior a 1 µs | 3,22 ns | Sí: 0,32 % de 1 µs. |
+| F-005 | muy inferior a 1 µs | 3,29 ns | Sí: 0,33 % de 1 µs. |
+| F-006 | decenas de µs por haz | 2,71 µs (880 celdas) y 11,9 µs (3 520 celdas) | Sí: por debajo del orden fijado, incluso con el haz máximo de 3 520 celdas. |
+| F-007 | bajo 1 ms | 10,6 µs | Sí: 1,1 % de 1 ms. |
+
+Estas cifras son del M5 y no prueban que los objetivos se cumplan en la ECU. Se midió con la memoria caliente (precalentamiento y lotes repetidos), de modo que no incluyen fallos de caché que sí podrían darse en el ciclo real. La medida con caché fría no se ha hecho y queda para la medida en la ECU.
+
+#### Contraste con el presupuesto del diseño
+
+Diseno.md §9: la entrega se limita a 128 ms (SYS-T-01) y, como la publicación espera al temporizador de 50 ms, el procesamiento de cada nube debe caber en 128 − 50 = 78 ms. SYS-IMP-02 exige además un ciclo máximo ≤ 128 ms.
+
+El coste de proceso del grid en un ciclo es:
+
+> t_ciclo(grid) = n_haces × t_haz + t_máscara (+ t_reset solo al arrancar o al volver de FALLO)
+
+con t_haz = coste de `ogrid_update_ray` (F-006), t_máscara = coste de `ogrid_extract_occupied` (F-007) y t_reset = coste de `ogrid_reset_grid` (F-001). Faltan por sumar los pasos del pipeline que no están implementados (geometría de qué celdas cruza cada haz, agrupación en objetos, filtro de tamaño, confirmación de N ciclos, máquina de estados y publicación; ver «Pendientes y límites»). Este t_ciclo(grid) es por tanto una parte del procesamiento, no el total. El número de haces por ciclo depende del radar (R-HW) y no consta en los documentos: se fija con la hoja de datos del radar elegido (regla R-HW, `diseno.md` §10).
+
+Con el máximo observado en el M5, y t_máscara = 10,6 µs:
+
+| Haz | t_haz (máx.) | Haces que caben en 78 ms (todo el presupuesto, solo grid) | Haces con holgura: se usa solo el 10 % del presupuesto (7,8 ms) |
+|---|---:|---:|---:|
+| 880 celdas con eco en la última (haz más largo a lo largo de la vía) | 2,71 µs | 28 778 | 2 874 |
+| 3 520 celdas con eco en la última (cota absoluta del módulo) | 11,9 µs | 6 553 | 654 |
+
+El criterio del 10 % es una elección de este apartado para ilustrar una holgura, no un requisito del proyecto. El contrato de F-004 prevé que se la llame hasta unas decenas de miles de veces por ciclo de 50 ms (sección 7); con el máximo de 3,22 ns por llamada, cada 10 000 llamadas suman 32,2 µs en el M5.
+
+**Sensibilidad (ilustración, no estimación).** La tabla multiplica los máximos del M5 por un factor de lentitud de la ECU respecto al M5 de 10, 50 y 100. Los factores son hipótesis para ver el orden de magnitud: no salen de ninguna medida ni de ninguna ECU (R-HW). Haces que caben en 78 ms, solo con el coste del grid y sin holgura:
+
+| Factor | t_haz 880 celdas | t_haz 3 520 celdas | t_máscara | t_reset | Haces de 880 celdas en 78 ms | Haces de 3 520 celdas en 78 ms |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 (M5, medido) | 2,71 µs | 11,9 µs | 10,6 µs | 0,908 µs | 28 778 | 6 553 |
+| 10 | 27,1 µs | 119 µs | 106 µs | 9,08 µs | 2 874 | 654 |
+| 50 | 135,5 µs | 595 µs | 530 µs | 45,4 µs | 571 | 130 |
+| 100 | 271 µs | 1 190 µs | 1 060 µs | 90,8 µs | 283 | 64 |
+
+Con un factor de 100, la máscara (1,06 ms) pasaría el objetivo de F-007 («bajo 1 ms»), y el haz de 3 520 celdas (1,19 ms) quedaría muy por encima de las «decenas de µs» de F-006. Con un factor de 10, el haz de 880 celdas (27,1 µs) sigue en decenas de µs.
+
+#### Límites y siguiente paso
+
+- No se ha compilado para la ECU: el build `cross-aarch64` no se ha ejecutado (§4.3), y no hay medida ni análisis de WCET en el hardware real. Hasta entonces, las cifras de este apartado solo valen para el M5.
+- El máximo observado en 3 ejecuciones no es una cota: otra ejecución puede dar un valor mayor (por ejemplo, el valor aislado de F-003).
+- Siguiente paso: elegir la ECU (R-HW), compilar con el preset `cross-aarch64`, medir con este mismo benchmark o analizar el WCET en destino, y volver a contrastar con los objetivos de los contratos y con el presupuesto de 78 ms con el número real de haces por nube.
+- El benchmark se ejecuta con `cmake --preset host-bench && cmake --build build/host-bench && build/host-bench/bench_wcet_ogrid` (§6).
+
 ## 5. Trazabilidad
 
 Ver `trazabilidad.md` (generado con `h trace`). Resumen:
@@ -435,6 +547,7 @@ Ver `trazabilidad.md` (generado con `h trace`). Resumen:
 | Preset | Uso |
 |---|---|
 | `host-test` | Tests: `H_TEST`, `H_COVERAGE` y `H_SANITIZE` activos (ASan y UBSan), `gcc-16`, tipo Debug. |
+| `host-bench` | Medidas de tiempo (§4.5): `H_BENCH` activo, Release con `gcc-16`, sin sanitizers ni cobertura. Construye `bench_wcet_ogrid`. |
 | `host-debug`, `host-release` | Compilación del módulo en el equipo, sin tests. |
 | `linux-container` | Release con `gcc`, para el contenedor Linux. |
 | `cross-aarch64` | Release con el toolchain `cmake/aarch64-linux-gnu.cmake`, para comprobar la portabilidad al objetivo. |
@@ -452,6 +565,14 @@ H="/Users/alicia/prueba-saf/.claude/harness/bin/h"
 $H test F-001        # una función: los 9 checks de STD-TST §3
 $H test --all        # integración completa, sobre todo el árbol
 ```
+
+**Medida de tiempos (WCET empírico).** Desde la raíz del repositorio:
+
+```
+cmake --preset host-bench && cmake --build build/host-bench && build/host-bench/bench_wcet_ogrid
+```
+
+Imprime las tablas por escenario (ver §4.5). Los resultados de las 3 ejecuciones de referencia están en `wcet-medidas.md`. Solo vale para el equipo donde se ejecuta, no para la ECU.
 
 Cada `h test` añade una entrada a `docs/03-implementacion/log-tests.md` y guarda el informe en `.harness/reports/`. `h doxygen` genera la documentación HTML en `build/doxygen/`.
 
@@ -522,7 +643,7 @@ El script comprueba el código de retorno de cada llamada y falla si alguna no d
 ## Pendientes y límites
 
 - **No implementado.** Agrupación de celdas en objetos (SYS-PR-04), filtro de tamaño, confirmación de N ciclos, geometría (qué celdas cruza cada haz y conversión a coordenadas de vía) y máquina de estados.
-- **WCET sin medir.** Los contratos fijan objetivos (por ejemplo, F-004 muy por debajo de 1 µs, F-006 decenas de µs por haz) pero el WCET real no se ha medido. El diseño fija un presupuesto de proceso de 78 ms por nube (128 ms − 50 ms, diseno.md §9).
+- **WCET medido solo en el equipo de desarrollo; falta medir en la ECU.** Las medidas son de un Apple M5 (§4.5) y el máximo observado no es una cota demostrada. El diseño fija un presupuesto de proceso de 78 ms por nube (128 ms − 50 ms, diseno.md §9); el número de haces por nube depende del radar (R-HW) y no consta.
 - **Portabilidad al objetivo.** El build `cross-aarch64` no se ha ejecutado por falta del compilador en esta máquina.
 - **Registro SAF-07 aplazado.** Las desviaciones MQ-QOS-03 (caída del broker sin evento de fallo) y MQ-PAY-03 (sin esquemas JSON de los payloads) están decididas por el usuario en el diseño (§5), pero su registro con análisis de impacto (SAF-07) está aplazado.
 - **Visor sin capturas automáticas.** El aspecto visual del visor no se comprobó con capturas automáticas, porque no hay navegador en el entorno de desarrollo. Lo revisó y aprobó el usuario.
@@ -538,3 +659,4 @@ El script comprueba el código de retorno de cada llamada y falla si alguna no d
 | 0.2 | 2026-11-02 | Alicia Garcia | Fichas F-001 a F-007, diagramas de secuencia, verificación, trazabilidad, construcción y pendientes. `observed` como `uint8_t`, F-008 retirada, tests con `gcc-16` |
 | 0.3 | 2026-11-03 | Alicia Garcia | Visor del grid: §1, §6 (cómo ejecutarlo), §7 (qué es, qué muestra, seis escenarios, origen de los números, diagrama de flujo de datos) y límites del visor |
 | 1.0 | 2026-11-03 | Alicia Garcia | Cierre de la fase de implementación: 7 funciones del grid integradas, integración completa en PASS, visor del grid aprobado y documento cerrado |
+| 1.1 | 2026-11-03 | Alicia Garcia | Fase reabierta para el WCET: apartado 4.5 (tiempos de ejecución: cuenta de operaciones, medida en el M5, contraste con contratos y con el presupuesto de 78 ms, sensibilidad), receta del benchmark en §6, §1 y «Pendientes y límites» |
