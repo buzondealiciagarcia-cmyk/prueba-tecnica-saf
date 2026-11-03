@@ -1,0 +1,11 @@
+%%{init: {'themeVariables': {'fontSize': '24px'}, 'flowchart': {'nodeSpacing': 40, 'rankSpacing': 90, 'padding': 14}}}%%
+flowchart LR
+  RAD[Radar frontal 3D<br/>distancia, azimut y altura]
+  VEL[Sensor de velocidad<br/>lineal y de giro]
+  ECU[ECU a bordo<br/>procesamiento en el borde]:::hl
+  HMI[HMI del conductor<br/>lista de objetos, modo y vigilancia]
+  NUBE[(Nube<br/>estado, diagnóstico y logs)]
+  RAD -->|nube de puntos cada 50 ms| ECU
+  VEL -->|velocidad y giro| ECU
+  ECU -->|IEC 61375 + EN 50159| HMI
+  ECU -->|MQTT cifrado| NUBE

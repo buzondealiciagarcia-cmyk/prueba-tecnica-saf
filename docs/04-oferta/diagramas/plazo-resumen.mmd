@@ -1,0 +1,18 @@
+%%{init: {'gantt': {'useWidth': 1300, 'leftPadding': 420, 'rightPadding': 30, 'barHeight': 34, 'barGap': 14, 'topPadding': 70, 'fontSize': 22, 'sectionFontSize': 22, 'gridLineStartPadding': 50}}}%%
+gantt
+    dateFormat YYYY-MM-DD
+    axisFormat %d/%m
+    tickInterval 2week
+    title Plan: 15 semanas desde el 2 de enero de 2027
+    section Fase A · viabilidad, diseño y componente
+    2,5 sem :a, 2027-01-02, 2.5w
+    section Fase B · entrada, descartes y grid
+    4,06 sem :b1, after a, 4.0625w
+    section Fase B · salida, estados y comunicaciones
+    5 sem :b2, after b1, 5w
+    section Fase B · verificación y documentación
+    3,44 sem :b3, after b2, 3.4375w
+    section Hitos
+    Fin de la Fase A · 20/01 :milestone, m1, 2027-01-19, 0d
+    Software completo en banco · 24/03 :milestone, m2, 2027-03-24, 0d
+    Verificación final · 17/04 :milestone, m3, 2027-04-17, 0d
