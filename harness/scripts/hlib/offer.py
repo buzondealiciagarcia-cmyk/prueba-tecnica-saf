@@ -119,20 +119,41 @@ def render_budget(root=None):
     return c.EXIT_OK
 
 
+def _fmt_weeks(w):
+    return ("%.2f" % float(w)).rstrip("0").rstrip(".").replace(".", ",")
+
+
 def _gantt(root, plazo):
+    """Diagrama de Gantt legible: una fila por tarea con su nombre en la columna izquierda."""
     start = plazo.get("inicio") or c.today()
-    L = ["gantt", "    dateFormat YYYY-MM-DD", "    axisFormat %d/%m",
-         "    title Planificación del proyecto"]
-    section = None
+    tasks = {t["id"].lower(): t for t in plazo["tareas"]}
+    end = {}
+
+    def finish(tid):
+        # semanas desde el inicio hasta el final de la tarea (rutas más largas de sus dependencias)
+        if tid not in end:
+            t = tasks[tid]
+            begin = max([finish(d) for d in t.get("depende", [])] or [0.0])
+            end[tid] = begin + float(t["semanas"])
+        return end[tid]
+
+    day0 = dt.date.fromisoformat(start)
+    L = ["%%{init: {'gantt': {'useWidth': 1200, 'leftPadding': 300, 'rightPadding': 30, "
+         "'barHeight': 26, 'barGap': 10, 'topPadding': 60, 'fontSize': 14, "
+         "'sectionFontSize': 14, 'gridLineStartPadding': 40}}}%%",
+         "gantt", "    dateFormat YYYY-MM-DD", "    axisFormat %d/%m", "    tickInterval 2week",
+         "    title Planificación del proyecto (marcas cada dos semanas, dd/mm)"]
     for t in plazo["tareas"]:
-        if t.get("fase") != section:
-            section = t.get("fase") or "Proyecto"
-            L.append("    section %s" % section)
         after = ("after %s" % " ".join(t["depende"])) if t.get("depende") else start
-        L.append("    %s :%s, %s, %sw" % (t["nombre"], t["id"].lower(), after, t["semanas"]))
+        L.append("    section %s · %s" % (t["id"], t["nombre"]))
+        L.append("    %s sem :%s, %s, %sw" % (_fmt_weeks(t["semanas"]), t["id"].lower(), after,
+                                             t["semanas"]))
+    if plazo.get("hitos"):
+        L.append("    section Hitos")
     for h in plazo.get("hitos", []):
-        L.append("    %s :milestone, %s, after %s, 0d" % (h["nombre"], h["id"].lower(),
-                                                         " ".join(h["tras"])))
+        when = day0 + dt.timedelta(days=round(max(finish(x) for x in h["tras"]) * 7))
+        L.append("    %s · %s :milestone, %s, after %s, 0d" % (h["nombre"], when.strftime("%d/%m"),
+                                                              h["id"].lower(), " ".join(h["tras"])))
     p = root / GANTT_REL
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text("\n".join(L) + "\n", encoding="utf-8")

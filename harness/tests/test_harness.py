@@ -295,6 +295,25 @@ class TestExport(unittest.TestCase):
             shd = doc.tables[-1].rows[0].cells[0]._tc.xml
             self.assertIn("D9D9D9", shd.upper())
 
+    def test_table_of_contents_has_cached_entries(self):
+        """El campo TOC lleva las entradas dentro, para visores que no lo actualizan (Pages)."""
+        import re
+        import zipfile
+        with tempfile.TemporaryDirectory() as tmp:
+            git_project(tmp)
+            Path(tmp, "nota.md").write_text("# Nota\n\n## Uno\n\ntexto\n\n### Uno punto uno\n\n"
+                                            "texto\n\n## Dos\n\ntexto\n")
+            r = run([H, "export", "nota.md"], cwd=tmp)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            xml = zipfile.ZipFile(str(Path(tmp, "docs/export/nota.docx"))).read(
+                "word/document.xml").decode()
+            start = xml.find("Table of Contents")
+            seg = xml[start:xml.find("</w:sdt>", start)]
+            texts = re.findall(r"<w:t[^>]*>([^<]*)</w:t>", seg)
+            for title in ("Uno", "Uno punto uno", "Dos"):
+                self.assertIn(title, texts)
+            self.assertEqual(seg.count('fldCharType="begin"'), seg.count('fldCharType="end"'))
+
 
 class TestInstaller(unittest.TestCase):
     def test_install_update_uninstall(self):
