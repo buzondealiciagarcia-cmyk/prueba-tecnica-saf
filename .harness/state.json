@@ -35,7 +35,7 @@
       ]
     },
     "design": {
-      "status": "closed",
+      "status": "open",
       "version": "1.1",
       "closed_at": "2026-11-02T23:02:51",
       "tag": "design-v1.1",
@@ -59,11 +59,16 @@
           "event": "close",
           "at": "2026-11-02T23:02:51",
           "version": "1.1"
+        },
+        {
+          "event": "reopen",
+          "at": "2026-11-03T10:39:08",
+          "reason": "reorganizar el diagrama de arquitectura software y cerrar viabilidad y justificacion C"
         }
       ]
     },
     "impl": {
-      "status": "closed",
+      "status": "locked",
       "version": "1.1",
       "closed_at": "2026-11-03T10:35:55",
       "tag": "impl-v1.1",
@@ -87,6 +92,11 @@
           "event": "close",
           "at": "2026-11-03T10:35:55",
           "version": "1.1"
+        },
+        {
+          "event": "locked-by-reopen",
+          "at": "2026-11-03T10:39:08",
+          "of": "design"
         }
       ],
       "integration": {
@@ -98,7 +108,7 @@
       }
     },
     "offer": {
-      "status": "open",
+      "status": "locked",
       "version": "0.1",
       "closed_at": null,
       "tag": null,
@@ -107,6 +117,11 @@
           "event": "locked-by-reopen",
           "at": "2026-11-03T10:17:17",
           "of": "impl"
+        },
+        {
+          "event": "locked-by-reopen",
+          "at": "2026-11-03T10:39:08",
+          "of": "design"
         }
       ]
     }
