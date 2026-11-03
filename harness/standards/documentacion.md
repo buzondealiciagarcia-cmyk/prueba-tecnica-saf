@@ -28,7 +28,7 @@ docs/
   03-implementacion/ plan.json · contratos/F-NNN-*.md · implementacion.md · log-tests.md · trazabilidad.md · diagramas/
   04-oferta/       oferta.md · presupuesto.json · presentacion.json · diagramas/
   dosier/          contexto.md · dosier.md (generado)
-  export/          *.docx/*.pptx generados (versionados; se actualizan al cerrar cada fase)
+  export/          *.docx generados (no versionados)
 ```
 
 ## 3. Requisitos (resumen; detalle en `requisitos-redaccion.md`)

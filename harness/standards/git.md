@@ -100,4 +100,4 @@ Refs: SYS-PR-04, F-004
 
 ## 6. Qué no se versiona
 
-`build/`, `.harness/sandbox/`, `.harness/reports/`, `.claude/` (instalación local del harness, contiene rutas absolutas). Sí se versiona `.harness/state.json` (estado de fases) y los `*.docx`/`*.pptx` generados en `docs/export/`, que se actualizan al cerrar cada fase.
+`build/`, `.harness/sandbox/`, `.harness/reports/`, `docs/**/export/`, `*.docx`/`*.pptx` generados (se adjuntan a releases), `.claude/` (instalación local del harness, contiene rutas absolutas). Sí se versiona `.harness/state.json` (estado de fases).
