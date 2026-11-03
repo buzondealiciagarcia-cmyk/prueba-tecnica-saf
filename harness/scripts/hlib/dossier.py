@@ -12,10 +12,13 @@ PARTS = [
      "Qué debe hacer el sistema: requisitos cerrados y aprobados que son la base contractual de "
      "las fases siguientes."),
     ("Parte II — Diseño", [("docs/02-diseno/diseno.md", True),
+                          ("docs/02-diseno/viabilidad-radar.md", False),
+                          ("docs/02-diseno/justificacion-c.md", False),
                           ("docs/02-diseno/alternativas/*.md", False),
-                          ("docs/02-diseno/comparativa.md", True)],
-     "Cómo se resuelve: diseño seleccionado, alternativas estudiadas que no se implementan y "
-     "comparativa ponderada que justifica la elección."),
+                          ("docs/02-diseno/comparativa.md", False)],
+     "Cómo se resuelve: diseño seleccionado, plan de viabilidad del radar, justificación del "
+     "lenguaje y, si las hay, alternativas estudiadas que no se implementan y comparativa "
+     "ponderada que justifica la elección."),
     ("Parte III — Implementación", [("docs/03-implementacion/implementacion.md", True),
                                    ("docs/03-implementacion/trazabilidad.md", False)],
      "Qué se ha construido y cómo se ha verificado: alcance implementado, funciones, resultados "
@@ -119,12 +122,15 @@ def build(root=None):
             "## Guía de lectura", "",
             "Este dosier reúne, en el orden en que se produjeron, los documentos cerrados de las "
             "tres primeras fases del proyecto. Cada parte comienza con una breve explicación de su "
-            "propósito.", "",
+            "propósito. La Tabla 1 lista los documentos incluidos, con su código, versión, fecha y "
+            "fuente, y la Tabla 2 recoge el estado de las cuatro fases del proyecto.", "",
             "Tabla: Documentos incluidos", "",
             "| Documento | Código | Versión | Fecha | Fuente |", "|---|---|---|---|---|"]
     for d in docs:
         head.append("| %s | %s | %s | %s | `%s` |" % d)
-    head += ["", "Tabla: Estado de las fases", "", gate.status(root), ""]
+    # La fecha de cierre se muestra sin la hora (AAAA-MM-DDTHH:MM -> AAAA-MM-DD)
+    status = re.sub(r"(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}(:\d{2})?", r"\1", gate.status(root))
+    head += ["", "Tabla: Estado de las fases", "", status, ""]
     out = out_dir / "dosier.md"
     out.write_text("\n".join(head + body) + "\n", encoding="utf-8")
     c.info("dosier generado: %s" % out.relative_to(root))

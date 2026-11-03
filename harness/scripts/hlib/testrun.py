@@ -80,6 +80,12 @@ def _gcov_exe(bdir):
         for cand in ("llvm-cov",):
             if c.which(cand):
                 return "llvm-cov gcov"
+    cache = bdir / "CMakeCache.txt"
+    if cache.is_file():
+        m = re.search(r"CMAKE_C_COMPILER:\w+=.*gcc-(\d+)\s*$", cache.read_text(errors="ignore"),
+                      flags=re.M)
+        if m and c.which("gcov-%s" % m.group(1)):
+            return "gcov-%s" % m.group(1)
     return "gcov"
 
 
