@@ -270,6 +270,79 @@ def _toc_page_break(doc):
             break
 
 
+def _fill_toc(doc):
+    """Rellena el resultado en caché del campo TOC con los títulos del documento.
+
+    pandoc deja el campo vacío y solo Word lo rellena al abrirlo; Pages y otros visores muestran
+    el título «Índice» sin entradas. Aquí se escriben las entradas (con enlaces internos, sin
+    números de página, que solo calcula Word); el campo sigue marcado como sucio, así que Word lo
+    actualiza al abrir.
+    """
+    from docx.oxml import parse_xml
+    from docx.oxml.ns import nsdecls
+    body = doc.element.body
+    sdt = None
+    for cand in body.iter(dx.qn("w:sdt")):
+        if "TOC" in "".join(t.text or "" for t in cand.iter(dx.qn("w:instrText"))):
+            sdt = cand
+            break
+    if sdt is None:
+        return
+    content = sdt.find(dx.qn("w:sdtContent"))
+    field_p = None
+    for para in content.findall(dx.qn("w:p")):
+        if para.find(".//" + dx.qn("w:instrText")) is not None:
+            field_p = para
+            break
+    if field_p is None:
+        return
+    entries = []
+    after = False
+    for el in body.iterchildren():
+        if el is sdt:
+            after = True
+            continue
+        if not after or el.tag != dx.qn("w:p"):
+            continue
+        ppr = el.find(dx.qn("w:pPr"))
+        style = ppr.find(dx.qn("w:pStyle")) if ppr is not None else None
+        sid = style.get(dx.qn("w:val")) if style is not None else ""
+        if not sid.startswith("Heading") or not sid[7:].isdigit() or int(sid[7:]) > 3:
+            continue
+        text = "".join(t.text or "" for t in el.iter(dx.qn("w:t"))).strip()
+        bm = el.find(dx.qn("w:bookmarkStart"))
+        if text:
+            entries.append((int(sid[7:]), text, bm.get(dx.qn("w:name")) if bm is not None else None))
+    if not entries:
+        return
+    from xml.sax.saxutils import escape
+
+    def entry_p(level, text, anchor):
+        run = '<w:r><w:t xml:space="preserve">%s</w:t></w:r>' % escape(text)
+        if anchor:
+            run = '<w:hyperlink w:anchor="%s" w:history="1">%s</w:hyperlink>' % (escape(anchor), run)
+        return parse_xml('<w:p %s><w:pPr><w:ind w:left="%d"/></w:pPr>%s</w:p>'
+                         % (nsdecls("w"), (level - 1) * 360, run))
+
+    # El campo ocupa una sola ejecución (begin, instrucción, separate, end): se parte para que
+    # las entradas queden entre «separate» y «end».
+    run = field_p.find(dx.qn("w:r"))
+    end = None
+    for ch in run.findall(dx.qn("w:fldChar")):
+        if ch.get(dx.qn("w:fldCharType")) == "end":
+            end = ch
+    if end is None:
+        return
+    run.remove(end)
+    prev = field_p
+    paras = [entry_p(*e) for e in entries]
+    for para in paras:
+        prev.addnext(para)
+        prev = para
+    last_run = parse_xml('<w:r %s><w:fldChar w:fldCharType="end"/></w:r>' % nsdecls("w"))
+    paras[-1].append(last_run)
+
+
 def _fill_req_table(tbl_el, doc, mapping, req):
     from docx.table import Table
     t = Table(tbl_el, doc)
@@ -595,6 +668,7 @@ def export(src, out=None, toc=True, kind=None, extra_meta=None):
     produced = []
     _apply_cover(doc, tpl, mapping, values)
     if toc:
+        _fill_toc(doc)
         _toc_page_break(doc)
     if req_mode:
         _requirements(doc, tpl, mapping, req_list, produced)

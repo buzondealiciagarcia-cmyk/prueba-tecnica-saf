@@ -124,13 +124,16 @@ def finish(branch=None, refs="", root=None, allow_untested=False):
                   % (branch, fid or "<F-NNN>"))
         if current_branch(root) != branch:
             git("checkout", branch, root=root)
+        # La rama se sube mientras su último commit tiene el PASS de 'h test': el commit de
+        # estado de abajo lo invalidaría para el hook pre-push (GIT-MG-02).
+        push([branch], root)
         impl.set_state(fid, "integrada", root)
         git("add", str(impl.PLAN_REL), root=root)
         git("commit", "-m", "chore(impl): mark %s as integrated" % fid, "-m", "Refs: %s" % fid,
             root=root)
         refs = refs or fid
     _merge(branch, dev, refs, root)
-    push([branch, dev], root)
+    push([dev] if branch.startswith("feature/") else [branch, dev], root)
     c.info("integrada %s en %s" % (branch, dev))
 
 
