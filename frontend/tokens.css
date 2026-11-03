@@ -1,0 +1,57 @@
+/*
+ * tokens.css — STD-UI. Generado a partir de tokens.json (no editar valores sin
+ * actualizar tokens.json; `h tokens check` verifica que coinciden).
+ */
+:root {
+  --c-bg: #FFFFFF;
+  --c-surface: #F5F6F8;
+  --c-border: #D9DCE1;
+  --c-text: #1F2933;
+  --c-text-muted: #616E7C;
+  --c-accent: #1F5FAD;
+  --c-accent-soft: #8FB3E0;
+  --c-accent-tint: #E8F0FA;
+  --c-ok: #2E7D4F;
+  --c-warning: #B7791F;
+  --c-error: #B23A3A;
+  --c-grid-free: #FFFFFF;
+  --c-grid-occupied: #1F2933;
+  --c-grid-unknown: #D9DCE1;
+
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-lg: 18px;
+  --fs-xl: 24px;
+
+  --sp-xs: 4px;
+  --sp-sm: 8px;
+  --sp-md: 16px;
+  --sp-lg: 24px;
+  --sp-xl: 40px;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --stroke: 1px;
+  --stroke-emphasis: 2px;
+}
+
+[data-theme="dark"] {
+  --c-bg: #14191F;
+  --c-surface: #1C232B;
+  --c-border: #2E3842;
+  --c-text: #E6E9ED;
+  --c-text-muted: #9AA5B1;
+  --c-accent: #5B8FD6;
+  --c-accent-soft: #2C4A73;
+  --c-accent-tint: #1A2A3F;
+  --c-ok: #4FA374;
+  --c-warning: #D69E3A;
+  --c-error: #D46363;
+  --c-grid-free: #14191F;
+  --c-grid-occupied: #E6E9ED;
+  --c-grid-unknown: #2E3842;
+}
