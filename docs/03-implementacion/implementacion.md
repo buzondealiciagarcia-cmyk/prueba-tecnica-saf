@@ -499,7 +499,7 @@ El coste de proceso del grid en un ciclo es:
 
 > t_ciclo(grid) = n_haces × t_haz + t_máscara (+ t_reset solo al arrancar o al volver de FALLO)
 
-con t_haz = coste de `ogrid_update_ray` (F-006), t_máscara = coste de `ogrid_extract_occupied` (F-007) y t_reset = coste de `ogrid_reset_grid` (F-001). Faltan por sumar los pasos del pipeline que no están implementados (geometría de qué celdas cruza cada haz, agrupación en objetos, filtro de tamaño, confirmación de N ciclos, máquina de estados y publicación; ver «Pendientes y límites»). Este t_ciclo(grid) es por tanto una parte del procesamiento, no el total. El número de haces por ciclo depende del radar (R-HW) y no consta en los documentos [PENDIENTE: ¿cuántos haces por nube de puntos entrega el radar elegido?].
+con t_haz = coste de `ogrid_update_ray` (F-006), t_máscara = coste de `ogrid_extract_occupied` (F-007) y t_reset = coste de `ogrid_reset_grid` (F-001). Faltan por sumar los pasos del pipeline que no están implementados (geometría de qué celdas cruza cada haz, agrupación en objetos, filtro de tamaño, confirmación de N ciclos, máquina de estados y publicación; ver «Pendientes y límites»). Este t_ciclo(grid) es por tanto una parte del procesamiento, no el total. El número de haces por ciclo depende del radar (R-HW) y no consta en los documentos: se fija con la hoja de datos del radar elegido (regla R-HW, `diseno.md` §10).
 
 Con el máximo observado en el M5, y t_máscara = 10,6 µs:
 
