@@ -180,13 +180,44 @@ Para las partes no implementadas (la Fase B), el planteamiento está en el docum
 
 Una explicación más detallada de los resultados está en el documento de implementación (`docs/03-implementacion/implementacion.md`, y su exportación `docs/export/implementacion.docx`): fichas de cada función, resultados de verificación, tiempos de ejecución y trazabilidad.
 
-<!-- seccion: presupuesto | estado: borrador -->
+<!-- seccion: presupuesto | estado: aprobado -->
 ## 8. Presupuesto
 
 <!-- h:budget:begin -->
+Tabla: Desglose del presupuesto por partidas
+
+| ID | Partida | Fase | Horas | Tarifa (EUR/h) | Importe (EUR) |
+|----|------------------------------|--------------|-------:|---------:|-----------:|
+| A1 | Viabilidad del radar | Fase A | 24,00 | 75,00 | 1.800,00 |
+| A2 | Diseño hardware y software | Fase A | 80,00 | 75,00 | 6.000,00 |
+| A3 | Componente de código y justificación de C | Fase A | 40,00 | 75,00 | 3.000,00 |
+| A4 | Borrador de oferta | Fase A | 16,00 | 75,00 | 1.200,00 |
+| B1 | Entrada y validación de datos | Fase B | 80,00 | 75,00 | 6.000,00 |
+| B2 | Descartes y geometría de vía | Fase B | 120,00 | 75,00 | 9.000,00 |
+| B3 | Grid y objetos | Fase B | 60,00 | 75,00 | 4.500,00 |
+| B4 | Cálculo de confianza y salida | Fase B | 60,00 | 75,00 | 4.500,00 |
+| B5 | Máquina de estados y gestión de fallos | Fase B | 100,00 | 75,00 | 7.500,00 |
+| B6 | Comunicaciones (HMI y MQTT) | Fase B | 120,00 | 75,00 | 9.000,00 |
+| B7 | Configuración | Fase B | 40,00 | 75,00 | 3.000,00 |
+| B8 | Verificación independiente y trazabilidad | Fase B | 160,00 | 75,00 | 12.000,00 |
+| B9 | Documentación | Fase B | 60,00 | 75,00 | 4.500,00 |
+| | **Subtotal** | | **960,00** | | **72.000,00** |
+| | Base imponible | | | | 72.000,00 |
+| | IVA (21,00 %) | | | | 15.120,00 |
+| | **Total** | | | | **87.120,00 EUR** |
 <!-- h:budget:end -->
 
 ### 8.1 Condiciones económicas
+
+- **Importes.** En euros y sin impuestos; el IVA se añade como línea aparte. Las horas y la tarifa son una estimación de esfuerzo, sin contingencia.
+- **Por fases.** La Fase A (viabilidad, diseño, componente de código y borrador de oferta) suma 12.000,00 EUR y la Fase B (implementación completa) 60.000,00 EUR, ambas sin IVA.
+- **Demostrador.** El módulo del grid implementado y su visor se incluyen en la Fase A sin coste aparte.
+- **Hardware.** El radar, la ECU y el sensor de velocidad los suministra el cliente y no están en el presupuesto. En el siguiente borrador de la oferta el hardware deberá quedar incluido.
+- **Instalación, montaje y pruebas en tranvía real.** No están incluidas: corren por cuenta del cliente y del propietario del tranvía, y las pruebas en vía se acuerdan aparte.
+- **Segundo radar.** Es una mejora opcional fuera del presupuesto, sin precio por ahora.
+- **Validez.** 60 días desde la fecha de la oferta.
+- **Condiciones de pago.** Fase A: el 100 % a la aceptación de sus entregables. Fase B: el 30 % al inicio, el 40 % al entregar el software completo verificado en banco y el 30 % tras la verificación final.
+- **Garantía.** 12 meses para la corrección de defectos.
 
 <!-- seccion: plazo | estado: borrador -->
 ## 9. Plazo del proyecto

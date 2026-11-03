@@ -1,9 +1,108 @@
 {
-  "$comment": "Valores aportados por el usuario en /oferta-seccion presupuesto y plazo. No inventar.",
-  "moneda": "EUR",
-  "partidas": [],
-  "otros": [],
-  "contingencia_pct": 0,
-  "impuestos": null,
-  "plazo": {"inicio": "", "tareas": [], "hitos": []}
+ "$comment": "Cifras [PROPUESTA] por el orquestador a petición del usuario (aprobadas por el usuario como propuesta): horas estimadas sin datos de esfuerzo reales; tarifa e IVA por confirmar.",
+ "moneda": "EUR",
+ "partidas": [
+  {
+   "id": "A1",
+   "concepto": "Viabilidad del radar",
+   "fase": "Fase A",
+   "horas": 24,
+   "tarifa": 75
+  },
+  {
+   "id": "A2",
+   "concepto": "Diseño hardware y software",
+   "fase": "Fase A",
+   "horas": 80,
+   "tarifa": 75
+  },
+  {
+   "id": "A3",
+   "concepto": "Componente de código y justificación de C",
+   "fase": "Fase A",
+   "horas": 40,
+   "tarifa": 75
+  },
+  {
+   "id": "A4",
+   "concepto": "Borrador de oferta",
+   "fase": "Fase A",
+   "horas": 16,
+   "tarifa": 75
+  },
+  {
+   "id": "B1",
+   "concepto": "Entrada y validación de datos",
+   "fase": "Fase B",
+   "horas": 80,
+   "tarifa": 75
+  },
+  {
+   "id": "B2",
+   "concepto": "Descartes y geometría de vía",
+   "fase": "Fase B",
+   "horas": 120,
+   "tarifa": 75
+  },
+  {
+   "id": "B3",
+   "concepto": "Grid y objetos",
+   "fase": "Fase B",
+   "horas": 60,
+   "tarifa": 75
+  },
+  {
+   "id": "B4",
+   "concepto": "Cálculo de confianza y salida",
+   "fase": "Fase B",
+   "horas": 60,
+   "tarifa": 75
+  },
+  {
+   "id": "B5",
+   "concepto": "Máquina de estados y gestión de fallos",
+   "fase": "Fase B",
+   "horas": 100,
+   "tarifa": 75
+  },
+  {
+   "id": "B6",
+   "concepto": "Comunicaciones (HMI y MQTT)",
+   "fase": "Fase B",
+   "horas": 120,
+   "tarifa": 75
+  },
+  {
+   "id": "B7",
+   "concepto": "Configuración",
+   "fase": "Fase B",
+   "horas": 40,
+   "tarifa": 75
+  },
+  {
+   "id": "B8",
+   "concepto": "Verificación independiente y trazabilidad",
+   "fase": "Fase B",
+   "horas": 160,
+   "tarifa": 75
+  },
+  {
+   "id": "B9",
+   "concepto": "Documentación",
+   "fase": "Fase B",
+   "horas": 60,
+   "tarifa": 75
+  }
+ ],
+ "otros": [],
+ "contingencia_pct": 0,
+ "impuestos": {
+  "nombre": "IVA",
+  "pct": 21
+ },
+ "plazo": {
+  "inicio": "",
+  "tareas": [],
+  "hitos": []
+ }
 }
