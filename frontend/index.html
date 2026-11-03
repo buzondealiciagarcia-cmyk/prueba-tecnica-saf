@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>prueba-saf · Visor del grid</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+  <header class="ui-topbar">
+    <div class="ui-topbar__title">prueba-saf · grid de ocupación</div>
+    <div class="ui-topbar__meta">
+      <span id="conn" class="ui-status">cargando</span>
+      <button id="theme" class="ui-btn ui-btn--ghost" aria-label="Cambiar tema">Tema</button>
+    </div>
+  </header>
+  <main class="ui-layout">
+    <div>
+      <section class="ui-panel">
+        <h2 class="ui-panel__title">Escenario</h2>
+        <label class="viewer-field">Escenario
+          <select id="scenario" class="viewer-select"></select>
+        </label>
+        <p id="sc-text" class="viewer-text"></p>
+      </section>
+      <section class="ui-panel">
+        <h2 class="ui-panel__title">Grid: ventana de 24 celdas de largo y 4 carriles</h2>
+        <p class="viewer-hint">El tranvía queda a la izquierda y el avance de la vía va hacia la derecha. Pulsa una celda para ver su historia.</p>
+        <canvas id="grid" class="ui-canvas viewer-canvas" aria-label="Ventana del grid de ocupación" tabindex="0"></canvas>
+        <div class="ui-legend">
+          <span>p = 0</span><div class="ui-legend__ramp"></div><span>0,5</span><span>p = 1</span>
+          <div class="ui-legend__swatch"></div><span>zona no estudiada</span>
+          <div class="viewer-swatch-occ"></div><span>ocupado</span>
+        </div>
+      </section>
+      <section class="ui-panel">
+        <h2 class="ui-panel__title">Ciclos</h2>
+        <div class="viewer-controls">
+          <button id="first" class="ui-btn ui-btn--ghost">Inicio</button>
+          <button id="prev" class="ui-btn">Anterior</button>
+          <button id="next" class="ui-btn ui-btn--primary">Siguiente</button>
+          <span id="step-n" class="viewer-step"></span>
+        </div>
+        <p id="step-label" class="viewer-label" aria-live="polite"></p>
+      </section>
+    </div>
+    <aside>
+      <section class="ui-panel">
+        <h2 class="ui-panel__title">Todo el grid</h2>
+        <div class="ui-kpis">
+          <div class="ui-kpi"><div><span id="k-occ" class="ui-kpi__value">—</span></div><div class="ui-kpi__label">celdas ocupadas</div></div>
+          <div class="ui-kpi"><div><span id="k-obs" class="ui-kpi__value">—</span></div><div class="ui-kpi__label">celdas observadas</div></div>
+        </div>
+      </section>
+      <section class="ui-panel">
+        <h2 id="cell-title" class="ui-panel__title">Celda</h2>
+        <table class="ui-table" aria-label="Historia de la celda">
+          <thead><tr><th>Paso</th><th>log-odds</th><th>p</th><th>Estado</th></tr></thead>
+          <tbody id="cell-rows"></tbody>
+        </table>
+      </section>
+      <section class="ui-panel">
+        <h2 class="ui-panel__title">Modelo (de ogrid_limits.h)</h2>
+        <table class="ui-table" aria-label="Constantes del modelo">
+          <tbody id="consts"></tbody>
+        </table>
+      </section>
+    </aside>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
