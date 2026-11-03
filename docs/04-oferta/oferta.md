@@ -123,8 +123,62 @@ Los requisitos del sistema están cerrados y aprobados (versión 1.2): 64 requis
 
 Los cuatro requisitos de la propuesta de Ikerlan se cubren así: la detección (requisito 1) con los de detección y procesamiento; el análisis de radar, velocidad y giro (2) con los de entradas y procesamiento; la entrega en menos de 128 ms con posición, tamaño y confianza (3) con los de salida y tiempo; y el paso a modo degradado o error (4) con los de seguridad y modos.
 
-<!-- seccion: descripcion | estado: borrador -->
+<!-- seccion: descripcion | estado: aprobado -->
 ## 7. Descripción del proyecto
+
+### 7.1 Solución técnica
+
+- **Hardware.** Radar frontal 3D (distancia, azimut y altura) a 1 m sobre el suelo, sensor de velocidad lineal y de giro, ECU edge a bordo y HMI del conductor. El estado, el diagnóstico y los logs van a la nube por MQTT cifrado, sin que la nube intervenga en el procesamiento ni en la salida al HMI.
+- **Software.** Un pipeline de 15 pasos por cada nube de puntos de 50 ms, en cuatro bloques: entrada y validación; descartes (objetos dinámicos, señal débil, fuera de vía, por encima del techo y raíles); grid de ocupación y objetos; y cálculo de confianza y salida.
+- **Grid de ocupación.** 880 × 4 celdas de 0,25 m. Cada celda guarda un log-odds: un eco suma 0,85, una onda que pasa sin eco resta 0,40 y una celda oculta tras un eco no cambia. Con tres ecos seguidos la celda pasa a ocupado. Nunca existe el estado «libre».
+- **Modos y fallos.** Modos init, normal, degradado y fallo, con una tabla de fallos (detección, mitigación, notificación y recuperación) y resets de dos niveles.
+- **Salida.** La lista de objetos estáticos con posición, tamaño, incertidumbre y confianza, junto con el modo del sistema y un indicador de vigilancia.
+
+### 7.2 Metodología
+
+- **Fases con puertas.** Requisitos, diseño, implementación y oferta, cada una cerrada con su versión y su etiqueta, de modo que cada fase parte de la anterior ya aprobada. La autora aprueba los requisitos, el diseño y el contrato de cada función.
+- **Revisión del diseño.** El diseño se contrastó con los requisitos en varias rondas: 62 hallazgos, todos resueltos.
+- **Código y pruebas independientes.** El código y las pruebas de cada función los generan agentes de inteligencia artificial distintos: uno implementa la función y otro escribe sus tests, sin ver el trabajo del otro, a partir del mismo contrato aprobado. La verificación es automática y se ejecuta sobre cada función: cobertura del 100 % de líneas y de ramas, cumplimiento de MISRA C:2012, análisis estático, formato, complejidad acotada y ejecución con detectores de errores de memoria y de comportamiento indefinido.
+- **Trazabilidad.** Cada requisito se traza hasta el apartado del diseño, la función y los casos de test que lo verifican.
+- **Documentos de cada fase.** Cada fase tiene su documento en Markdown, versionado en git, y su exportación a Word (`.docx`):
+
+  | Fase | Markdown (en git) | Word |
+  |---|---|---|
+  | Requisitos | `docs/01-requisitos/requisitos.md` y `dudas.md` | `docs/export/requisitos.docx` |
+  | Diseño | `docs/02-diseno/diseno.md`, `viabilidad-radar.md` y `justificacion-c.md`, con los diagramas en `docs/02-diseno/diagramas/` | `docs/export/diseno.docx` |
+  | Implementación | `docs/03-implementacion/implementacion.md`, con `trazabilidad.md`, `contratos/`, `casos/` y `wcet-medidas.md` | `docs/export/implementacion.docx` |
+  | Oferta | `docs/04-oferta/oferta.md` | `docs/export/oferta.docx` |
+
+  Los ficheros Word se generan a partir de los Markdown y no se guardan en git: la carpeta `docs/export/` queda fuera del control de versiones. Quien descargue el proyecto de git los obtiene instalando el harness con `./harness/install.sh --target .` y ejecutando `.claude/harness/bin/h export <fase>`, con `<fase>` igual a `requisitos`, `diseno`, `implementacion` u `oferta`.
+- **Control de versiones con git.** Todo el trabajo se ha mantenido bajo control de versiones: una rama por fase y por función, mensajes de commit con formato Conventional Commits, en inglés y con la referencia al requisito que cubren, fusiones sin avance rápido (`--no-ff`) y etiquetas por fase (`req-v1.2`, `design-v1.2`, `impl-v1.2`) y por versión del módulo (`v1.1.0`). Hooks de git validan el formato de los mensajes, protegen las ramas principales y comprueban que la última verificación de una función esté en verde antes de subirla.
+- **Harness de ingeniería con IA.** Para habilitar el proyecto se creó un harness (arnés) para Claude Code, que está en la carpeta `harness/` del repositorio con su `README.md` y su instalador. Reúne 15 estándares (requisitos, código C, documentación, seguridad funcional, MQTT, red, configuración, pruebas, git y otros), comandos para cada paso, siete agentes especializados, skills, hooks y scripts. Impone el flujo por fases con puertas: no se avanza sin cerrar la fase anterior, y solo la autora puede cerrar o reabrir una fase. Garantiza la independencia entre código y pruebas con áreas de trabajo separadas, ejecuta de forma determinista las verificaciones automáticas y genera los Word, los diagramas y la matriz de trazabilidad. El estado de las fases queda en `.harness/state.json`.
+
+### 7.3 Resultados de la Fase A
+
+Viabilidad concluida, diseño cerrado y el módulo del grid implementado y verificado.
+
+**Puntos clave de la fase implementada**
+
+- **Grid de ocupación implementado.** Siete funciones en C del módulo `ogrid`: reinicio, actualización por haz y por celda, límites del valor, probabilidad de ocupación, estado de la celda y máscara de celdas ocupadas. La memoria es fija (880 × 4 celdas), sin memoria dinámica, y el resultado depende solo de los ecos del radar.
+- **Probabilidad de ocupación por celda.** Cada celda guarda un log-odds a partir del cual se calcula su probabilidad. Una celda pasa a ocupada con tres ecos seguidos y no con uno aislado, y una celda oculta tras un eco no cambia.
+- **Nunca «libre».** El estado de una celda es ocupado, probabilidad baja de obstáculo o zona no estudiada. Una celda con datos corruptos se informa como error y se trata como zona no estudiada.
+- **Verificación.** 209 casos de test (194 unitarios y 15 de integración), todos en verde, con cobertura del 100 % de líneas y de ramas, MISRA C:2012 con tres desviaciones registradas y aprobadas, análisis estático y detectores de errores de memoria.
+- **Tiempos.** Medidos en el equipo de desarrollo, no en la ECU: un haz de 880 celdas cuesta unos 2 µs (máximo observado 2,7 µs) y la máscara de las 3 520 celdas unos 9 µs (máximo 10,6 µs), muy por debajo del presupuesto de 78 ms de proceso del diseño.
+- **Visor.** Seis escenarios que reproducen el comportamiento del grid ciclo a ciclo con el código real.
+
+**Cómo lo probado cumple los requisitos de Ikerlan**
+
+| Requisito de Ikerlan | Qué se ha probado | Resultado | Qué falta (Fase B) |
+|---|---|---|---|
+| Algoritmo de grid de ocupación dinámico con la probabilidad de cada celda, basada exclusivamente en los ecos del radar | Actualización por haz y por celda; probabilidad de ocupación de cada celda; confirmación con tres ecos | Cumplido para el grid | Alimentarlo con el radar real |
+| 1. Detectar objetos estáticos de más de 0,60 m en la vía a menos de 220 m con un único radar frontal | El grid cubre 220 m de vía en celdas de 0,25 m; marca como ocupada una celda tras tres ecos y no con un eco aislado; extrae la máscara de celdas ocupadas | Cumplido solo en la parte del grid | Agrupar celdas en objetos, filtrar por tamaño, confirmar en N ciclos y geometría de vía |
+| 2. Analizar los datos del radar junto con la velocidad y el giro del tranvía | Diseñado, no probado | No probado | Recepción, validación y sincronización de radar, velocidad y giro |
+| 3. Entregar los objetos (posición, tamaño y confianza) en menos de 128 ms | Los tiempos del grid medidos en el equipo de desarrollo | Parcial: el coste del grid es de microsegundos | Medir el ciclo completo y la entrega al HMI en la ECU |
+| 4. Pasar a modo degradado o declarar un error ante fallos del sensor | El grid detecta sus datos corruptos y no declara nunca una celda libre | Parcial: piezas de base | Máquina de estados y gestión de fallos |
+
+Para las partes no implementadas (la Fase B), el planteamiento está en el documento de diseño (`docs/02-diseno/diseno.md`, y su exportación `docs/export/diseno.docx`): arquitectura hardware y software, pipeline de 15 pasos por ciclo, comunicaciones, modos y fallos, rendimiento y configuración.
+
+Una explicación más detallada de los resultados está en el documento de implementación (`docs/03-implementacion/implementacion.md`, y su exportación `docs/export/implementacion.docx`): fichas de cada función, resultados de verificación, tiempos de ejecución y trazabilidad.
 
 <!-- seccion: presupuesto | estado: borrador -->
 ## 8. Presupuesto
