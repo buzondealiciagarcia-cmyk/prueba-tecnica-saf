@@ -1,0 +1,12 @@
+{
+  "titulo": "prueba-saf",
+  "subtitulo": "Propuesta técnica y económica",
+  "autor": "Alicia Garcia",
+  "cliente": "",
+  "fecha": "2026-11-03",
+  "pie": "prueba-saf",
+  "diapositivas": [
+    {"tipo": "titulo"},
+    {"tipo": "cierre", "titulo": "Gracias", "texto": ""}
+  ]
+}
