@@ -4,8 +4,8 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-IMP |
-| Versión | 0.2 |
-| Fecha | 2026-11-02 |
+| Versión | 0.3 |
+| Fecha | 2026-11-03 |
 | Autor | Alicia Garcia |
 | Estado | Borrador |
 
@@ -14,6 +14,8 @@
 Se implementa el núcleo del grid de ocupación en log-odds (diseno.md §6 y paso 10, versión 1.1), por ser el componente central del sistema y el que SYS-IMP-10 toma como ejemplo. Son siete funciones, F-001 a F-007 (`plan.json`). Requisitos cubiertos: SYS-PR-08, SYS-SAF-07, SYS-PR-04 (solo la máscara de celdas ocupadas, que es la entrada de la agrupación) y SYS-IMP-01 (sin memoria dinámica).
 
 El estado por celdas no se publica al HMI: el análisis de la rejilla es interno y al HMI solo llega la lista de objetos con el modo del sistema y el indicador de vigilancia (SYS-OUT-11, diseno.md §5.3 y §6.5). SYS-OUT-06 se retiró en los requisitos v1.2. Por eso la función F-008 («estado por celdas», que publicaba ese estado) se retiró del plan.
+
+Además del módulo se entrega un visor de solo lectura que reproduce el grid paso a paso con el código C real (§7).
 
 Quedan fuera de este alcance: agrupación en objetos, filtro de tamaño, confirmación de N ciclos (pasos 11 a 12), geometría y conversión a coordenadas de vía, máquina de estados y desplazamiento del grid con el avance del tranvía. Ver «Pendientes y límites» al final.
 
@@ -457,9 +459,65 @@ Cada `h test` añade una entrada a `docs/03-implementacion/log-tests.md` y guard
 
 **Despliegue.** Aún no hay aplicación: `src/app/` y `src/hal/` están vacíos (solo `.gitkeep`) y `CMakeLists.txt` solo crea el ejecutable `ogrid_app` si existen fuentes en esas carpetas. Este módulo se entrega como biblioteca estática `libogrid` junto con sus tests. El despliegue en la ECU depende del hardware y de la aplicación, que se definen cuando se elija la ECU (regla R-HW, `diseno.md` §10); quien lo integre usa el preset `cross-aarch64`, que todavía no se ha ejecutado en este entorno (decisión del usuario).
 
-## 7. Interfaz de usuario (si aplica)
+**Visor del grid.** Necesita `gcc` o `cc` y Python 3 (`tools/ogrid_demo.py` prefiere `gcc-16` si existe y, si no, usa `cc`). No usa CMake. Desde la raíz del repositorio:
 
-No hay interfaz de usuario: el módulo es una biblioteca interna. La pantalla del HMI recibe solo la lista de objetos (SYS-OUT-11) y no forma parte de este alcance. Se valorará `/impl-frontend`.
+```
+python3 tools/ogrid_demo.py --serve    # genera los datos y sirve frontend/
+```
+
+Después se abre http://localhost:8080. El puerto se cambia con `--port`. Sin `--serve`, el script solo regenera `frontend/data/escenarios.json`. La biblioteca dinámica se deja en `build/ui/` (`.dylib` en macOS, `.so` en Linux). Ver §7.
+
+## 7. Interfaz de usuario
+
+### 7.1 Qué es el visor
+
+El visor es una página web de solo lectura que reproduce, paso a paso, escenarios del grid de ocupación. No tiene ningún control que actúe sobre el sistema: solo consume datos (UI-TEC-03). Sus controles (escenario, anterior, siguiente, inicio, tema, elegir celda) solo cambian lo que se ve. Es independiente del HMI del tranvía, que recibe solo la lista de objetos (SYS-OUT-11) y no forma parte de este alcance.
+
+Está hecho con HTML, JavaScript sin frameworks y Canvas 2D (UI-TEC-01). Los colores salen de variables CSS (UI-TEC-02). Los ficheros son `frontend/index.html`, `frontend/app.js` y `frontend/viewer.css`.
+
+### 7.2 Qué muestra
+
+- **Ventana del grid.** 24 celdas de largo (de s = 100 a 123) por 4 carriles (d0 a d3). El tranvía queda a la izquierda y el avance de la vía va hacia la derecha.
+- **Colores por probabilidad.** Cada celda se pinta con una rampa entre «p = 0» y «p = 1» según la probabilidad que da `ogrid_log_odds_to_prob` (F-002). Las celdas no estudiadas se pintan en gris.
+- **Celdas ocupadas.** Borde rojo con un anillo del color de fondo debajo, para que el rojo contraste también con la celda más oscura. La marca sale de la máscara de `ogrid_extract_occupied` (F-007).
+- **Leyenda** de la rampa, la zona no estudiada y el borde de ocupado.
+- **Historia de la celda elegida.** Al pulsar una celda, una tabla da, para cada ciclo, su log-odds, su probabilidad y su estado (de `ogrid_get_cell_state`, F-005).
+- **Todo el grid.** Dos contadores: celdas ocupadas y celdas observadas de las 3 520, no solo de la ventana.
+- **Constantes del modelo,** leídas de `include/ogrid/ogrid_limits.h`: voto por eco +0,85, voto por paso sin eco −0,4, celda oculta sin cambio, límites del log-odds de −0,8 a 3,4, ocupado si p > 0,85 y grid de 880 × 4 celdas.
+- **Tema claro y oscuro,** conmutable; el claro es el de partida y la elección se recuerda en `localStorage` (UI-TEC-05).
+
+### 7.3 Los seis escenarios
+
+Los valores son los del log-odds de la celda que sigue cada escenario, tal como salen de `frontend/data/escenarios.json`. Al principio todas las celdas están en «zona no estudiada».
+
+| Escenario | Celda seguida (s, d) | Log-odds por ciclo | Resultado |
+|---|---|---|---|
+| Un eco aislado no confirma | (110, 1) | 0,85 (p = 0,7006) | Probabilidad baja; ocupadas: 0. |
+| Tres ecos seguidos confirman | (110, 1) | 0,85 / 1,70 / 2,55 (p = 0,7006 / 0,8455 / 0,9276) | Ocupado en el ciclo 3; ocupadas: 1. |
+| Tras una racha de pasos, tres ecos siguen confirmando | (108, 2) | −0,4 / −0,8 / −0,8, y luego 0,05 / 0,90 / 1,75 (p = 0,852 en el último) | Ocupado en el ciclo 6; ocupadas: 1. |
+| Una celda detrás de un eco no cambia | (108, 0) | −0,4 en el ciclo 1 y −0,4 en el ciclo 2 | La celda, oculta tras el eco en la celda 105, no cambia. |
+| Varios haces por ciclo y un objeto de varias celdas | (110, 1) | 0,85 / 1,70 / 2,55 | Ocupado en el ciclo 3; ocupadas: 2; observadas: 50. |
+| El reinicio olvida todo | (110, 1) | 0,85 / 1,70 / 2,55 y reinicio: 0 | Tras el reinicio, ocupadas 0 y observadas 0. |
+
+En los escenarios con un solo haz se observan 11 celdas (14 en la racha de pasos y 16 en la celda oculta). El tercer escenario muestra el efecto del mínimo −0,8: desde ahí, tres ecos bastan para confirmar (diseno.md §6.2).
+
+### 7.4 De dónde salen los números
+
+Los números no los calcula la página ni una copia de la lógica en otro lenguaje: los calcula el código C real del módulo. El flujo es este.
+
+![Figura. Flujo de datos del visor](diagramas/visor.svg)
+
+1. `tools/ogrid_demo.py` compila `src/ogrid/*.c` en una biblioteca dinámica (`build/ui/libogrid`), con `gcc-16` si existe y, si no, con `cc`, enlazada con `libm`.
+2. Con `ctypes` carga esa biblioteca y llama a las funciones públicas: `ogrid_reset_grid`, `ogrid_update_ray`, `ogrid_get_cell_state`, `ogrid_log_odds_to_prob` y `ogrid_extract_occupied`.
+3. Ejecuta los seis escenarios ciclo a ciclo. Después de cada ciclo guarda el estado de la ventana de 24 × 4 celdas y los totales de todo el grid.
+4. Escribe todo en `frontend/data/escenarios.json`. Las constantes del modelo las lee de `ogrid_limits.h` con una expresión regular, para no duplicarlas.
+5. La página (`app.js`) lee ese JSON con `fetch` y lo reproduce. Si no lo encuentra, muestra «sin datos: ejecuta tools/ogrid_demo.py --serve».
+
+El script comprueba el código de retorno de cada llamada y falla si alguna no devuelve `OGRID_OK`.
+
+**Qué es y qué no es.** `tools/ogrid_demo.py` y `frontend/` son herramientas de la interfaz, no código del sistema ni del núcleo C (así lo dice la cabecera del script). El código del módulo (`src/ogrid/`) no se modifica. Por eso no pasaron por el ciclo de agentes aislados (implementador e ingeniero de tests, §4.1) ni por los checks de `h test`: se consideran código no crítico, tratado según STD-UI. Esa clasificación es una decisión del proyecto y el texto de `frontend.md` no la formula con esas palabras (ver «Pendientes y límites»). Los números, en cambio, sí pasan por el código verificado de §4.
+
+**Por qué no se usó `ui_bridge.py`.** El estándar (UI-TEC-04) prevé `tools/ui_bridge.py` para datos en vivo: un puente de MQTT a Server-Sent Events. Este módulo no publica ni consume mensajes MQTT y aún no hay aplicación que los genere (§6), así que no habría nada que escuchar. Además, el puente es para flujo en vivo y aquí se necesitan escenarios repetibles y paso a paso. Por eso el visor reproduce un fichero grabado, en la línea del modo replay que menciona UI-TEC-04 (que habla de ficheros de STD-DAT; aquí el formato es propio del visor).
 
 ## Pendientes y límites
 
@@ -467,6 +525,9 @@ No hay interfaz de usuario: el módulo es una biblioteca interna. La pantalla de
 - **WCET sin medir.** Los contratos fijan objetivos (por ejemplo, F-004 muy por debajo de 1 µs, F-006 decenas de µs por haz) pero el WCET real no se ha medido. El diseño fija un presupuesto de proceso de 78 ms por nube (128 ms − 50 ms, diseno.md §9).
 - **Portabilidad al objetivo.** El build `cross-aarch64` no se ha ejecutado por falta del compilador en esta máquina.
 - **Registro SAF-07 aplazado.** Las desviaciones MQ-QOS-03 (caída del broker sin evento de fallo) y MQ-PAY-03 (sin esquemas JSON de los payloads) están decididas por el usuario en el diseño (§5), pero su registro con análisis de impacto (SAF-07) está aplazado.
+- **Visor sin capturas automáticas.** El aspecto visual del visor no se comprobó con capturas automáticas, porque no hay navegador en el entorno de desarrollo. Lo revisó y aprobó el usuario.
+- **Visor fuera del ciclo de agentes aislados.** `tools/ogrid_demo.py` y `frontend/` no pasaron por implementador, ingeniero de tests ni `h test`. El flujo `/impl-frontend` del harness establece que el front-end no es código crítico: no pasa por el ciclo de agentes aislados, pero sí por STD-UI y por la revisión del usuario, que aprobó el visor. `tools/ogrid_demo.py` se trata igual por ser herramienta de la interfaz.
+- **Visor con datos grabados.** Muestra una ventana fija de 24 × 4 celdas (s = 100 a 123) con seis escenarios grabados, no datos en vivo. No lee de MQTT ni de ninguna aplicación.
 - **Tamaño de la rejilla.** El grid es fijo (880 × 4 celdas) y no se desplaza con el avance del tranvía.
 
 ## Historial de cambios
@@ -475,3 +536,4 @@ No hay interfaz de usuario: el módulo es una biblioteca interna. La pantalla de
 |---|---|---|---|
 | 0.1 | 2026-11-02 | Alicia Garcia | Creación |
 | 0.2 | 2026-11-02 | Alicia Garcia | Fichas F-001 a F-007, diagramas de secuencia, verificación, trazabilidad, construcción y pendientes. `observed` como `uint8_t`, F-008 retirada, tests con `gcc-16` |
+| 0.3 | 2026-11-03 | Alicia Garcia | Visor del grid: §1, §6 (cómo ejecutarlo), §7 (qué es, qué muestra, seis escenarios, origen de los números, diagrama de flujo de datos) y límites del visor |
