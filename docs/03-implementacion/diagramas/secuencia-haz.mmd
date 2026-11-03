@@ -1,0 +1,17 @@
+sequenceDiagram
+  participant L as Quien llama
+  participant R as F-006 ogrid_update_ray
+  participant C as F-004 ogrid_update_cell
+  participant K as F-003 ogrid_clamp_log_odds
+  L->>R: grid, celdas del haz, eco y posición
+  R->>R: valida parámetros e índices sin tocar el grid
+  loop cada celda hasta la del eco, la más cercana primero
+    R->>C: celda y voto (paso o eco)
+    C->>C: comprueba que el valor guardado es válido
+    C->>K: valor + voto
+    K-->>C: valor limitado a -0,8 y 3,4
+    C->>C: guarda el valor y marca la celda observada
+    C-->>R: OGRID_OK
+  end
+  Note over R: las celdas detrás del eco no se leen ni se tocan
+  R-->>L: OGRID_OK, o el primer error
