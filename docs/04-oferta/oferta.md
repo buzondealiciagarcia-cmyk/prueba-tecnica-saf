@@ -79,14 +79,31 @@ El trabajo se plantea por fases, con requisitos cerrados y aprobados, un diseño
 | 4. Entradas | Entradas y su validación diseñadas | Recepción, validación y sincronización del radar y del tranvía |
 | 5. Calidad del software | **Aplicada** al módulo implementado: C sin memoria dinámica, verificación independiente y trazabilidad | Aplicación al resto del sistema |
 
-<!-- seccion: alcance | estado: borrador -->
+<!-- seccion: alcance | estado: aprobado -->
 ## 5. Alcance del proyecto y de los resultados
 
 ### 5.1 Incluido
 
+- **Fase A.** Plan de viabilidad del uso del radar. Diseño hardware y software del sistema, con el diagrama del pipeline de un ciclo y la gestión de fallos. Código de un componente (el grid de ocupación) y justificación del lenguaje C. Este borrador de oferta. Como demostrador: el módulo del grid implementado y verificado (siete funciones, 209 casos de test, tiempos medidos en el equipo de desarrollo) y su visor.
+- **Fase B.** Implementación completa del sistema: recepción y validación de los datos del radar y del tranvía, geometría de vía, agrupación en objetos, confirmación, confianza e incertidumbre, máquina de estados y gestión de fallos, salida al HMI y envío de estado, diagnóstico y logs a la nube por MQTT. Verificación independiente, trazabilidad y documentación. Las pruebas son en banco, con entradas simuladas o grabadas.
+
 ### 5.2 Excluido
 
+- **Hardware** (radar, ECU y sensor de velocidad). Lo suministra el cliente y se acuerda con Ikerlan. En el siguiente borrador de la oferta el hardware deberá quedar incluido.
+- **Instalación y montaje en el tranvía.** Corren por cuenta del cliente y del propietario del tranvía.
+- **Pruebas en tranvía real** con el cliente, para validar las falsas alarmas y la precisión del radar elegido. Se acuerdan aparte.
+- **Certificación formal.** Las normas EN 50126, EN 50128 y EN 50129 con un nivel de integridad objetivo SIL 2 se aplican como práctica de simulación, sin reclamar certificación.
+- **Segundo radar.** Se recomienda como mejora opcional, fuera del alcance base, porque reduce el error de medida y aporta redundancia, lo que mejora la seguridad de un sistema con seguridad funcional. La propuesta de Ikerlan pide un único radar, y esta opción no tiene precio por ahora.
+- **Evoluciones futuras** sugeridas al cliente: acceso de la ECU al sistema de freno, actualizaciones de flota y descarga de mapas desde la nube, y persistencia del último estado del sistema entre arranques.
+
 ### 5.3 Entregables
+
+- **Fase A:** plan de viabilidad, documento de diseño, código del grid y justificación del lenguaje C, documentos de requisitos e implementación, y este borrador de oferta.
+- **Fase B:** el software del sistema completo, su documentación y sus informes de verificación.
+
+### 5.4 Garantía
+
+Garantía de 12 meses para la corrección de defectos.
 
 <!-- seccion: requisitos | estado: borrador -->
 ## 6. Requisitos
