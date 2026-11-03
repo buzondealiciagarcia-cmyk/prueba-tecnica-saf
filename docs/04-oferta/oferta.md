@@ -105,8 +105,23 @@ El trabajo se plantea por fases, con requisitos cerrados y aprobados, un diseño
 
 Garantía de 12 meses para la corrección de defectos.
 
-<!-- seccion: requisitos | estado: borrador -->
+<!-- seccion: requisitos | estado: aprobado -->
 ## 6. Requisitos
+
+Los requisitos del sistema están cerrados y aprobados (versión 1.2): 64 requisitos, de los que 62 son obligatorios (Must) y 2 deseables (Should), 48 funcionales, 5 no funcionales y 11 restricciones, además de 8 hipótesis de partida. El detalle completo está en el documento de requisitos.
+
+| Categoría | Nº | Qué cubren |
+|---|---:|---|
+| Detección y prestaciones | 7 | Alcance de 220 m, tamaño mínimo de 0,6 m, exclusión de objetos fuera de la vía, falsas alarmas, error de localización y error angular |
+| Entradas | 7 | Nube de puntos del radar, velocidad y giro del tranvía, marcas de tiempo, altura de montaje, validación de trama y de reloj |
+| Procesamiento | 11 | Coordenadas de vía, compensación del movimiento, filtrado de raíles, agrupación de celdas, objetos estáticos y móviles, probabilidad de ocupación y confirmación en N ciclos |
+| Salida | 10 | Lista de objetos con posición, tamaño, incertidumbre, confianza, identificador y marca de tiempo; aviso y registro de cambio de modo |
+| Tiempo | 1 | Entrega en menos de 128 ms |
+| Seguridad y modos | 16 | Modos normal, degradado y fallo, resets, recuperación, no declarar nunca la ausencia de obstáculo |
+| Normativa | 2 | Seguridad funcional (SIL 2 como práctica) y documentación del entorno operativo |
+| Implementación | 10 | Sin memoria dinámica, comportamiento determinista, procesamiento a bordo, nube solo para trazabilidad y los entregables de la práctica |
+
+Los cuatro requisitos de la propuesta de Ikerlan se cubren así: la detección (requisito 1) con los de detección y procesamiento; el análisis de radar, velocidad y giro (2) con los de entradas y procesamiento; la entrega en menos de 128 ms con posición, tamaño y confianza (3) con los de salida y tiempo; y el paso a modo degradado o error (4) con los de seguridad y modos.
 
 <!-- seccion: descripcion | estado: borrador -->
 ## 7. Descripción del proyecto
