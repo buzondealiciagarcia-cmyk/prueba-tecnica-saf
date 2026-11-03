@@ -4,10 +4,10 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-IMP |
-| Versión | 0.3 |
+| Versión | 1.0 |
 | Fecha | 2026-11-03 |
 | Autor | Alicia Garcia |
-| Estado | Borrador |
+| Estado | Cerrado |
 
 ## 1. Alcance implementado
 
@@ -537,3 +537,4 @@ El script comprueba el código de retorno de cada llamada y falla si alguna no d
 | 0.1 | 2026-11-02 | Alicia Garcia | Creación |
 | 0.2 | 2026-11-02 | Alicia Garcia | Fichas F-001 a F-007, diagramas de secuencia, verificación, trazabilidad, construcción y pendientes. `observed` como `uint8_t`, F-008 retirada, tests con `gcc-16` |
 | 0.3 | 2026-11-03 | Alicia Garcia | Visor del grid: §1, §6 (cómo ejecutarlo), §7 (qué es, qué muestra, seis escenarios, origen de los números, diagrama de flujo de datos) y límites del visor |
+| 1.0 | 2026-11-03 | Alicia Garcia | Cierre de la fase de implementación: 7 funciones del grid integradas, integración completa en PASS, visor del grid aprobado y documento cerrado |
