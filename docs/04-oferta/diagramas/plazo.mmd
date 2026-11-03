@@ -1,0 +1,36 @@
+%%{init: {'gantt': {'useWidth': 1200, 'leftPadding': 300, 'rightPadding': 30, 'barHeight': 26, 'barGap': 10, 'topPadding': 60, 'fontSize': 14, 'sectionFontSize': 14, 'gridLineStartPadding': 40}}}%%
+gantt
+    dateFormat YYYY-MM-DD
+    axisFormat %d/%m
+    tickInterval 2week
+    title Planificación del proyecto (marcas cada dos semanas, dd/mm)
+    section A1 · Viabilidad del radar
+    0,38 sem :a1, 2027-01-02, 0.375w
+    section A2 · Diseño hardware y software
+    1,25 sem :a2, after a1, 1.25w
+    section A3 · Componente de código y justificación de C
+    0,62 sem :a3, after a2, 0.625w
+    section A4 · Borrador de oferta
+    0,25 sem :a4, after a3, 0.25w
+    section B1 · Entrada y validación de datos
+    1,25 sem :b1, after a4, 1.25w
+    section B2 · Descartes y geometría de vía
+    1,88 sem :b2, after b1, 1.875w
+    section B3 · Grid y objetos
+    0,94 sem :b3, after b2, 0.9375w
+    section B4 · Cálculo de confianza y salida
+    0,94 sem :b4, after b3, 0.9375w
+    section B5 · Máquina de estados y gestión de fallos
+    1,56 sem :b5, after b4, 1.5625w
+    section B6 · Comunicaciones (HMI y MQTT)
+    1,88 sem :b6, after b5, 1.875w
+    section B7 · Configuración
+    0,62 sem :b7, after b6, 0.625w
+    section B8 · Verificación independiente y trazabilidad
+    2,5 sem :b8, after b7, 2.5w
+    section B9 · Documentación
+    0,94 sem :b9, after b8, 0.9375w
+    section Hitos
+    Fin de la Fase A e inicio de la Fase B · 20/01 :milestone, h1, after a4, 0d
+    Software completo en banco · 24/03 :milestone, h2, after b7, 0d
+    Verificación final · 17/04 :milestone, h3, after b9, 0d

@@ -219,11 +219,28 @@ Tabla: Desglose del presupuesto por partidas
 - **Condiciones de pago.** Fase A: el 100 % a la aceptación de sus entregables. Fase B: el 30 % al inicio, el 40 % al entregar el software completo verificado en banco y el 30 % tras la verificación final.
 - **Garantía.** 12 meses para la corrección de defectos.
 
-<!-- seccion: plazo | estado: borrador -->
+<!-- seccion: plazo | estado: en revision -->
 ## 9. Plazo del proyecto
 
 <!-- h:plazo:begin -->
+![Figura. Planificación del proyecto](diagramas/plazo.svg)
+
+Duración por tareas (suma, sin solapes): 15 semanas.
 <!-- h:plazo:end -->
+
+- **Inicio.** 2 de enero de 2027.
+- **Equipo y capacidad.** 2 personas a 40 horas semanales, con una dedicación del 80 % (el 20 % restante se dedica a reuniones): 64 horas de trabajo útil por semana.
+- **Cómo se calcula la duración.** Cada tarea dura sus horas del presupuesto entre 64 horas por semana. Las tareas se ejecutan una tras otra, de modo que el plan respeta la capacidad del equipo.
+- **Duración total.** 15 semanas (960 horas ÷ 64): la Fase A dura 2,5 semanas y la Fase B 12,5.
+- **Hitos** (fechas aproximadas):
+
+| Hito | Fecha aproximada |
+|---|---|
+| Fin de la Fase A e inicio de la Fase B | 20 de enero de 2027 |
+| Software completo en banco | 24 de marzo de 2027 |
+| Verificación final | 17 de abril de 2027 |
+
+Los hitos de la Fase B coinciden con los de pago de las condiciones económicas (sección 8.1).
 
 ## Historial de cambios
 
