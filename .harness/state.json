@@ -63,10 +63,10 @@
       ]
     },
     "impl": {
-      "status": "open",
-      "version": "1.0",
-      "closed_at": "2026-11-03T10:13:43",
-      "tag": "impl-v1.0",
+      "status": "closed",
+      "version": "1.1",
+      "closed_at": "2026-11-03T10:35:55",
+      "tag": "impl-v1.1",
       "history": [
         {
           "event": "locked-by-reopen",
@@ -82,18 +82,23 @@
           "event": "reopen",
           "at": "2026-11-03T10:17:17",
           "reason": "calcular el WCET de las funciones ogrid"
+        },
+        {
+          "event": "close",
+          "at": "2026-11-03T10:35:55",
+          "version": "1.1"
         }
       ],
       "integration": {
         "result": "PASS",
-        "commit": "0160f3e821d5c49f3bcc5e448fca89dcc3e40ffc",
-        "at": "2026-11-02T23:08:01",
-        "run": 1,
-        "branch": "test/integration"
+        "commit": "1cca6632fa682463b18174be36ee1f06779e8d2b",
+        "at": "2026-11-03T10:35:33",
+        "run": 3,
+        "branch": "develop"
       }
     },
     "offer": {
-      "status": "locked",
+      "status": "open",
       "version": "0.1",
       "closed_at": null,
       "tag": null,

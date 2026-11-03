@@ -4,10 +4,10 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-IMP |
-| Versión | 1.0 |
+| Versión | 1.1 |
 | Fecha | 2026-11-03 |
 | Autor | Alicia Garcia |
-| Estado | Borrador |
+| Estado | Cerrado |
 
 ## 1. Alcance implementado
 
