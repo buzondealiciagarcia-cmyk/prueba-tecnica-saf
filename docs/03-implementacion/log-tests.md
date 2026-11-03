@@ -179,3 +179,20 @@ Casos fallados:
 | doxygen | PASS |  |
 | forbidden | PASS |  |
 | test_format | PASS |  |
+
+## 2026-11-03 21:47 · F-002 · ogrid_log_odds_to_prob · ejecución 3 · PASS
+
+- Rama: `feature/SYS-PR-08-ogrid-log-odds-to-prob` · commit `ed31f4e7fb`
+
+| Check | Resultado | Detalle |
+|---|---|---|
+| build | PASS |  |
+| unit | PASS | 27 casos, 0 fallos |
+| coverage | PASS | ogrid_log_odds_to_prob.c L 100.0 % R 100.0 % |
+| misra | PASS |  |
+| tidy | PASS |  |
+| format | PASS |  |
+| complexity | PASS |  |
+| doxygen | PASS |  |
+| forbidden | PASS |  |
+| test_format | PASS |  |
