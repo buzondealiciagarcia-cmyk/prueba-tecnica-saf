@@ -1,0 +1,246 @@
+{
+ "$comment": "Cifras [PROPUESTA] aprobadas por el usuario: horas estimadas sin datos de esfuerzo reales. Plazo: capacidad 2 personas x 40 h x 80 % = 64 h/semana; tareas en serie con duración exacta (horas / 64), 15 semanas.",
+ "moneda": "EUR",
+ "partidas": [
+  {
+   "id": "A1",
+   "concepto": "Viabilidad del radar",
+   "fase": "Fase A",
+   "horas": 24,
+   "tarifa": 75
+  },
+  {
+   "id": "A2",
+   "concepto": "Diseño hardware y software",
+   "fase": "Fase A",
+   "horas": 80,
+   "tarifa": 75
+  },
+  {
+   "id": "A3",
+   "concepto": "Componente de código y justificación de C",
+   "fase": "Fase A",
+   "horas": 40,
+   "tarifa": 75
+  },
+  {
+   "id": "A4",
+   "concepto": "Borrador de oferta",
+   "fase": "Fase A",
+   "horas": 16,
+   "tarifa": 75
+  },
+  {
+   "id": "B1",
+   "concepto": "Entrada y validación de datos",
+   "fase": "Fase B",
+   "horas": 80,
+   "tarifa": 75
+  },
+  {
+   "id": "B2",
+   "concepto": "Descartes y geometría de vía",
+   "fase": "Fase B",
+   "horas": 120,
+   "tarifa": 75
+  },
+  {
+   "id": "B3",
+   "concepto": "Grid y objetos",
+   "fase": "Fase B",
+   "horas": 60,
+   "tarifa": 75
+  },
+  {
+   "id": "B4",
+   "concepto": "Cálculo de confianza y salida",
+   "fase": "Fase B",
+   "horas": 60,
+   "tarifa": 75
+  },
+  {
+   "id": "B5",
+   "concepto": "Máquina de estados y gestión de fallos",
+   "fase": "Fase B",
+   "horas": 100,
+   "tarifa": 75
+  },
+  {
+   "id": "B6",
+   "concepto": "Comunicaciones (HMI y MQTT)",
+   "fase": "Fase B",
+   "horas": 120,
+   "tarifa": 75
+  },
+  {
+   "id": "B7",
+   "concepto": "Configuración",
+   "fase": "Fase B",
+   "horas": 40,
+   "tarifa": 75
+  },
+  {
+   "id": "B8",
+   "concepto": "Verificación independiente y trazabilidad",
+   "fase": "Fase B",
+   "horas": 160,
+   "tarifa": 75
+  },
+  {
+   "id": "B9",
+   "concepto": "Documentación",
+   "fase": "Fase B",
+   "horas": 60,
+   "tarifa": 75
+  }
+ ],
+ "otros": [],
+ "contingencia_pct": 0,
+ "impuestos": {
+  "nombre": "IVA",
+  "pct": 21
+ },
+ "plazo": {
+  "inicio": "2027-01-02",
+  "tareas": [
+   {
+    "id": "A1",
+    "nombre": "Viabilidad del radar",
+    "fase": "Fase A",
+    "semanas": 0.375,
+    "depende": []
+   },
+   {
+    "id": "A2",
+    "nombre": "Diseño hardware y software",
+    "fase": "Fase A",
+    "semanas": 1.25,
+    "depende": [
+     "a1"
+    ]
+   },
+   {
+    "id": "A3",
+    "nombre": "Componente de código y justificación de C",
+    "fase": "Fase A",
+    "semanas": 0.625,
+    "depende": [
+     "a2"
+    ]
+   },
+   {
+    "id": "A4",
+    "nombre": "Borrador de oferta",
+    "fase": "Fase A",
+    "semanas": 0.25,
+    "depende": [
+     "a3"
+    ]
+   },
+   {
+    "id": "B1",
+    "nombre": "Entrada y validación de datos",
+    "fase": "Fase B",
+    "semanas": 1.25,
+    "depende": [
+     "a4"
+    ]
+   },
+   {
+    "id": "B2",
+    "nombre": "Descartes y geometría de vía",
+    "fase": "Fase B",
+    "semanas": 1.875,
+    "depende": [
+     "b1"
+    ]
+   },
+   {
+    "id": "B3",
+    "nombre": "Grid y objetos",
+    "fase": "Fase B",
+    "semanas": 0.9375,
+    "depende": [
+     "b2"
+    ]
+   },
+   {
+    "id": "B4",
+    "nombre": "Cálculo de confianza y salida",
+    "fase": "Fase B",
+    "semanas": 0.9375,
+    "depende": [
+     "b3"
+    ]
+   },
+   {
+    "id": "B5",
+    "nombre": "Máquina de estados y gestión de fallos",
+    "fase": "Fase B",
+    "semanas": 1.5625,
+    "depende": [
+     "b4"
+    ]
+   },
+   {
+    "id": "B6",
+    "nombre": "Comunicaciones (HMI y MQTT)",
+    "fase": "Fase B",
+    "semanas": 1.875,
+    "depende": [
+     "b5"
+    ]
+   },
+   {
+    "id": "B7",
+    "nombre": "Configuración",
+    "fase": "Fase B",
+    "semanas": 0.625,
+    "depende": [
+     "b6"
+    ]
+   },
+   {
+    "id": "B8",
+    "nombre": "Verificación independiente y trazabilidad",
+    "fase": "Fase B",
+    "semanas": 2.5,
+    "depende": [
+     "b7"
+    ]
+   },
+   {
+    "id": "B9",
+    "nombre": "Documentación",
+    "fase": "Fase B",
+    "semanas": 0.9375,
+    "depende": [
+     "b8"
+    ]
+   }
+  ],
+  "hitos": [
+   {
+    "id": "H1",
+    "nombre": "Fin de la Fase A e inicio de la Fase B",
+    "tras": [
+     "a4"
+    ]
+   },
+   {
+    "id": "H2",
+    "nombre": "Software completo en banco",
+    "tras": [
+     "b7"
+    ]
+   },
+   {
+    "id": "H3",
+    "nombre": "Verificación final",
+    "tras": [
+     "b9"
+    ]
+   }
+  ]
+ }
+}

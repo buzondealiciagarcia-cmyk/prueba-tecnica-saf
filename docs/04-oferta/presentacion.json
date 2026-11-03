@@ -1,0 +1,217 @@
+{
+ "titulo": "Detección de obstáculos estáticos en vía con radar frontal",
+ "subtitulo": "Propuesta técnica y económica para Ikerlan",
+ "autor": "Alicia Garcia",
+ "cliente": "Ikerlan",
+ "fecha": "2026-11-03",
+ "pie": "prueba-saf · Oferta para Ikerlan",
+ "diapositivas": [
+  {
+   "tipo": "titulo",
+   "notas": "Presentación de la oferta: un sistema de detección de obstáculos estáticos en la vía de un tranvía, con un radar frontal 3D y procesamiento a bordo. Dura unos 15 minutos."
+  },
+  {
+   "tipo": "vinetas",
+   "titulo": "El problema",
+   "vinetas": [
+    "Un tranvía a 50 km/h recorre unos 14 m cada segundo",
+    "Los 220 m de alcance exigidos se cubren en unos 16 s",
+    "Hay que detectar objetos estáticos de 0,6 m en la vía con un único radar frontal",
+    "La detección debe ser fiable, determinista y de tiempo acotado",
+    "Nunca debe dar a entender que la vía está libre sin haberlo comprobado"
+   ],
+   "notas": "Los datos salen de la propuesta de Ikerlan y del diseño: 50 km/h son 13,9 m/s y 220 m se recorren en unos 15,8 s. El último punto es el de seguridad funcional."
+  },
+  {
+   "tipo": "vinetas",
+   "titulo": "Objetivos, por prioridad",
+   "vinetas": [
+    "Detección: objetos de 0,6 m o más en la vía, a menos de 220 m",
+    "Tiempo: entrega en menos de 128 ms desde cada nube del radar",
+    "Seguridad funcional: nunca comunicar la ausencia de obstáculo; modos degradado y fallo",
+    "Entradas: radar más velocidad y giro, compensando el movimiento",
+    "Calidad del software: C sin memoria dinámica, verificable y trazable"
+   ],
+   "notas": "Es el orden de prioridad acordado en la oferta. La Fase A deja diseñados los cinco y implementa el grid de ocupación."
+  },
+  {
+   "tipo": "imagen",
+   "titulo": "Arquitectura hardware",
+   "imagen": "docs/04-oferta/diagramas/arquitectura-resumen.mmd",
+   "pie": "Radar 3D, sensor de velocidad, ECU edge a bordo, HMI y nube por MQTT cifrado",
+   "notas": "El procesamiento es a bordo: se descarta la nube por latencia, fiabilidad y restricciones de tiempo. La nube solo recibe estado, diagnóstico y logs."
+  },
+  {
+   "tipo": "imagen",
+   "titulo": "Pipeline de un ciclo de 50 ms",
+   "imagen": "docs/04-oferta/diagramas/pipeline-resumen.mmd",
+   "pie": "15 pasos en cuatro bloques: entrada, descartes, grid y objetos, salida",
+   "notas": "Cada nube de puntos del radar recorre estos 15 pasos. El grid de ocupación, paso 10, es lo que se ha implementado."
+  },
+  {
+   "tipo": "dos_columnas",
+   "titulo": "El grid de ocupación",
+   "izquierda_titulo": "Cómo vota cada haz",
+   "izquierda": [
+    "Eco en la celda: +0,85",
+    "Onda que pasa sin eco: −0,40",
+    "Celda oculta tras un eco: sin cambio",
+    "Tres ecos seguidos: la celda pasa a ocupada",
+    "Un eco aislado no confirma"
+   ],
+   "derecha_titulo": "Estados de una celda",
+   "derecha": [
+    "Ocupado",
+    "Probabilidad baja de obstáculo",
+    "Zona no estudiada",
+    "Nunca «libre»",
+    "Datos corruptos: error y zona no estudiada"
+   ],
+   "notas": "880 × 4 celdas de 0,25 m, 220 m de vía. Cada celda guarda un log-odds a partir del cual se calcula su probabilidad. Es el componente implementado y verificado en la Fase A."
+  },
+  {
+   "tipo": "vinetas",
+   "titulo": "Metodología",
+   "vinetas": [
+    "Cuatro fases con puertas: requisitos, diseño, implementación y oferta",
+    "Diseño revisado contra los requisitos: 62 hallazgos resueltos",
+    "Código y tests de cada función, generados por agentes de IA distintos que no se ven, con un contrato aprobado",
+    "Verificación automática: cobertura 100 %, MISRA C:2012 y análisis estático",
+    "Trazabilidad de requisitos a tests y control de versiones con git",
+    "Un harness de ingeniería propio para Claude Code impone el flujo"
+   ],
+   "notas": "Lo dice la oferta con claridad: el código y los tests los generan agentes de inteligencia artificial independientes; la autora aprueba los requisitos, el diseño y el contrato de cada función. Cada fase tiene su documento en Markdown versionado y su Word."
+  },
+  {
+   "tipo": "kpis",
+   "titulo": "Verificación del grid",
+   "kpis": [
+    {
+     "valor": "209",
+     "etiqueta": "casos de test en verde"
+    },
+    {
+     "valor": "100 %",
+     "etiqueta": "cobertura de líneas y ramas"
+    },
+    {
+     "valor": "7",
+     "etiqueta": "funciones del grid implementadas"
+    },
+    {
+     "valor": "≈ 2 µs",
+     "etiqueta": "por haz de 880 celdas (equipo de desarrollo)"
+    }
+   ],
+   "notas": "194 tests unitarios y 15 de integración. Los tiempos están medidos en el equipo de desarrollo, no en la ECU, que aún no está elegida."
+  },
+  {
+   "tipo": "tabla",
+   "titulo": "Cumplimiento de los requisitos de Ikerlan",
+   "cabecera": [
+    "Requisito de Ikerlan",
+    "Resultado",
+    "Falta (Fase B)"
+   ],
+   "filas": [
+    [
+     "Grid de ocupación dinámico con la probabilidad de cada celda",
+     "Cumplido para el grid",
+     "Alimentarlo con el radar real"
+    ],
+    [
+     "1. Detectar objetos de más de 0,60 m en la vía a menos de 220 m",
+     "Solo la parte del grid",
+     "Agrupar en objetos, filtrar por tamaño, geometría de vía"
+    ],
+    [
+     "2. Analizar radar, velocidad y giro",
+     "No probado (diseñado)",
+     "Recepción y sincronización"
+    ],
+    [
+     "3. Entregar los objetos en menos de 128 ms",
+     "Parcial: el grid cuesta microsegundos",
+     "Medir el ciclo completo en la ECU"
+    ],
+    [
+     "4. Modo degradado o error ante fallos del sensor",
+     "Parcial: piezas de base",
+     "Máquina de estados y gestión de fallos"
+    ]
+   ],
+   "notas": "Es la lectura más defendible: solo está probado el núcleo del grid. El resto está diseñado y se ejecuta en la Fase B."
+  },
+  {
+   "tipo": "dos_columnas",
+   "titulo": "Alcance",
+   "izquierda_titulo": "Fase A",
+   "izquierda": [
+    "Viabilidad del radar",
+    "Diseño hardware y software",
+    "Código del grid y justificación de C",
+    "Borrador de oferta",
+    "Demostrador del grid y su visor, sin coste aparte"
+   ],
+   "derecha_titulo": "Fase B",
+   "derecha": [
+    "Implementación completa del sistema",
+    "Máquina de estados y gestión de fallos",
+    "Comunicaciones con el HMI y MQTT",
+    "Verificación independiente y trazabilidad",
+    "Pruebas en banco, garantía de 12 meses"
+   ],
+   "notas": "Quedan fuera: el hardware (que suministra el cliente), la instalación y el montaje, las pruebas en tranvía real y la certificación formal. El segundo radar se recomienda como mejora opcional."
+  },
+  {
+   "tipo": "imagen",
+   "titulo": "Plan: 15 semanas desde el 2 de enero de 2027",
+   "imagen": "docs/04-oferta/diagramas/plazo-resumen.mmd",
+   "pie": "2 personas, 40 h semanales al 80 %; hitos aproximados: 20/01, 24/03 y 17/04",
+   "notas": "Tareas en serie con la duración exacta de sus horas entre 64 h por semana. Es un plan ajustado: un retraso desplaza lo siguiente."
+  },
+  {
+   "tipo": "tabla",
+   "titulo": "Presupuesto",
+   "cabecera": [
+    "Concepto",
+    "Horas",
+    "Importe (EUR)"
+   ],
+   "filas": [
+    [
+     "Fase A: viabilidad, diseño, componente y oferta",
+     "160",
+     "12.000,00"
+    ],
+    [
+     "Fase B: implementación completa",
+     "800",
+     "60.000,00"
+    ],
+    [
+     "Base imponible",
+     "960",
+     "72.000,00"
+    ],
+    [
+     "IVA (21 %)",
+     "",
+     "15.120,00"
+    ],
+    [
+     "Total",
+     "",
+     "87.120,00"
+    ]
+   ],
+   "notas": "Tarifa única de 75 EUR/h, sin contingencia. Validez de 60 días. Pago: Fase A al aceptar los entregables; Fase B 30 % al inicio, 40 % al entregar el software verificado en banco y 30 % tras la verificación final. El hardware no está incluido; en el siguiente borrador deberá incluirse."
+  },
+  {
+   "tipo": "cierre",
+   "titulo": "Siguientes pasos",
+   "texto": "Acordar con Ikerlan el hardware y los datos, y arrancar la Fase B. Gracias.",
+   "notas": "Cierre: proponer acordar el hardware específico con el cliente y los datos que de ello se deriven."
+  }
+ ]
+}
