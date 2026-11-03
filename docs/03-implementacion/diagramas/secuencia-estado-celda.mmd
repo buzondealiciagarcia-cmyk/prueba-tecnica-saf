@@ -1,0 +1,21 @@
+sequenceDiagram
+  participant X as F-007 ogrid_extract_occupied
+  participant S as F-005 ogrid_get_cell_state
+  participant P as F-002 ogrid_log_odds_to_prob
+  loop las 3 520 celdas
+    X->>S: grid e índice de celda
+    alt celda no observada
+      S-->>X: zona no estudiada
+    else celda observada
+      S->>P: log-odds guardado
+      alt log-odds fuera de rango o no finito
+        P-->>S: OGRID_ERR_RANGE
+        S-->>X: zona no estudiada y OGRID_ERR_STATE
+      else log-odds válido
+        P-->>S: p = 1 / (1 + e^-l)
+        S-->>X: ocupado si p > 0,85, si no probabilidad baja
+      end
+    end
+    X->>X: máscara[celda] = (estado es ocupado)
+  end
+  Note over X: si hubo alguna celda corrupta, devuelve OGRID_ERR_STATE al final

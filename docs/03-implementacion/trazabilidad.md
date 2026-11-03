@@ -1,6 +1,6 @@
 # Matriz de trazabilidad
 
-Generada por `h trace` el 2026-11-02. No editar a mano.
+Generada por `h trace` el 2026-11-03. No editar a mano.
 
 Tabla: Trazabilidad requisito → diseño → función → test
 

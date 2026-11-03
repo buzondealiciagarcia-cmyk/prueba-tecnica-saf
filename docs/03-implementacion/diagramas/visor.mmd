@@ -1,0 +1,12 @@
+flowchart LR
+  C["Código C: src/ogrid/*.c"]
+  L["Biblioteca dinámica: build/ui/libogrid"]
+  P["Script tools/ogrid_demo.py: llama con ctypes"]
+  J["frontend/data/escenarios.json"]
+  W["Página: index.html y app.js"]
+  U["Usuario: solo mira, sin enviar órdenes"]
+  C -->|compila gcc o cc| L
+  L -->|funciones públicas| P
+  P -->|escribe| J
+  J -->|fetch| W
+  W -->|muestra| U
