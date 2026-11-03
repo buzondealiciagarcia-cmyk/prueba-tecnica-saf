@@ -4,7 +4,7 @@
 |---|---|
 | Proyecto | prueba-saf |
 | Código | SAF-OFE |
-| Versión | 0.1 |
+| Versión | 1.0 |
 | Fecha | 2026-11-03 |
 | Autor | Alicia Garcia |
 | Cliente | Ikerlan |
@@ -13,7 +13,7 @@
 | Validez de la oferta | 60 días |
 | Moneda e impuestos | EUR, impuestos aparte |
 | Demostrador | La implementación realizada (módulo del grid, verificación y visor) se incluye como demostrador de la Fase A, sin coste aparte |
-| Estado | Borrador |
+| Estado | Cerrado |
 
 <!-- seccion: objeto | estado: aprobado -->
 ## 1. Objeto de la oferta
@@ -247,3 +247,4 @@ Los hitos de la Fase B coinciden con los de pago de las condiciones económicas 
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 0.1 | 2026-11-03 | Alicia Garcia | Creación |
+| 1.0 | 2026-11-03 | Alicia Garcia | Cierre de la oferta: nueve secciones aprobadas (objeto, introducción, datos, objetivos, alcance, requisitos, descripción, presupuesto y plazo) y presentación de 13 diapositivas |
