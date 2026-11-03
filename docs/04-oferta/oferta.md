@@ -27,8 +27,16 @@ La ejecución se ofrece en dos fases:
 
 La oferta la presenta Alicia Garcia, a título personal.
 
-<!-- seccion: introduccion | estado: borrador -->
+<!-- seccion: introduccion | estado: aprobado -->
 ## 2. Introducción
+
+La propuesta inicial de Ikerlan, del equipo SAF de la unidad DIG («percepción confiable, del sensor a la decisión»), plantea diseñar un algoritmo basado en un grid de ocupación dinámico para identificar obstáculos estáticos sobre la vía de un tranvía, usando un radar frontal. El radar entrega cada 50 ms una nube de puntos con sus ecos, y el resultado debe ser un grid con la probabilidad de ocupación de cada celda, basada exclusivamente en esos ecos. El sistema debe detectar objetos estáticos de más de 0,60 m de lado situados en la vía a menos de 220 m, analizar los datos del radar junto con la velocidad y el giro del tranvía, entregar los objetos detectados (posición, tamaño y confianza) en menos de 128 ms, y pasar a modo degradado o declarar un error ante fallos del sensor.
+
+Un tranvía que circula a 50 km/h recorre unos 14 m cada segundo, y los 220 m de alcance exigido los cubre en unos 16 s. La detección debe ser fiable, determinista y de tiempo acotado, y nunca debe dar a entender que la vía está libre cuando no se ha podido comprobar: es un sistema que requiere seguridad funcional.
+
+La solución propuesta procesa los datos del radar frontal 3D en una unidad a bordo del tranvía (procesamiento en el borde) y no en la nube. Se descarta la nube por latencia, fiabilidad y restricciones de tiempo, que pondrían en riesgo el cumplimiento de los estándares del proyecto; el procesamiento a bordo ofrece buena latencia y disponibilidad, es certificable y es más seguro frente a ataques.
+
+El trabajo se plantea por fases, con requisitos cerrados y aprobados, un diseño revisado contra ellos y una implementación en la que el código y sus pruebas los escriben y revisan de forma independiente. Los primeros resultados confirman que el planteamiento es viable: el plan de viabilidad concluye que un radar 3D con la precisión angular exigida permite cubrir los 220 m, y el módulo central del sistema, el grid de ocupación, ya está implementado y verificado.
 
 <!-- seccion: datos | estado: borrador -->
 ## 3. Datos utilizados
